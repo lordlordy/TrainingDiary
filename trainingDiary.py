@@ -36,7 +36,8 @@ def tsb(trainingDiary, activity):
         ctl = ctl * ctlDecay + tss * ctlImpact
         atl = atl * atlDecay + tss * atlImpact
         # results.append((d.date.strftime("%Y-%b-%d"), tss,ctl,atl, (ctl-atl)))
-        results.append({'date':d.date.strftime("%Y-%b-%d"), 'tss': tss,'ctl':ctl, 'atl':atl, 'tsb': (ctl-atl)})
+        # results.append({'date':d.date.strftime("%Y-%b-%d"), 'tss': tss,'ctl':ctl, 'atl':atl, 'tsb': (ctl-atl)})
+        results.append({'date':d.date, 'tss': tss,'ctl':ctl, 'atl':atl, 'tsb': (ctl-atl)})
 
     return results
 

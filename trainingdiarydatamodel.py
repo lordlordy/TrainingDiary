@@ -13,11 +13,11 @@ class TrainingDiary:
         self.included = included
         self.days = []
 
-#    def workoutCount(self):
-#        i = 0
-#        for d in self.days:
-#            i += len(d.workouts)
-#        return i
+    def workoutCount(self):
+       i = 0
+       for d in self.days:
+           i += len(d.workouts)
+       return i
 
     def sum(self, activityString, unit):
         total = 0

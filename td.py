@@ -21,6 +21,10 @@ import json
 import Eddington
 # from docopt import docopt
 import docopt
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import date
+import pandas as pd
 
 versionText = 'Training Diary (0.1 beta)'
 t = None
@@ -109,14 +113,48 @@ def parseInput(arguments):
 
 
 if __name__ == '__main__':
-    arguments = docopt.docopt(__doc__, version=versionText)
-    parseInput(arguments)
+    # arguments = docopt.docopt(__doc__, version=versionText)
+    # parseInput(arguments)
 
-    c = 0
+    # c = 0
+    #
+    # while c<4:
+    #     c += 1
+    #     i = input(f"{versionText} > ")
+    #     arguments = docopt.docopt(__doc__, argv=i, version=versionText)
+    #     parseInput(arguments)
 
-    while c<4:
-        c += 1
-        i = input(f"{versionText} > ")
-        arguments = docopt.docopt(__doc__, argv=i, version=versionText)
-        parseInput(arguments)
+    td = trainingDiary.importDiary('TrainingDiary.json')
+    print(td)
+
+    frame = pd.DataFrame(td.days)
+
+
+    tsbData = trainingDiary.tsb(td,'Run')
+    for t in tsbData:
+        print(t)
+
+    year = 2004
+    dates = np.array([t['date'] for t in tsbData if t['date'].date() >= date(year,1,1)])
+    ctl = np.array([t['ctl'] for t in tsbData if t['date'].date() >= date(year,1,1)])
+    atl = np.array([t['atl'] for t in tsbData if t['date'].date() >= date(year,1,1)])
+    tsb = np.array([t['tsb'] for t in tsbData if t['date'].date() >= date(year,1,1)])
+    tss = np.array([t['tss'] for t in tsbData if t['date'].date() >= date(year,1,1)])
+
+    fig, ax1 = plt.subplots()
+
+    ax1.plot(dates, ctl, label='CTL')
+    ax1.plot(dates, atl, label='ATL')
+    ax1.plot(dates, tsb, label='TSB')
+
+    ax2 = ax1.twinx()
+
+    ax2.bar(dates, tss, label='TSS')
+
+    plt.title("Training Stress Balance")
+    ax1.legend()
+    ax2.legend(loc=0)
+
+
+    plt.show()
 
