@@ -21,6 +21,8 @@ from matplotlib import cm
 
 from numpy.polynomial.polynomial import polyfit
 import tkinter as tk
+from tkinter import filedialog
+
 
 DF_DATE, DF_ACTIVITY, DF_ACTIVITY_TYPE, DF_EQUIPMENT, DF_WORKOUT = 'Date', 'Activity', 'Activity Type', 'Equipment', 'Workout #'
 DF_ASCENT_METRES, DF_KJ, DF_SECONDS, DF_REPS, DF_KM, DF_TSS, DF_BRICK, DF_RPE, DF_WATTS, DF_CADENCE, DF_HR, DF_HOURS, DF_TOTAL = 'ascentMetres', 'kj', 'seconds', 'reps', 'km', 'tss', 'brick', 'rpe', 'watts', 'cadence', 'hr', 'hours', 'total'
@@ -192,6 +194,13 @@ class PlotTest:
         plt.subplots_adjust(wspace=0, hspace=0)
         plt.show()
 
+    def rYearsHoursStackedPlot(self):
+        df = self.loadAndCreateTimeSeriesDataFrame()
+        hoursDF = df['hours'].drop(['Total'], axis=1)
+        # rolling sum can introduce tiny negative numbers
+        np.around(hoursDF.rolling(365, min_periods=1).sum(), decimals=0).plot(kind='area', stacked=True)
+        plt.show()
+
     def monthlyHoursArea(self):
 
         df = self.loadAndCreateSimpleDataFrame()
@@ -301,16 +310,19 @@ class PlotTest:
     def createWeightScatter(self):
         weightDF = self.loadAndCreateWeightDF()
         weightDF = weightDF[(weightDF != 0).all(1)]
+        self.createScatter(weightDF['kg'],weightDF['fatPercent'],0.5)
 
-        x = weightDF['kg']
-        y = weightDF['fatPercent']
+    def createWeightHeatMap(self):
+        weightDF = self.loadAndCreateWeightDF()
+        weightDF = weightDF[(weightDF != 0).all(1)]
+        self.createHeatMap(weightDF['kg'],weightDF['fatPercent'],20)
 
+    def createScatter(self,x,y,binWidth):
         c, p1 = polyfit(x, y, 1)
 
         # start with a rectangular Figure
         fig = plt.figure()
         gs = gridspec.GridSpec(3, 3)
-        # fig, ax = plt.subplots(3,3, sharex=True, sharey=True)
 
         axMain = fig.add_subplot(gs[1:, :2])
         ax1 = fig.add_subplot(gs[0, :2], sharex=axMain)
@@ -324,9 +336,8 @@ class PlotTest:
         # add best fit
         axMain.plot(x, c + p1 * x, color='red', dashes=[3,3])
 
-        binwidth = 0.5
-        xbins = np.arange(min(x), max(x) + binwidth, binwidth)
-        ybins = np.arange(min(y), max(y) + binwidth, binwidth)
+        xbins = np.arange(min(x), max(x) + binWidth, binWidth)
+        ybins = np.arange(min(y), max(y) + binWidth, binWidth)
 
         ax1.hist(x, bins=xbins)
         ax2.hist(y, bins=ybins, orientation='horizontal')
@@ -334,21 +345,16 @@ class PlotTest:
 
         plt.show()
 
-    def createWeightHeatMap(self):
-        weightDF = self.loadAndCreateWeightDF()
-        weightDF = weightDF[(weightDF != 0).all(1)]
 
-        x = weightDF['kg']
-        y = weightDF['fatPercent']
+    def createHeatMap(self,x,y,gridSize):
 
-        plt.hexbin(x, y, gridsize=20, cmap=cm.hot, bins=None)
+        plt.hexbin(x, y, gridsize=gridSize, cmap=cm.hot, bins=None)
         plt.axis([x.min(), x.max(), y.min(), y.max()])
         plt.grid(True, linestyle='-', alpha=0.5)
 
         cb = plt.colorbar()
         cb.set_label('observations')
         plt.show()
-
 
     def createTSBBar(self):
 
@@ -409,22 +415,8 @@ class PlotTest:
 
         fig.tight_layout()
 
-        # axes[1, 0].xaxis.set_major_locator(mdates.MonthLocator())
-
-        # import time
-        # print(int(time.mktime(displayTimeSeries.index.values[0])))
-
-        # print(displayTimeSeries.index.values[0].asType(int))
-        # print(displayTimeSeries.index.values[len(displayTimeSeries)-1])
-
         plt.subplots_adjust(wspace=0, hspace=0)
         axes[1, 0].xaxis.set_major_locator(mdates.MonthLocator())
-
-        # import time
-        # print(int(time.mktime(displayTimeSeries.index.values[0])))
-
-        # print(displayTimeSeries.index.values[0].asType(int))
-        # print(displayTimeSeries.index.values[len(displayTimeSeries)-1])
 
         plt.subplots_adjust(wspace=0, hspace=0)
         plt.show()
@@ -438,6 +430,7 @@ class PlotTest:
         weightScatterB = tk.Button(self.__root, text='KG v %', command=self.createWeightScatter)
         kgHeatMapB = tk.Button(self.__root, text='KG Heatmap', command=self.createWeightHeatMap)
         tsbB = tk.Button(self.__root, text='TSB', command=self.createTSBBar)
+        rYearHrsB = tk.Button(self.__root, text='rYear Hours', command=self.rYearsHoursStackedPlot)
         testB.grid(row=0,column=0, sticky='nsew')
         multiB.grid(row=0,column=1, sticky='nsew')
         singleB.grid(row=0,column=2, sticky='nsew')
@@ -446,6 +439,14 @@ class PlotTest:
         weightScatterB.grid(row=0,column=5, sticky='nsew')
         tsbB.grid(row=0,column=6, sticky='nsew')
         kgHeatMapB.grid(row=0,column=7, sticky='nsew')
+        rYearHrsB.grid(row=0,column=8, sticky='nsew')
+
+        loadFileB = tk.Button(self.__root, text='Open Training Diary', command=self.openDiary)
+        loadFileB.grid(row=1,column=0,sticky='nsew')
+
+    def openDiary(self):
+        fileName = filedialog.askopenfilename(initialdir='/~', title='Select file', filetypes=[('JSON','*.json')])
+        print(fileName)
 
 def main():
     root = tk.Tk()
