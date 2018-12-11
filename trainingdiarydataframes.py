@@ -38,6 +38,10 @@ DF_MEAN = 'mean'
 DF_UNIT = 'unit'
 DF_SUM = 'sum'
 DF_COUNT = 'count'
+DF_KM = 'km'
+DF_MILES = 'miles'
+DF_ASCENT_METRES = 'ascentMetres'
+DF_ASCENT_FEET = 'ascentFeet'
 
 JSON_DAYS = 'days'
 JSON_ISODATE = 'iso8061DateString'
@@ -52,7 +56,14 @@ JSON_ACTIVITY = 'activityString'
 JSON_ACTIVITY_TYPE = 'activityTypeString'
 JSON_EQUIPMENT = 'equipmentName'
 
+PERIOD_TYPE_STD = 'STD'
+PERIOD_TYPE_GROUPBY = 'groupby'
+PERIOD_TYPE_ROLLING = 'rolling'
+PERIOD_TYPE_TODATE = 'toDate'
+
 LBS_PER_KG = 2.20462
+FEET_PER_METRE = 3.28084
+MILES_PER_KM = 0.621371
 
 
 class TDDataFrames(ABC):
@@ -60,6 +71,7 @@ class TDDataFrames(ABC):
     def __init__(self, cachingOn=True):
         self._dfDict = {}
         self._cachingOn = cachingOn
+        self.__createPeriodMapping()
         pd.options.display.float_format = '{:,.01f}'.format
 
     def getUnits(self):
@@ -103,36 +115,55 @@ class TDDataFrames(ABC):
     def getHRVDF(self):
         pass
 
-    def addTSBToTimeSeriesDF(self, ctlDecayDays=42, ctlImpactDays=42, atlDecayDays=7, atlImpactDays=7):
+    def getSeries(self, unit, activity, period, workoutAggregator, periodAggregator):
 
-        df = self.getDaysTimeSeriesDF()
-        tss = df[DF_TSS]
+        if period[0] == 'R':
+            try:
+                days = int(period[1:])
+                print(f'Rolling {days} days')
+                periodDetails = (PERIOD_TYPE_ROLLING, days)
+            except:
+                periodDetails = self.periodMapping[period]
+        else:
+            periodDetails = self.periodMapping[period]
 
-        cDecay = np.exp(-1/ctlDecayDays)
-        cImpact = 1 - np.exp(-1/ctlImpactDays)
-        aDecay = np.exp(-1/atlDecayDays)
-        aImpact = 1 - np.exp(-1/atlImpactDays)
+        if periodDetails[0] == PERIOD_TYPE_STD:
+            df = self.getDaysTimeSeriesDF()
+        elif periodDetails[0] == PERIOD_TYPE_GROUPBY:
+            if periodAggregator == DF_SUM:
+                df = self.summarySum(periodDetails[1])
+            elif periodAggregator == DF_MEAN:
+                df = self.summaryMean(periodDetails[1])
+            else:
+                raise Exception(f'Invalid periodAgregator {periodAggregator}')
+        elif periodDetails[0] == PERIOD_TYPE_ROLLING:
+            if periodAggregator == DF_SUM:
+                df = self.rollingSum(periodDetails[1])
+            elif periodAggregator == DF_MEAN:
+                df = self.rollingMean(periodDetails[1])
+            else:
+                raise Exception(f'Invalid periodAggregator {periodAggregator}')
+        elif periodDetails[0] == PERIOD_TYPE_TODATE:
+            if periodAggregator == DF_SUM:
+                df = self.toDateSum(periodDetails[1])
+            elif periodAggregator == DF_MEAN:
+                df = self.toDateMean(periodDetails[1])
+            else:
+                raise Exception(f'Invalid periodAggregator {periodAggregator}')
+        else:
+            raise Exception(f'Invalid period type {period}')
 
-        for c in tss.columns.levels[0].values:
-            prevATL = prevCTL = 0
-            atlArray = []
-            ctlArray = []
-            tsbArray = []
-            # temp = tss[c]
-            # v = temp.values
-            for t in tss[c, DF_SUM].values:
-                ctl = t * cImpact + prevCTL * cDecay
-                atl = t * aImpact + prevATL * aDecay
-                atlArray.append(atl)
-                ctlArray.append(ctl)
-                tsbArray.append(ctl - atl)
-                prevCTL = ctl
-                prevATL = atl
-            df[DF_CTL, c, DF_SUM] = ctlArray
-            df[DF_ATL, c, DF_SUM] = atlArray
-            df[DF_TSB, c, DF_SUM] = tsbArray
+        return df[unit, activity, workoutAggregator]
 
-        df.sort_index(axis=1, inplace=True)
+
+    def units(self):
+        return set(self.getDaysTimeSeriesDF().columns.get_level_values(0))
+
+    def activities(self):
+        return set(self.getDaysTimeSeriesDF().columns.get_level_values(1))
+
+    def workoutAggregators(self):
+        return set(self.getDaysTimeSeriesDF().columns.get_level_values(2))
 
 
     def summarySum(self, freq='A'):
@@ -147,15 +178,59 @@ class TDDataFrames(ABC):
             self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).mean()
         return self._dfDict[key]
 
-    def annualFrequencies(self):
-        return ['A', 'A-JAN', 'A-FEB', 'A-MAR', 'A-APR', 'A-MAY', 'A-JUN',
-                'A-JUL', 'A-AUG', 'A-SEP', 'A-OCT', 'A-NOV', 'A-DEC']
+    def toDateSum(self, freq='A'):
+        key = f'To Date Sum {freq}'
+        if key not in self._dfDict:
+            self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).cumsum()
+        return self._dfDict[key]
 
-    def weeklyFrequency(self):
-        return ['W', 'W-MON', 'W-TUE', 'W-WED', 'W-THU', 'W-FRI', 'W-SAT', 'W-SUN']
+    def toDateMean(self, freq='A'):
+        key = f'To Date Mean {freq}'
+        if key not in self._dfDict:
+            df = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).expanding(1).mean()
+            # expanding inserts an extra index to represent the frequency. We don't want it so remove it
+            df.reset_index(level=0, drop=True, inplace=True)
+            self._dfDict[key] = df
+        return self._dfDict[key]
 
-    def otherFrequencies(self):
-        return 'All frequecies can be preceded by an integer. Then use A: Annual, Q: Quarter, M: Month, W: Week and D: Day '
+    def rollingSum(self, days):
+        key = f'Rolling Sum {str(days)}'
+        if key not in self._dfDict:
+            self._dfDict[key] = self.getDaysTimeSeriesDF().rolling(days, min_periods=1).sum()
+        return self._dfDict[key]
+
+    def rollingMean(self, days):
+        key = f'Rolling Mean {str(days)}'
+        if key not in self._dfDict:
+            self._dfDict[key] = self.getDaysTimeSeriesDF().rolling(days, min_periods=1).mean()
+        return self._dfDict[key]
+
+    def __createPeriodMapping(self):
+        months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+        days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+        rolling = ['RWeek', 'RMonth', 'RYear', 'RInteger']
+        toDate = ['WTD-' + i for i in days] + ['YTD-' + i for i in months] + ['WTD', 'MTD', 'YTD']
+        stdDaily = ['Day']
+        stdNonDaily = ['W-' + i for i in days] + ['Y-' + i for i in months] + ['Q-' + i for i in months]
+
+        self.periodMapping = {'Day': (PERIOD_TYPE_STD,'D'), 'Week': (PERIOD_TYPE_GROUPBY,'W'),
+                              'Month': (PERIOD_TYPE_GROUPBY,'M'), 'Quarter': (PERIOD_TYPE_GROUPBY,'Q'),
+                              'Year': (PERIOD_TYPE_GROUPBY,'A'), 'RWeek': (PERIOD_TYPE_ROLLING,7),
+                              'RMonth': (PERIOD_TYPE_ROLLING,30), 'RQuarter': (PERIOD_TYPE_ROLLING,91),
+                              'RYear': (PERIOD_TYPE_ROLLING,365), 'WTD': (PERIOD_TYPE_TODATE, 'W'),
+                              'MTD': (PERIOD_TYPE_TODATE, 'M'), 'QTD': (PERIOD_TYPE_TODATE, 'Q'),
+                              'YTD': (PERIOD_TYPE_TODATE, 'A')}
+        for m in months:
+            self.periodMapping['Q-' + m] = (PERIOD_TYPE_GROUPBY, 'Q-' + m)
+            self.periodMapping['Y-' + m] = (PERIOD_TYPE_GROUPBY, 'A-' + m)
+            self.periodMapping['QTD-' + m] = (PERIOD_TYPE_TODATE, 'Q-' + m)
+            self.periodMapping['YTD-' + m] = (PERIOD_TYPE_TODATE, 'A-' + m)
+
+        for d in days:
+            self.periodMapping['W-' + d] = (PERIOD_TYPE_GROUPBY, 'W-' + d)
+            self.periodMapping['WTD-' + d] = (PERIOD_TYPE_TODATE, 'W-' + d)
+
+        self.periods = list(self.periodMapping.keys())
 
     def __createDayTimeSeries(self):
         days = self.getDaysDF()
@@ -236,11 +311,62 @@ class TDDataFrames(ABC):
                 allDF[DF_HOURS,c, DF_MEAN] = np.around(allDF[DF_SECONDS,c, DF_MEAN]/3600, decimals=2)
                 allDF[DF_HOURS,c, DF_COUNT] = allDF[DF_SECONDS,c, DF_COUNT]
 
+        # add miles
+        if DF_KM in allDF.columns.levels[0].values:
+            for c in allDF[DF_KM].columns.levels[0].values:
+                allDF[DF_MILES,c, DF_SUM] = np.around(allDF[DF_KM,c, DF_SUM]*MILES_PER_KM, decimals=2)
+                allDF[DF_MILES,c, DF_MEAN] = np.around(allDF[DF_KM,c, DF_MEAN]*MILES_PER_KM, decimals=2)
+                allDF[DF_MILES,c, DF_COUNT] = allDF[DF_KM,c, DF_COUNT]
+
+        # add feet
+        if DF_ASCENT_METRES in allDF.columns.levels[0].values:
+            for c in allDF[DF_ASCENT_METRES].columns.levels[0].values:
+                allDF[DF_ASCENT_FEET,c, DF_SUM] = np.around(allDF[DF_ASCENT_METRES,c, DF_SUM]*FEET_PER_METRE, decimals=2)
+                allDF[DF_ASCENT_FEET,c, DF_MEAN] = np.around(allDF[DF_ASCENT_METRES,c, DF_MEAN]*FEET_PER_METRE, decimals=2)
+                allDF[DF_ASCENT_FEET,c, DF_COUNT] = allDF[DF_ASCENT_METRES,c, DF_COUNT]
+
         allDF.rename_axis([DF_UNIT, DF_ACTIVITY, DF_AGG], axis=1, inplace=True)
+
+        allDF.drop(['comments','sleepQuality','type'], axis=1, level=0, inplace=True)
+
 
         allDF.sort_index(axis=1, inplace=True)
 
+        self.__addTSBToTimeSeriesDF(allDF)
+
         return allDF
+
+    def __addTSBToTimeSeriesDF(self, df, ctlDecayDays=42, ctlImpactDays=42, atlDecayDays=7, atlImpactDays=7):
+
+        tss = df[DF_TSS]
+
+        cDecay = np.exp(-1/ctlDecayDays)
+        cImpact = 1 - np.exp(-1/ctlImpactDays)
+        aDecay = np.exp(-1/atlDecayDays)
+        aImpact = 1 - np.exp(-1/atlImpactDays)
+
+        for c in tss.columns.levels[0].values:
+            prevATL = prevCTL = 0
+            atlArray = []
+            ctlArray = []
+            tsbArray = []
+            # temp = tss[c]
+            # v = temp.values
+            for t in tss[c, DF_SUM].values:
+                ctl = t * cImpact + prevCTL * cDecay
+                atl = t * aImpact + prevATL * aDecay
+                atlArray.append(atl)
+                ctlArray.append(ctl)
+                tsbArray.append(ctl - atl)
+                prevCTL = ctl
+                prevATL = atl
+            df[DF_CTL, c, DF_SUM] = ctlArray
+            df[DF_ATL, c, DF_SUM] = atlArray
+            df[DF_TSB, c, DF_SUM] = tsbArray
+
+        df.sort_index(axis=1, inplace=True)
+
+
 
 class TDDataFramesSQLITE(TDDataFrames):
 
