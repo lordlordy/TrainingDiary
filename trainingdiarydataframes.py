@@ -8,6 +8,7 @@ import logging
 
 #specify some global constants
 DAYS_DF = 'Days'
+RAW_WORKOUTS_DF = 'Raw Workouts'
 WORKOUTS_DF = 'Workouts'
 DAY_TIMESERIES_DF = 'Date Time Series'
 WEIGHTS_DF = 'Weights'
@@ -23,6 +24,7 @@ DF_EQUIPMENT = 'equipment'
 DF_ALL = 'All'
 DF_SECONDS = 'seconds'
 DF_HOURS = 'hours'
+DF_MINUTES = 'minutes'
 DF_WEIGHTED_MEAN = 'All Wgtd Mean'
 DF_TSS = 'tss'
 DF_CTL = 'ctl'
@@ -88,8 +90,21 @@ class TDDataFrames(ABC):
 
     # DF with single datetime index
     @abstractmethod
-    def getWorkoutsDF(self):
+    def getRawWorkoutsDF(self):
         pass
+
+    def getWorkoutsDF(self):
+        if WORKOUTS_DF not in self._dfDict:
+            workouts = self.getRawWorkoutsDF()
+            if DF_SECONDS in workouts.columns:
+                workouts[DF_MINUTES] = np.around(workouts[DF_SECONDS] / 60, decimals=2)
+                workouts[DF_HOURS] = np.around(workouts[DF_SECONDS] / 3600, decimals=2)
+            if DF_ASCENT_METRES in workouts.columns:
+                workouts[DF_ASCENT_FEET] = np.around(workouts[DF_ASCENT_METRES] * FEET_PER_METRE, decimals=2)
+            if DF_KM in workouts.columns:
+                workouts[DF_MILES] = np.around(workouts[DF_KM] * MILES_PER_KM, decimals=2)
+                self._dfDict[WORKOUTS_DF] = workouts
+        return self._dfDict[WORKOUTS_DF]
 
     def getDaysTimeSeriesDF(self, activityType=None, equipment=None):
         key = DAY_TIMESERIES_DF + self.__keyFor(activityType,equipment)
@@ -329,26 +344,26 @@ class TDDataFrames(ABC):
                         allDF[c, DF_ALL, DF_COUNT] += allDF[c, c2, DF_COUNT]
                 allDF[c, DF_ALL, DF_MEAN] = allDF[c, DF_ALL, DF_SUM] / allDF[c, DF_ALL, DF_COUNT]
 
-        # add hours
-        if DF_SECONDS in allDF.columns.levels[0].values:
-            for c in allDF[DF_SECONDS].columns.levels[0].values:
-                allDF[DF_HOURS,c, DF_SUM] = np.around(allDF[DF_SECONDS,c, DF_SUM]/3600, decimals=2)
-                allDF[DF_HOURS,c, DF_MEAN] = np.around(allDF[DF_SECONDS,c, DF_MEAN]/3600, decimals=2)
-                allDF[DF_HOURS,c, DF_COUNT] = allDF[DF_SECONDS,c, DF_COUNT]
-
-        # add miles
-        if DF_KM in allDF.columns.levels[0].values:
-            for c in allDF[DF_KM].columns.levels[0].values:
-                allDF[DF_MILES,c, DF_SUM] = np.around(allDF[DF_KM,c, DF_SUM]*MILES_PER_KM, decimals=2)
-                allDF[DF_MILES,c, DF_MEAN] = np.around(allDF[DF_KM,c, DF_MEAN]*MILES_PER_KM, decimals=2)
-                allDF[DF_MILES,c, DF_COUNT] = allDF[DF_KM,c, DF_COUNT]
-
-        # add feet
-        if DF_ASCENT_METRES in allDF.columns.levels[0].values:
-            for c in allDF[DF_ASCENT_METRES].columns.levels[0].values:
-                allDF[DF_ASCENT_FEET,c, DF_SUM] = np.around(allDF[DF_ASCENT_METRES,c, DF_SUM]*FEET_PER_METRE, decimals=2)
-                allDF[DF_ASCENT_FEET,c, DF_MEAN] = np.around(allDF[DF_ASCENT_METRES,c, DF_MEAN]*FEET_PER_METRE, decimals=2)
-                allDF[DF_ASCENT_FEET,c, DF_COUNT] = allDF[DF_ASCENT_METRES,c, DF_COUNT]
+        # # add hours
+        # if DF_SECONDS in allDF.columns.levels[0].values:
+        #     for c in allDF[DF_SECONDS].columns.levels[0].values:
+        #         allDF[DF_HOURS,c, DF_SUM] = np.around(allDF[DF_SECONDS,c, DF_SUM]/3600, decimals=2)
+        #         allDF[DF_HOURS,c, DF_MEAN] = np.around(allDF[DF_SECONDS,c, DF_MEAN]/3600, decimals=2)
+        #         allDF[DF_HOURS,c, DF_COUNT] = allDF[DF_SECONDS,c, DF_COUNT]
+        #
+        # # add miles
+        # if DF_KM in allDF.columns.levels[0].values:
+        #     for c in allDF[DF_KM].columns.levels[0].values:
+        #         allDF[DF_MILES,c, DF_SUM] = np.around(allDF[DF_KM,c, DF_SUM]*MILES_PER_KM, decimals=2)
+        #         allDF[DF_MILES,c, DF_MEAN] = np.around(allDF[DF_KM,c, DF_MEAN]*MILES_PER_KM, decimals=2)
+        #         allDF[DF_MILES,c, DF_COUNT] = allDF[DF_KM,c, DF_COUNT]
+        #
+        # # add feet
+        # if DF_ASCENT_METRES in allDF.columns.levels[0].values:
+        #     for c in allDF[DF_ASCENT_METRES].columns.levels[0].values:
+        #         allDF[DF_ASCENT_FEET,c, DF_SUM] = np.around(allDF[DF_ASCENT_METRES,c, DF_SUM]*FEET_PER_METRE, decimals=2)
+        #         allDF[DF_ASCENT_FEET,c, DF_MEAN] = np.around(allDF[DF_ASCENT_METRES,c, DF_MEAN]*FEET_PER_METRE, decimals=2)
+        #         allDF[DF_ASCENT_FEET,c, DF_COUNT] = allDF[DF_ASCENT_METRES,c, DF_COUNT]
 
         allDF.rename_axis([DF_UNIT, DF_ACTIVITY, DF_AGG], axis=1, inplace=True)
 
@@ -370,6 +385,7 @@ class TDDataFrames(ABC):
         if equipment is not None:
             workouts = workouts.query(f""" equipment == '{equipment}' """)
             logging.info(f'Number of workouts post query for equipment = {equipment} : {len(workouts)}')
+
         workouts = workouts.set_index([DF_ACTIVITY, DF_ACTIVITY_TYPE, DF_EQUIPMENT, DF_WORKOUT_NUMBER], append=True)
         workouts = workouts.groupby([DF_DATE, DF_ACTIVITY]).agg(['sum','mean','count'])
         workouts = workouts.unstack(level=1, fill_value=0)
@@ -417,7 +433,7 @@ class TDDataFramesSQLITE(TDDataFrames):
         self.tdName = trainingDiaryName
 
 
-    def getWorkoutsDF(self):
+    def getRawWorkoutsDF(self):
         df = self.__readSQLDF(f'''select * from workout where trainingDiary="{self.tdName}" ''')
         df = df.drop(['id','trainingDiary'], axis=1)
         df['date'] = pd.to_datetime(df['date'])
@@ -477,10 +493,10 @@ class TDDataFramesJSON(TDDataFrames):
         return self._dfDict[DAYS_DF]
 
     # DF with datetime index
-    def getWorkoutsDF(self):
-        if WORKOUTS_DF not in self._dfDict:
-            self._dfDict[WORKOUTS_DF] = self.__createWorkouts()
-        return self._dfDict[WORKOUTS_DF]
+    def getRawWorkoutsDF(self):
+        if RAW_WORKOUTS_DF not in self._dfDict:
+            self._dfDict[RAW_WORKOUTS_DF] = self.__createWorkouts()
+        return self._dfDict[RAW_WORKOUTS_DF]
 
     def getFatPercentageDF(self):
         if FAT_PERCENT_DF  not in self._dfDict:
@@ -590,8 +606,9 @@ if __name__ == '__main__':
                         datefmt=dateFormatStr)
 
     dataFrames = TDDataFramesSQLITE('TD.db','StevenLordDiary')
-    df = dataFrames.getSeries('km','Bike','Year','sum','sum','Road','IF XS')
-    df = dataFrames.getSeries('km','Bike','Year','sum','sum','Turbo','IF XS')
-    df = dataFrames.getSeries('km','Run','Year','sum','sum','Road')
-    df = dataFrames.getSeries('km','Swim','Year','sum','sum','Squad')
+    df = dataFrames.getSeries('miles','Bike','Day','sum','sum','Road')
+    logging.info(type(df))
+    # df = dataFrames.getSeries('km','Bike','Year','sum','sum','Turbo','IF XS')
+    # df = dataFrames.getSeries('km','Run','Year','sum','sum','Road')
+    # df = dataFrames.getSeries('km','Swim','Year','sum','sum','Squad')
 
