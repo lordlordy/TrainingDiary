@@ -91,10 +91,25 @@ class TDDataFrames(ABC):
     def getWorkoutsDF(self):
         pass
 
-    def getDaysTimeSeriesDF(self):
-        if DAY_TIMESERIES_DF not in self._dfDict:
-            self._dfDict[DAY_TIMESERIES_DF] = self.__createDayTimeSeries()
-        return self._dfDict[DAY_TIMESERIES_DF]
+    def getDaysTimeSeriesDF(self, activityType=None, equipment=None):
+        key = DAY_TIMESERIES_DF + self.__keyFor(activityType,equipment)
+        logging.info(f'Key for days time series: {key}')
+
+        if key not in self._dfDict:
+            if (activityType is None) and (equipment is None):
+                self._dfDict[key] = self.__createDayTimeSeries()
+            else:
+                self._dfDict[key] = self.__workoutsDayTimeSeries(activityType,equipment)
+
+        return self._dfDict[key]
+
+    def __keyFor(self,activityType, equipment):
+        key = ''
+        if activityType is not None:
+            key += ' :' + activityType
+        if equipment is not None:
+            key += ' :' + equipment
+        return key
 
     # DF with single datetime index
     @abstractmethod
@@ -115,7 +130,16 @@ class TDDataFrames(ABC):
     def getHRVDF(self):
         pass
 
-    def getSeries(self, unit, activity, period, workoutAggregator, periodAggregator):
+    def getSeries(self, unit, activity, period, workoutAggregator='sum', periodAggregator='sum',
+                  activityType=None, equipment=None):
+
+        key = self.__keyFor(activityType, equipment)
+        df = self.getDaysTimeSeriesDF(activityType, equipment)
+        logging.info(f'DF series is in is of length: {len(df)}')
+        logging.info(f'DF size : {df.size}')
+
+        if df.size == 0:
+            return None
 
         if period[0] == 'R':
             try:
@@ -128,26 +152,26 @@ class TDDataFrames(ABC):
             periodDetails = self.periodMapping[period]
 
         if periodDetails[0] == PERIOD_TYPE_STD:
-            df = self.getDaysTimeSeriesDF()
+            pass # df needs no adjustment
         elif periodDetails[0] == PERIOD_TYPE_GROUPBY:
             if periodAggregator == DF_SUM:
-                df = self.summarySum(periodDetails[1])
+                df = self.__summarySum(df,periodDetails[1], key)
             elif periodAggregator == DF_MEAN:
-                df = self.summaryMean(periodDetails[1])
+                df = self.__summaryMean(df,periodDetails[1], key)
             else:
                 raise Exception(f'Invalid periodAgregator {periodAggregator}')
         elif periodDetails[0] == PERIOD_TYPE_ROLLING:
             if periodAggregator == DF_SUM:
-                df = self.rollingSum(periodDetails[1])
+                df = self.__rollingSum(df,periodDetails[1], key)
             elif periodAggregator == DF_MEAN:
-                df = self.rollingMean(periodDetails[1])
+                df = self.__rollingMean(df,periodDetails[1], key)
             else:
                 raise Exception(f'Invalid periodAggregator {periodAggregator}')
         elif periodDetails[0] == PERIOD_TYPE_TODATE:
             if periodAggregator == DF_SUM:
-                df = self.toDateSum(periodDetails[1])
+                df = self.__toDateSum(df,periodDetails[1], key)
             elif periodAggregator == DF_MEAN:
-                df = self.toDateMean(periodDetails[1])
+                df = self.__toDateMean(df,periodDetails[1], key)
             else:
                 raise Exception(f'Invalid periodAggregator {periodAggregator}')
         else:
@@ -165,45 +189,48 @@ class TDDataFrames(ABC):
     def workoutAggregators(self):
         return set(self.getDaysTimeSeriesDF().columns.get_level_values(2))
 
+    def __summarySum(self, df, freq='A', key=''):
+        k = f'Annual Sum {freq + key}'
+        if k not in self._dfDict:
+            # self._dfDict[k] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).sum()
+            self._dfDict[k] = df.groupby(pd.Grouper(freq=freq)).sum()
+        return self._dfDict[k]
 
-    def summarySum(self, freq='A'):
-        key = f'Annual Sum {freq}'
-        if key not in self._dfDict:
-            self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).sum()
-        return self._dfDict[key]
+    def __summaryMean(self, df, freq='A', key=''):
+        k = f'Annual Mean {freq + key}'
+        if k not in self._dfDict:
+            self._dfDict[k] = df.groupby(pd.Grouper(freq=freq)).mean()
+        # self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).mean()
+        return self._dfDict[k]
 
-    def summaryMean(self, freq='A'):
-        key = f'Annual Mean {freq}'
-        if key not in self._dfDict:
-            self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).mean()
-        return self._dfDict[key]
+    def __toDateSum(self, df, freq='A', key=''):
+        k = f'To Date Sum {freq}'
+        if k not in self._dfDict:
+            self._dfDict[k] = df.groupby(pd.Grouper(freq=freq)).cumsum()
+        # self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).cumsum()
+        return self._dfDict[k]
 
-    def toDateSum(self, freq='A'):
-        key = f'To Date Sum {freq}'
-        if key not in self._dfDict:
-            self._dfDict[key] = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).cumsum()
-        return self._dfDict[key]
-
-    def toDateMean(self, freq='A'):
-        key = f'To Date Mean {freq}'
-        if key not in self._dfDict:
-            df = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).expanding(1).mean()
+    def __toDateMean(self, freq='A', key=''):
+        k = f'To Date Mean {freq + key}'
+        if k not in self._dfDict:
+            thisDF = df.groupby(pd.Grouper(freq=freq)).expanding(1).mean()
+            # thisDF = self.getDaysTimeSeriesDF().groupby(pd.Grouper(freq=freq)).expanding(1).mean()
             # expanding inserts an extra index to represent the frequency. We don't want it so remove it
-            df.reset_index(level=0, drop=True, inplace=True)
-            self._dfDict[key] = df
-        return self._dfDict[key]
+            thisDF.reset_index(level=0, drop=True, inplace=True)
+            self._dfDict[k] = thisDF
+        return self._dfDict[k]
 
-    def rollingSum(self, days):
-        key = f'Rolling Sum {str(days)}'
-        if key not in self._dfDict:
-            self._dfDict[key] = self.getDaysTimeSeriesDF().rolling(days, min_periods=1).sum()
-        return self._dfDict[key]
+    def __rollingSum(self, df, days, key=''):
+        k = f'Rolling Sum {str(days) + key}'
+        if k not in self._dfDict:
+            self._dfDict[k] = df.rolling(days, min_periods=1).sum()
+        return self._dfDict[k]
 
-    def rollingMean(self, days):
-        key = f'Rolling Mean {str(days)}'
-        if key not in self._dfDict:
-            self._dfDict[key] = self.getDaysTimeSeriesDF().rolling(days, min_periods=1).mean()
-        return self._dfDict[key]
+    def __rollingMean(self,df, days,key=''):
+        k = f'Rolling Mean {str(days)+ key}'
+        if k not in self._dfDict:
+            self._dfDict[k] = df.rolling(days, min_periods=1).mean()
+        return self._dfDict[k]
 
     def __createPeriodMapping(self):
         months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -232,29 +259,27 @@ class TDDataFrames(ABC):
 
         self.periods = list(self.periodMapping.keys())
 
+    def __getDateIndex(self):
+        days = self.getDaysDF()
+        maxDate = days.index.max()
+        minDate = days.index.min()
+        return pd.date_range(minDate, maxDate, freq='D')
+
     def __createDayTimeSeries(self):
         days = self.getDaysDF()
-        workouts = self.getWorkoutsDF()
         weights = self.getWeightsDF()
         fatP = self.getFatPercentageDF()
         hr = self.getHRDF()
         hrv = self.getHRVDF()
-
-        maxDate = days.index.max()
-        minDate = days.index.min()
 
         days[DF_ACTIVITY] = DF_ALL
         days[DF_AGG] = DF_MEAN
         days = days.set_index([DF_ACTIVITY, DF_AGG], append=True)
         days = days.unstack(level=[1,2], fill_value=0)
 
-        datesIndex = pd.date_range(minDate, maxDate, freq='D')
+        datesIndex = self.__getDateIndex()
 
-        workouts = workouts.set_index([DF_ACTIVITY, DF_ACTIVITY_TYPE, DF_EQUIPMENT, DF_WORKOUT_NUMBER], append=True)
-        workouts = workouts.groupby([DF_DATE, DF_ACTIVITY]).agg(['sum','mean','count'])
-        workouts = workouts.unstack(level=1, fill_value=0)
-        workouts = workouts.reindex(datesIndex, fill_value=0)
-        workouts = workouts.swaplevel(1,2,axis=1)
+        workouts = self.__workoutsDayTimeSeries()
 
         fatP[DF_ACTIVITY] = DF_ALL
         fatP[DF_AGG] = DF_MEAN
@@ -335,6 +360,22 @@ class TDDataFrames(ABC):
         self.__addTSBToTimeSeriesDF(allDF)
 
         return allDF
+
+    def __workoutsDayTimeSeries(self, activityType=None, equipment=None):
+        workouts = self.getWorkoutsDF()
+        logging.info(f'Number of workouts: {len(workouts)}')
+        if activityType is not None:
+            workouts = workouts.query(f""" activityType == '{activityType}' """)
+            logging.info(f'Number of workouts post query for activityType = {activityType} : {len(workouts)}')
+        if equipment is not None:
+            workouts = workouts.query(f""" equipment == '{equipment}' """)
+            logging.info(f'Number of workouts post query for equipment = {equipment} : {len(workouts)}')
+        workouts = workouts.set_index([DF_ACTIVITY, DF_ACTIVITY_TYPE, DF_EQUIPMENT, DF_WORKOUT_NUMBER], append=True)
+        workouts = workouts.groupby([DF_DATE, DF_ACTIVITY]).agg(['sum','mean','count'])
+        workouts = workouts.unstack(level=1, fill_value=0)
+        workouts = workouts.reindex(self.__getDateIndex(), fill_value=0)
+        workouts = workouts.swaplevel(1,2,axis=1)
+        return workouts
 
     def __addTSBToTimeSeriesDF(self, df, ctlDecayDays=42, ctlImpactDays=42, atlDecayDays=7, atlImpactDays=7):
 
@@ -538,13 +579,19 @@ if __name__ == '__main__':
     formatStr = '%(asctime)s %(levelname)s: %(filename)s %(funcName)s Line:%(lineno)d %(message)s'
     dateFormatStr = '%Y-%b-%d %H:%M:%S'
 
-    logging.basicConfig(filename='TrainingDiary.log',
-                        filemode='w',
-                        level=logging.DEBUG,
+    # logging.basicConfig(filename='TrainingDiary.log',
+    #                     filemode='w',
+    #                     level=logging.DEBUG,
+    #                     format=formatStr,
+    #                     datefmt=dateFormatStr)
+
+    logging.basicConfig(level=logging.DEBUG,
                         format=formatStr,
                         datefmt=dateFormatStr)
 
     dataFrames = TDDataFramesSQLITE('TD.db','StevenLordDiary')
-    df = dataFrames.getDaysTimeSeriesDF()
-    dataFrames.addTSBToTimeSeriesDF()
+    df = dataFrames.getSeries('km','Bike','Year','sum','sum','Road','IF XS')
+    df = dataFrames.getSeries('km','Bike','Year','sum','sum','Turbo','IF XS')
+    df = dataFrames.getSeries('km','Run','Year','sum','sum','Road')
+    df = dataFrames.getSeries('km','Swim','Year','sum','sum','Squad')
 
