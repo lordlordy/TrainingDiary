@@ -20,3 +20,4 @@ bikeYTDkm.csv
 *.xml
 TD.db
 TrainingDiary.log
+.idea/workspace.xml
