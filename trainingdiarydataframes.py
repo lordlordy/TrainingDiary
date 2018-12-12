@@ -74,6 +74,9 @@ class TDDataFrames(ABC):
         self._df_dict = {}
         self._caching_on = caching_on
         self.__create_period_mapping()
+        self.__week_day_mapping = {'MON':0, 'TUE':1, 'WED':2, 'THU':3, 'FRI':4, 'SAT':5, 'SUN':6}
+        self.__month_mapping = {'JAN':1, 'FEB':2, 'MAR':3, 'APR':4, 'MAY':5, 'JUN':6, 'JUL':7, 'AUG':8, 'SEP':9, 'OCT':10,
+                                'NOV': 11, 'DEC':12, }
         pd.options.display.float_format = '{:,.01f}'.format
 
     def get_units(self):
@@ -115,13 +118,6 @@ class TDDataFrames(ABC):
             if drop_non_numeric:
                 dayDF.drop(['comments', 'sleepQuality', 'type'], axis=1, level=0, inplace=True)
             self._df_dict[key] = dayDF
-            # if (activity_type is None) and (equipment is None):
-            #     dayDF  = self.__create_day_time_series(activity_type, equipment)
-            #     if drop_none_numeric:
-            #         dayDF.drop(['comments', 'sleepQuality', 'type'], axis=1, level=0, inplace=True)
-            #     self._df_dict[key] = dayDF
-            # else:
-            #     self._df_dict[key] = self.__workouts_day_time_series(activity_type, equipment)
 
         return self._df_dict[key]
 
@@ -153,13 +149,29 @@ class TDDataFrames(ABC):
         pass
 
     def get_series(self, unit, activity, period, workout_aggregator='sum', period_aggregator='sum',
-                   activity_type=None, equipment=None):
+                   activity_type=None, equipment=None, day_type=None, sleep_quality=None, day_of_week=None, month=None):
 
         key = self.__key_for(activity_type, equipment)
         df = self.get_days_time_series_df(activity_type, equipment)
-        logging.info(f'DF series is in is of length: {len(df)}')
-        logging.info(f'DF size : {df.size}')
 
+        if day_type is not None:
+            df = df.query(f"""type == '{day_type}' """)
+        if sleep_quality is not None:
+            df = df.query(f""" sleepQuality == '{sleep_quality}' """)
+        if day_of_week is not None:
+            # try:
+            day_number = self.__week_day_mapping[day_of_week[:3].upper()]
+            df = df[df.index.get_level_values(0).dayofweek == day_number]
+            # except Exception as e:
+            #     logging.error(e)
+            #     return None
+        if month is not None:
+            # try:
+            month_number = self.__month_mapping[month[:3].upper()]
+            df = df[df.index.get_level_values(0).month == month_number]
+            # except Exception as e:
+            #     logging.error(e)
+            #     return None
         if df.size == 0:
             return None
 
@@ -200,8 +212,8 @@ class TDDataFrames(ABC):
             raise Exception(f'Invalid period type {period}')
 
         if isinstance(df.index, pd.MultiIndex):
-            # set index to just be datetime index (ie level 1)
-            df = df.set_index(df.index.levels[0])
+            # set index to just be datetime index (ie level 1). Use get_level_values to ensure only get those with a value associated
+            df = df.set_index(df.index.get_level_values(0))
 
 
         return df[unit, activity, workout_aggregator]
@@ -576,9 +588,8 @@ if __name__ == '__main__':
     import Eddington
 
     df = TDDataFramesSQLITE('TD.db', 'StevenLordDiary')
-    bikeMiles = df.get_series('km', 'Bike', 'Day')
-    e = Eddington.eddingtonHistoryDF(bikeMiles)
-
+    bikeMiles = df.get_series('miles', 'Bike', 'Day', day_type='Normal', day_of_week='Sat', month='dec')
+    print(bikeMiles)
     # df = data_frames.get_days_time_series_df(drop_non_numeric=False)
     # logging.info(type(df))
     # df = dataFrames.getSeries('km','Bike','Year','sum','sum','Turbo','IF XS')
