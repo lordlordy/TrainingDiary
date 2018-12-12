@@ -77,5 +77,5 @@ def eddingtonHistoryDF(timeSeries):
 if __name__=='__main__':
     import trainingdiarydataframes as tddf
     df = tddf.TDDataFramesSQLITE('td.db', 'StevenLordDiary')
-    bikeMiles = df.getSeries('miles', 'Bike', 'Day')
+    bikeMiles = df.get_series('miles', 'Bike', 'Day')
     e = eddingtonHistoryDF(bikeMiles)
