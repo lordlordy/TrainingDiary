@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9bfe7ec2-f17e-4caf-bed4-a93725dde8ec" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/graphgui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphguicontroller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trainingdiarydataframes.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainingdiarydataframes.py" afterDir="false" />
     </list>
@@ -15,62 +17,56 @@
     <session id="-1774192115">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="5" />
+          <entry key="project.closed" value="6" />
           <entry key="project.open.time.0" value="4" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="7" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.opened" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="31" />
+          <entry key="py" value="52" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="31" />
+          <entry key="Python" value="52" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="5" />
-          <entry key="dummy" value="10" />
-          <entry key="py" value="28129" />
-          <entry key="txt" value="119" />
+          <entry key="dummy" value="233" />
+          <entry key="py" value="45005" />
+          <entry key="txt" value="346" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="129" />
-          <entry key="Python" value="28134" />
+          <entry key="PLAIN_TEXT" value="579" />
+          <entry key="Python" value="45010" />
         </counts>
       </usages-collector>
     </session>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="TrainingDiary" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trainingdiarydataframes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1151">
-              <caret line="162" column="53" lean-forward="true" selection-start-line="162" selection-start-column="53" selection-end-line="162" selection-end-column="53" />
+            <state relative-caret-position="201">
+              <caret line="241" column="23" selection-start-line="241" selection-start-column="23" selection-end-line="241" selection-end-column="23" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
-                <marker date="1544533997590" expanded="true" signature="165:17597" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="1855:1860" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="2603:2791" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="3908:5246" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="5262:5365" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="5474:5555" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="6559:7054" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="9247:9412" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="13562:13571" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="14001:14523" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="15599:17597" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="17634:17635" ph="..." />
-                <marker date="1544533997590" expanded="true" signature="18175:18382" ph="..." />
+                <marker date="1545044366306" expanded="true" signature="149:18958" ph="..." />
+                <marker date="1545044366306" expanded="true" signature="3572:3642" ph="..." />
+                <marker date="1545044366306" expanded="true" signature="3637:3642" ph="..." />
               </folding>
             </state>
           </provider>
@@ -79,9 +75,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
+            <state relative-caret-position="179">
+              <caret line="316" column="19" lean-forward="true" selection-start-line="316" selection-start-column="19" selection-end-line="316" selection-end-column="51" />
               <folding>
+                <element signature="e#0#11#0" expanded="true" />
                 <marker date="1543068902709" expanded="true" signature="3342:6233" ph="..." />
                 <marker date="1543068902709" expanded="true" signature="7571:7866" ph="..." />
                 <marker date="1543068902709" expanded="true" signature="11956:12796" ph="..." />
@@ -93,31 +90,39 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/trainingDiary.py">
+        <entry file="file://$PROJECT_DIR$/graphgui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="816">
-              <caret line="45" column="16" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+            <state relative-caret-position="187">
+              <caret line="137" selection-start-line="137" selection-end-line="137" />
               <folding>
-                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#0#20#0" expanded="true" />
+                <marker date="1545031880994" expanded="true" signature="1336:1337" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="1336:1912" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="1678:1817" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="1906:1912" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="2234:5096" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="2261:2270" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="2559:2747" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="3304:4829" ph="..." />
+                <marker date="1545031880994" expanded="true" signature="4851:5096" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/trainingdiarydatamodel.py">
+        <entry file="file://$PROJECT_DIR$/graphguicontroller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Eddington.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+            <state relative-caret-position="634">
+              <caret line="55" column="35" lean-forward="true" selection-start-line="55" selection-start-column="35" selection-end-line="55" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+                <marker date="1545035081222" expanded="true" signature="340:346" ph="..." />
+                <marker date="1545035081222" expanded="true" signature="491:497" ph="..." />
+                <marker date="1545035081222" expanded="true" signature="1970:1975" ph="..." />
+                <marker date="1545035081222" expanded="true" signature="2397:2406" ph="..." />
+                <marker date="1545035081222" expanded="true" signature="2397:3085" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -138,6 +143,13 @@
       <find>DF_SDNN</find>
       <find>DF_RMSSD</find>
       <find>DF_HR</find>
+      <find>WORKOUTS_DF</find>
+      <find>__createDayTimeSeries</find>
+      <find>__create_period_mapping</find>
+      <find>period_mapping</find>
+      <find>__key_for</find>
+      <find>_diary_file_name</find>
+      <find>.update</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -154,15 +166,19 @@
         <option value="$PROJECT_DIR$/trainingDiary.py" />
         <option value="$PROJECT_DIR$/td.py" />
         <option value="$PROJECT_DIR$/testing.py" />
+        <option value="$PROJECT_DIR$/Eddington.py" />
+        <option value="$PROJECT_DIR$/Exam.py" />
+        <option value="$PROJECT_DIR$/graphgui.py" />
+        <option value="$PROJECT_DIR$/graphguicontroller.py" />
         <option value="$PROJECT_DIR$/trainingdiarydataframes.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="63" />
-    <option name="y" value="23" />
-    <option name="width" value="1402" />
-    <option name="height" value="877" />
+    <option name="x" value="2555" />
+    <option name="y" value="68" />
+    <option name="width" value="1749" />
+    <option name="height" value="1514" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -199,8 +215,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.trainingdiarydataframes">
-    <configuration name="td" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.graphguicontroller">
+    <configuration name="Exam" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="TrainingDiary" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -212,7 +228,49 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/td.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Exam.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="graphgui" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="TrainingDiary" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/graphgui.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="graphguicontroller" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="TrainingDiary" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/graphguicontroller.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -264,15 +322,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.td" />
       <item itemvalue="Python.testing" />
       <item itemvalue="Python.trainingdiarydataframes" />
+      <item itemvalue="Python.graphgui" />
+      <item itemvalue="Python.Exam" />
+      <item itemvalue="Python.graphguicontroller" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.trainingdiarydataframes" />
+        <item itemvalue="Python.graphguicontroller" />
         <item itemvalue="Python.testing" />
-        <item itemvalue="Python.td" />
+        <item itemvalue="Python.graphgui" />
+        <item itemvalue="Python.Exam" />
+        <item itemvalue="Python.trainingdiarydataframes" />
       </list>
     </recent_temporary>
   </component>
@@ -315,7 +377,35 @@
       <option name="project" value="LOCAL" />
       <updated>1544529230611</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="improved access to include equipment and activity type">
+      <created>1544534338046</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1544534338046</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Eddington numbers working like a dream !">
+      <created>1544559491062</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1544559491062</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Bug fixes in eddington numbers&#10;fixed a lot of style issues">
+      <created>1544622145313</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1544622145313</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Filtering on sleep_quality, day_type, day_of_week and month added">
+      <created>1544626444344</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1544626444344</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView">
@@ -328,20 +418,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="63" y="23" width="1402" height="877" extended-state="0" />
+    <frame x="2555" y="68" width="1749" height="1514" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49932885" visible="true" weight="0.24264705" />
-      <window_info id="Structure" order="2" sideWeight="0.50067115" side_tool="true" weight="9.775171E-4" />
-      <window_info anchor="bottom" id="Terminal" order="0" weight="0.32834226" />
+      <window_info id="Favorites" order="0" sideWeight="0.5016779" side_tool="true" weight="0.19963703" />
+      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49588138" weight="0.2837723" />
+      <window_info id="Structure" order="2" sideWeight="0.5041186" side_tool="true" weight="0.23891273" />
+      <window_info anchor="bottom" id="Terminal" order="0" weight="0.3272727" />
       <window_info anchor="bottom" id="Event Log" order="1" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="2" weight="0.48770052" />
+      <window_info anchor="bottom" id="Python Console" order="2" weight="0.4866242" />
       <window_info anchor="bottom" id="Message" order="3" />
-      <window_info anchor="bottom" id="Find" order="4" />
-      <window_info anchor="bottom" id="Version Control" order="5" weight="0.32891566" />
-      <window_info anchor="bottom" id="Run" order="6" weight="0.24713376" />
-      <window_info active="true" anchor="bottom" id="Debug" order="7" visible="true" weight="0.2267516" />
+      <window_info anchor="bottom" id="Find" order="4" weight="0.17961784" />
+      <window_info anchor="bottom" id="Version Control" order="5" weight="0.3284091" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.36005625" />
+      <window_info anchor="bottom" id="Debug" order="7" weight="0.24964838" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="10" weight="0.32941177" />
@@ -381,7 +471,11 @@
     <MESSAGE value="created time series df" />
     <MESSAGE value="added sql access" />
     <MESSAGE value="access methods to series" />
-    <option name="LAST_COMMIT_MESSAGE" value="access methods to series" />
+    <MESSAGE value="improved access to include equipment and activity type" />
+    <MESSAGE value="Eddington numbers working like a dream !" />
+    <MESSAGE value="Bug fixes in eddington numbers&#10;fixed a lot of style issues" />
+    <MESSAGE value="Filtering on sleep_quality, day_type, day_of_week and month added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Filtering on sleep_quality, day_type, day_of_week and month added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -402,21 +496,140 @@
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Eddington.py</url>
+          <line>80</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Eddington.py</url>
+          <line>67</line>
+          <option name="timeStamp" value="44" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Eddington.py</url>
+          <line>21</line>
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/trainingdiarydataframes.py</url>
-          <line>367</line>
-          <option name="timeStamp" value="37" />
+          <line>623</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/trainingdiarydataframes.py</url>
+          <line>624</line>
+          <option name="timeStamp" value="56" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/graphgui.py</url>
+          <line>60</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/graphguicontroller.py</url>
+          <line>83</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/graphgui.py</url>
+          <line>70</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/graphgui.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="83" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/trainingdiarydataframes.py</url>
+          <line>202</line>
+          <option name="timeStamp" value="89" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/trainingdiarydataframes.py</url>
+          <line>240</line>
+          <option name="timeStamp" value="92" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>dayDF['km','Bike', 'sum']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>dayDF['km']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>dayDF.columns.levels[0].values</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>dayDF.columns</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+    </expressions>
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>df.index</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df.columns</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['sleep_quality']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['sleepQuality']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>d['x']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['km','Bike','sum']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>x</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df[x_name]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df.columns[0].values</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pandas/compat/numpy/function.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -438,13 +651,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="96" selection-start-line="96" selection-end-line="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/tkinter/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="1279" selection-start-line="1279" selection-end-line="1279" />
         </state>
       </provider>
     </entry>
@@ -483,27 +689,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
-          <folding>
-            <marker date="1543068902709" expanded="true" signature="3342:6233" ph="..." />
-            <marker date="1543068902709" expanded="true" signature="7571:7866" ph="..." />
-            <marker date="1543068902709" expanded="true" signature="11956:12796" ph="..." />
-            <marker date="1543068902709" expanded="true" signature="13125:16229" ph="..." />
-            <marker date="1543068902709" expanded="true" signature="17933:17935" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trainingDiary.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="816">
           <caret line="45" column="16" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -514,32 +703,127 @@
         </state>
       </provider>
     </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/numpy/lib/function_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="1606" selection-start-line="1606" selection-end-line="1606" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pandas/core/resample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="1275" selection-start-line="1275" selection-end-line="1275" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Eddington.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="457">
+          <caret line="27" column="90" lean-forward="true" selection-start-line="27" selection-start-column="90" selection-end-line="27" selection-end-column="90" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <marker date="1544621427306" expanded="true" signature="172:1001" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="451">
+          <caret line="1663" selection-start-line="1663" selection-end-line="1663" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Exam.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="10" selection-start-column="10" selection-end-column="10" />
+          <folding>
+            <marker date="1544803382806" expanded="true" signature="39:44" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/tkinter/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="1701" selection-start-line="1701" selection-end-line="1701" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="316" column="19" lean-forward="true" selection-start-line="316" selection-start-column="19" selection-end-line="316" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <marker date="1543068902709" expanded="true" signature="3342:6233" ph="..." />
+            <marker date="1543068902709" expanded="true" signature="7571:7866" ph="..." />
+            <marker date="1543068902709" expanded="true" signature="11956:12796" ph="..." />
+            <marker date="1543068902709" expanded="true" signature="13125:16229" ph="..." />
+            <marker date="1543068902709" expanded="true" signature="17933:17935" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/tkinter/ttk.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="1354" selection-start-line="1354" selection-end-line="1354" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphgui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="137" selection-start-line="137" selection-end-line="137" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+            <marker date="1545031880994" expanded="true" signature="1336:1337" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="1336:1912" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="1678:1817" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="1906:1912" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="2234:5096" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="2261:2270" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="2559:2747" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="3304:4829" ph="..." />
+            <marker date="1545031880994" expanded="true" signature="4851:5096" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphguicontroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="634">
+          <caret line="55" column="35" lean-forward="true" selection-start-line="55" selection-start-column="35" selection-end-line="55" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+            <marker date="1545035081222" expanded="true" signature="340:346" ph="..." />
+            <marker date="1545035081222" expanded="true" signature="491:497" ph="..." />
+            <marker date="1545035081222" expanded="true" signature="1970:1975" ph="..." />
+            <marker date="1545035081222" expanded="true" signature="2397:2406" ph="..." />
+            <marker date="1545035081222" expanded="true" signature="2397:3085" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trainingdiarydataframes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1151">
-          <caret line="162" column="53" lean-forward="true" selection-start-line="162" selection-start-column="53" selection-end-line="162" selection-end-column="53" />
+        <state relative-caret-position="201">
+          <caret line="241" column="23" selection-start-line="241" selection-start-column="23" selection-end-line="241" selection-end-column="23" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
-            <marker date="1544533997590" expanded="true" signature="165:17597" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="1855:1860" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="2603:2791" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="3908:5246" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="5262:5365" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="5474:5555" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="6559:7054" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="9247:9412" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="13562:13571" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="14001:14523" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="15599:17597" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="17634:17635" ph="..." />
-            <marker date="1544533997590" expanded="true" signature="18175:18382" ph="..." />
+            <marker date="1545044366306" expanded="true" signature="149:18958" ph="..." />
+            <marker date="1545044366306" expanded="true" signature="3572:3642" ph="..." />
+            <marker date="1545044366306" expanded="true" signature="3637:3642" ph="..." />
           </folding>
         </state>
       </provider>

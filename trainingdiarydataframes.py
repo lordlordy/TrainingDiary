@@ -46,6 +46,8 @@ DF_ASCENT_FEET = 'ascentFeet'
 DF_SLEEP_QUALITY = 'sleepQuality'
 DF_TYPE = 'type'
 
+PERIOD_AGGREGATORS = [DF_SUM, DF_MEAN, DF_COUNT]
+
 JSON_DAYS = 'days'
 JSON_ISODATE = 'iso8061DateString'
 JSON_COMMENTS = 'comments'
@@ -64,14 +66,18 @@ PERIOD_TYPE_GROUPBY = 'groupby'
 PERIOD_TYPE_ROLLING = 'rolling'
 PERIOD_TYPE_TODATE = 'toDate'
 
+MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+
 LBS_PER_KG = 2.20462
 FEET_PER_METRE = 3.28084
 MILES_PER_KM = 0.621371
 
 class TDDataFrames(ABC):
 
-    def __init__(self, caching_on=True):
+    def __init__(self, file_name, caching_on=True):
         self._df_dict = {}
+        self.file_name = file_name
         self._caching_on = caching_on
         self.__create_period_mapping()
         self.__week_day_mapping = {'MON':0, 'TUE':1, 'WED':2, 'THU':3, 'FRI':4, 'SAT':5, 'SUN':6}
@@ -80,11 +86,53 @@ class TDDataFrames(ABC):
         pd.options.display.float_format = '{:,.01f}'.format
 
     def get_units(self):
-        return self.get_days_time_series_df().columns.get_level_values(0)
-
+        return sorted(list(set(self.get_days_time_series_df().columns.get_level_values(0))))
 
     def get_activities(self):
-        return self.get_days_time_series_df().columns.get_level_values(1)
+        return sorted(list(set(self.get_days_time_series_df().columns.get_level_values(1))))
+
+    def get_periods(self):
+        return sorted(list(self.period_mapping.keys()))
+
+    def get_workouts_aggregators(self):
+        return sorted(list(set(self.get_days_time_series_df().columns.get_level_values(2))), reverse=True)
+
+    def get_period_aggregators(self):
+        return PERIOD_AGGREGATORS
+
+    def get_activity_types(self):
+        a = set(self.get_workouts_df()[DF_ACTIVITY_TYPE])
+        a.add(DF_ALL)
+        return sorted(a)
+
+    def get_equipment(self):
+        e = set(self.get_workouts_df()[DF_EQUIPMENT])
+        e.add(DF_ALL)
+        if '' in e:
+            e.remove('')
+        if 'Not Set' in e:
+            e.remove('Not Set')
+        return sorted(e)
+
+    def get_day_types(self):
+        d = set(self.get_days_df()[DF_TYPE])
+        d.add(DF_ALL)
+        return sorted(d)
+
+    def get_sleep_quality(self):
+        s = set(self.get_days_df()[DF_SLEEP_QUALITY])
+        s.add(DF_ALL)
+        return sorted(s)
+
+    def get_days(self):
+        d = DAYS
+        d.insert(0, DF_ALL)
+        return d
+
+    def get_months(self):
+        m = MONTHS
+        m.insert(0, DF_ALL)
+        return m
 
     # DF with single datetime index
     @abstractmethod
@@ -148,32 +196,11 @@ class TDDataFrames(ABC):
     def get_hrv_df(self):
         pass
 
-    def get_series(self, unit, activity, period, workout_aggregator='sum', period_aggregator='sum',
+    def get_series(self, unit, period, activity='All', workout_aggregator='sum', period_aggregator='sum',
                    activity_type=None, equipment=None, day_type=None, sleep_quality=None, day_of_week=None, month=None):
 
         key = self.__key_for(activity_type, equipment)
         df = self.get_days_time_series_df(activity_type, equipment)
-
-        if day_type is not None:
-            df = df.query(f"""type == '{day_type}' """)
-        if sleep_quality is not None:
-            df = df.query(f""" sleepQuality == '{sleep_quality}' """)
-        if day_of_week is not None:
-            # try:
-            day_number = self.__week_day_mapping[day_of_week[:3].upper()]
-            df = df[df.index.get_level_values(0).dayofweek == day_number]
-            # except Exception as e:
-            #     logging.error(e)
-            #     return None
-        if month is not None:
-            # try:
-            month_number = self.__month_mapping[month[:3].upper()]
-            df = df[df.index.get_level_values(0).month == month_number]
-            # except Exception as e:
-            #     logging.error(e)
-            #     return None
-        if df.size == 0:
-            return None
 
         if period[0] == 'R':
             try:
@@ -211,10 +238,32 @@ class TDDataFrames(ABC):
         else:
             raise Exception(f'Invalid period type {period}')
 
-        if isinstance(df.index, pd.MultiIndex):
+        # if isinstance(df.index, pd.MultiIndex):
             # set index to just be datetime index (ie level 1). Use get_level_values to ensure only get those with a value associated
-            df = df.set_index(df.index.get_level_values(0))
+            # df = df.set_index(df.index.get_level_values(0))
+            # df.reset_index(level=df.index.levels[1:])
 
+
+        if day_type is not None:
+            df = df.query(f"""type == '{day_type}' """)
+        if sleep_quality is not None:
+            df = df.query(f""" sleepQuality == '{sleep_quality}' """)
+        if day_of_week is not None:
+            # try:
+            day_number = self.__week_day_mapping[day_of_week[:3].upper()]
+            df = df[df.index.get_level_values(0).dayofweek == day_number]
+            # except Exception as e:
+            #     logging.error(e)
+            #     return None
+        if month is not None:
+            # try:
+            month_number = self.__month_mapping[month[:3].upper()]
+            df = df[df.index.get_level_values(0).month == month_number]
+            # except Exception as e:
+            #     logging.error(e)
+            #     return None
+        if df.size == 0:
+            return None
 
         return df[unit, activity, workout_aggregator]
 
@@ -268,8 +317,6 @@ class TDDataFrames(ABC):
         return self._df_dict[k]
 
     def __create_period_mapping(self):
-        months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-        days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
         self.period_mapping = {'DAY': (PERIOD_TYPE_STD, 'D'), 'WEEK': (PERIOD_TYPE_GROUPBY, 'W'),
                                 'MONTH': (PERIOD_TYPE_GROUPBY, 'M'), 'QUARTER': (PERIOD_TYPE_GROUPBY, 'Q'),
@@ -278,13 +325,13 @@ class TDDataFrames(ABC):
                                 'RYEAR': (PERIOD_TYPE_ROLLING, 365), 'WTD': (PERIOD_TYPE_TODATE, 'W'),
                                 'MTD': (PERIOD_TYPE_TODATE, 'M'), 'QTD': (PERIOD_TYPE_TODATE, 'Q'),
                                 'YTD': (PERIOD_TYPE_TODATE, 'A')}
-        for m in months:
+        for m in MONTHS:
             self.period_mapping['Q-' + m] = (PERIOD_TYPE_GROUPBY, 'Q-' + m)
             self.period_mapping['Y-' + m] = (PERIOD_TYPE_GROUPBY, 'A-' + m)
             self.period_mapping['QTD-' + m] = (PERIOD_TYPE_TODATE, 'Q-' + m)
             self.period_mapping['YTD-' + m] = (PERIOD_TYPE_TODATE, 'A-' + m)
 
-        for d in days:
+        for d in DAYS:
             self.period_mapping['W-' + d] = (PERIOD_TYPE_GROUPBY, 'W-' + d)
             self.period_mapping['WTD-' + d] = (PERIOD_TYPE_TODATE, 'W-' + d)
 
@@ -313,40 +360,18 @@ class TDDataFrames(ABC):
         hr = self.get_hr_df()
         hrv = self.get_hrv_df()
 
-        days[DF_ACTIVITY] = DF_ALL
-        days[DF_AGG] = DF_MEAN
-        # days = days.set_index([DF_ACTIVITY, DF_AGG], append=True)
-        days = days.set_index([DF_TYPE, DF_SLEEP_QUALITY, DF_ACTIVITY, DF_AGG], append=True)
-        days = days.unstack(level=[3,4], fill_value=0)
-
-        # common_index = self.__get_date_index()
-        common_index = days.index
-
-        fat_p[DF_ACTIVITY] = DF_ALL
-        fat_p[DF_AGG] = DF_MEAN
-        fat_p = fat_p.set_index([DF_ACTIVITY, DF_AGG], append=True)
-        fat_p = fat_p.unstack(level=[1,2])
-        fat_p = fat_p.reindex(common_index).interpolate(method='linear')
-
-        weights[DF_ACTIVITY] = DF_ALL
-        weights[DF_AGG] = DF_MEAN
-        weights = weights.set_index([DF_ACTIVITY, DF_AGG], append=True)
-        weights = weights.unstack(level=[1,2])
-        weights = weights.reindex(common_index).interpolate(method='linear')
-
-        hr[DF_ACTIVITY] = DF_ALL
-        hr[DF_AGG] = DF_MEAN
-        hr = hr.set_index([DF_ACTIVITY, DF_AGG], append=True)
-        hr = hr.unstack(level=[1, 2])
-        hr = hr.reindex(common_index).interpolate(method='linear')
-
-        hrv[DF_ACTIVITY] = DF_ALL
-        hrv[DF_AGG] = DF_MEAN
-        hrv = hrv.set_index([DF_ACTIVITY, DF_AGG], append=True)
-        hrv = hrv.unstack(level=[1, 2])
-        hrv = hrv.reindex(common_index).interpolate(method='linear')
+        weights = weights.reindex(days.index).interpolate(method='linear')
+        fat_p = fat_p.reindex(days.index).interpolate(method='linear')
+        hr = hr.reindex(days.index).interpolate(method='linear')
+        hrv = hrv.reindex(days.index).interpolate(method='linear')
 
         df = pd.concat([days, weights, fat_p, hr, hrv], axis=1)
+
+        df[DF_ACTIVITY] = DF_ALL
+        df[DF_AGG] = DF_MEAN
+        df = df.set_index([DF_ACTIVITY, DF_AGG, DF_TYPE, DF_SLEEP_QUALITY], append=True)
+        # df = df.set_index([DF_ACTIVITY, DF_AGG], append=True)
+        df = df.unstack(level=[1, 2], fill_value=0)
 
         return df
 
@@ -414,20 +439,28 @@ class TDDataFrames(ABC):
 
 class TDDataFramesSQLITE(TDDataFrames):
 
-    def __init__(self, db_url, training_diary_name):
-        super().__init__()
-        self.db_url = db_url
-        self.td_name = training_diary_name
+    def __init__(self, db_url):
+        super().__init__(db_url)
+        names = self.get_training_diary_names()
+        self.training_diary_name = names[0][0]
+
+    def get_training_diary_names(self):
+        conn = sqlite3.connect(self.file_name)
+        c = conn.cursor()
+        c.execute(f''' select name from trainingDiary''')
+        names = c.fetchall()
+        conn.close()
+        return names
 
     def get_raw_workouts_df(self):
-        df = self.__read_sql_df(f'''select * from workout where trainingDiary="{self.td_name}" ''')
+        df = self.__read_sql_df(f'''select * from workout where trainingDiary="{self.training_diary_name}" ''')
         df = df.drop(['id','trainingDiary'], axis=1)
         df['date'] = pd.to_datetime(df['date'])
         df.set_index(['date'], inplace=True)
         return df
 
     def get_days_df(self):
-        df = self.__read_sql_df(f'''select * from day where trainingDiary="{self.td_name}" ''')
+        df = self.__read_sql_df(f'''select * from day where trainingDiary="{self.training_diary_name}" ''')
         df = df.drop(['id','trainingDiary'], axis=1)
         df['date'] = pd.to_datetime(df['date'])
         df.set_index(['date'], inplace=True)
@@ -435,33 +468,33 @@ class TDDataFramesSQLITE(TDDataFrames):
 
     # DF with single datetime index
     def get_weights_df(self):
-        df = self.__read_sql_df(f'''select date, kg, kg*{LBS_PER_KG} as lbs from weight where trainingDiary="{self.td_name}" ''')
+        df = self.__read_sql_df(f'''select date, kg, kg*{LBS_PER_KG} as lbs from weight where trainingDiary="{self.training_diary_name}" ''')
         df['date'] = pd.to_datetime(df['date'])
         df.set_index(['date'], inplace=True)
         return df
 
     def get_fat_percentage_df(self):
-        df = self.__read_sql_df(f'''select date, percentage from bodyFat where trainingDiary="{self.td_name}" ''')
+        df = self.__read_sql_df(f'''select date, percentage from bodyFat where trainingDiary="{self.training_diary_name}" ''')
         df['date'] = pd.to_datetime(df['date'])
         df.set_index(['date'], inplace=True)
         return df
 
     # DF with single datetime index
     def get_hr_df(self):
-        df = self.__read_sql_df(f'''select date, restingHR from hr where trainingDiary="{self.td_name}" ''')
+        df = self.__read_sql_df(f'''select date, restingHR from hr where trainingDiary="{self.training_diary_name}" ''')
         df['date'] = pd.to_datetime(df['date'])
         df.set_index(['date'], inplace=True)
         return df
 
     # DF with single datetime index
     def get_hrv_df(self):
-        df = self.__read_sql_df(f'''select date, sdnn, rmssd from hrv where trainingDiary="{self.td_name}" ''')
+        df = self.__read_sql_df(f'''select date, sdnn, rmssd from hrv where trainingDiary="{self.training_diary_name}" ''')
         df['date'] = pd.to_datetime(df['date'])
         df.set_index(['date'], inplace=True)
         return df
 
     def __read_sql_df(self, sql):
-        conn = sqlite3.connect(self.db_url)
+        conn = sqlite3.connect(self.file_name)
         df = pd.read_sql_query(sql, conn)
         conn.close()
         return df
@@ -469,7 +502,7 @@ class TDDataFramesSQLITE(TDDataFrames):
 class TDDataFramesJSON(TDDataFrames):
 
     def __init__(self, json_file):
-        super().__init__()
+        super().__init__(json_file)
         self.__dict = json.load(open(json_file))
 
     # DF with datetime index
@@ -590,9 +623,5 @@ if __name__ == '__main__':
     df = TDDataFramesSQLITE('TD.db', 'StevenLordDiary')
     bikeMiles = df.get_series('miles', 'Bike', 'Day', day_type='Normal', day_of_week='Sat', month='dec')
     print(bikeMiles)
-    # df = data_frames.get_days_time_series_df(drop_non_numeric=False)
-    # logging.info(type(df))
-    # df = dataFrames.getSeries('km','Bike','Year','sum','sum','Turbo','IF XS')
-    # df = dataFrames.getSeries('km','Run','Year','sum','sum','Road')
-    # df = dataFrames.getSeries('km','Swim','Year','sum','sum','Squad')
+
 
