@@ -1,4 +1,3 @@
-
 .idea/libraries/R_User_Library.xml
 .idea/
 .ipynb_checkpoints/
@@ -22,4 +21,6 @@ TD.db
 TrainingDiary.log
 .idea/workspace.xml
 Exam.py
-Training diary/db.sqlite3
+trainingdiary/db.sqlite3
+.idea/workspace.xml
+trainingdiary/db.sqlite3

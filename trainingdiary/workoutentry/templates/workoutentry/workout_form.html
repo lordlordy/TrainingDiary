@@ -1,0 +1,29 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h2 class="border-bottom mb-4">Workout</h2>
+    <table class="table table-hover table-bordered table-striped table-sm ">
+        <thead class="thead-light">
+            <tr>
+                <th>Date</th>
+                <th>Activity</th>
+
+           </tr>
+        </thead>
+            <tr>
+                <td>{{ workout.date }}</td>
+                <td>{{ workout.activity }}</td>
+          </tr>
+        </table>
+
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Workout Edit</legend>
+            {{ form|crispy }}
+        </fieldset>
+        <button class="btn btn-outline-primary btn-sm" type="submit">Update</button>
+    </form>
+
+
+{% endblock %}
