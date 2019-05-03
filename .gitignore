@@ -21,3 +21,5 @@ bikeYTDkm.csv
 TD.db
 TrainingDiary.log
 .idea/workspace.xml
+Exam.py
+Training diary/db.sqlite3
