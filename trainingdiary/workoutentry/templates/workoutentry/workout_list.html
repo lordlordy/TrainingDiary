@@ -1,0 +1,62 @@
+{% extends 'workoutentry/base.html' %}
+
+{% block content %}
+<h2 class="border-bottom mb-4">Workouts</h2>
+    <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+        <thead class="thead-light">
+            <tr>
+                <th></th>
+                <th>date</th>
+                <th>activity</th>
+                <th>activity_type</th>
+                <th>duration</th>
+                <th>rpe</th>
+                <th>tss</th>
+                <th>tss_method</th>
+                <th>km</th>
+                <th>kj</th>
+                <th>ascent_metres</th>
+                <th>reps</th>
+                <th>is_race</th>
+                <th>cadence</th>
+                <th>watts</th>
+                <th>watts_estimated</th>
+                <th>heart_rate</th>
+                <th>is_brick</th>
+                <th>keywords</th>
+                <th>comments</th>
+            </tr>
+        </thead>
+    {% if workouts %}
+
+    {% for w in workouts %}
+    <tr onclick="{% url 'workout_form' w.id %}">
+        <td>
+            <a href="{% url 'workout_form' w.id %}" class="btn btn-outline-primary btn-sm" role="button">View</a>
+        </td>
+        <td>{{ w.date }}</td>
+        <td>{{ w.activity }}</td>
+        <td>{{ w.activity_type }}</td>
+        <td>{{ w.duration }}</td>
+        <td>{{ w.rpe }}</td>
+        <td>{{ w.tss }}</td>
+        <td>{{ w.tss_method }}</td>
+        <td>{{ w.km }}</td>
+        <td>{{ w.kj }}</td>
+        <td>{{ w.ascent_metres }}</td>
+        <td>{{ w.reps }}</td>
+        <td>{{ w.is_race }}</td>
+        <td>{{ w.cadence }}</td>
+        <td>{{ w.watts }}</td>
+        <td>{{ w.watts_estimated }}</td>
+        <td>{{ w.heart_rate }}</td>
+        <td>{{ w.is_brick }}</td>
+        <td>{{ w.keywords }}</td>
+        <td>{{ w.comments }}</td>
+
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+
+{% endblock %}
