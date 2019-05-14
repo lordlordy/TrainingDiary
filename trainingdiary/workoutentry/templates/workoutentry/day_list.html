@@ -1,0 +1,63 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<h2 class="border-bottom mb-4">Days</h2>
+<div class="row">
+    <div id="report_chooser" class="col-md-3">
+                <h3 class="border-bottom mb-4 ">Filter</h3>
+
+        <form method="post" action="{% url 'day_list' %}">
+            {% csrf_token %}
+
+            {{filter.form | crispy}}
+            <button type="submit" name='model_search' class="btn btn-outline-primary btn-sm">search</button>
+        </form>
+    </div>
+    <div class="col-md-9">
+        <form action="{% url 'day_new' %}">
+            <input class="btn btn-outline-primary btn-sm" type="submit" value="Add Day"/>
+        </form>
+    <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+        <thead class="thead-light">
+            <tr>
+                <th></th>
+                <th>date</th>
+                <th>sleep</th>
+                <th>quality</th>
+                <th>fatigue</th>
+                <th>motivation</th>
+                <th>type</th>
+                <th>#</th>
+                <th>Time</th>
+                <th>TSS</th>
+                <th>comments</th>
+            </tr>
+        </thead>
+    {% if days %}
+
+    {% for d in days %}
+    <tr onclick="{% url 'day_form' d.id %}">
+        <td>
+            <a href="{% url 'day_form' d.id %}" class="btn btn-outline-primary btn-sm" role="button">View</a>
+        </td>
+        <td>{{ d.date | date:'Y-m-d' }}</td>
+        <td>{{ d.sleep }}</td>
+        <td>{{ d.sleep_quality }}</td>
+        <td>{{ d.fatigue }}</td>
+        <td>{{ d.motivation }}</td>
+        <td>{{ d.type }}</td>
+        <td>{{ d.number_of_workouts }}</td>
+        <td>{{ d.training_duration }}</td>
+        <td>{{ d.tss }}</td>
+        <td>{{ d.comments }}</td>
+
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+        </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'workoutentry/base.html' %}
+{% block content %}
+<div clas="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="border-bottom mb-4">Diary Upload</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="border-bottom mb=4">Training Diary</h5>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <input class="btn btn-outline-primary btn-sm" type="file" name="document">
+                <input class="btn btn-outline-primary btn-sm" type="submit" value="Upload">
+            </form>
+            <ul>
+                {% for i in info %}
+                <li>{{i}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

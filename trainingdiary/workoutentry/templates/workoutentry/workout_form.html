@@ -7,12 +7,23 @@
             <tr>
                 <th>Date</th>
                 <th>Activity</th>
-
+                <th>Type</th>
+                <th>Duration</th>
+                <th>KM</th>
+                <th>TSS</th>
+                <th>Method</th>
+                <th>HR</th>
            </tr>
         </thead>
             <tr>
-                <td>{{ workout.date }}</td>
+                <td>{{ workout.day.date }}</td>
                 <td>{{ workout.activity }}</td>
+                <td>{{ workout.activity_type }}</td>
+                <td>{{ workout.duration }}</td>
+                <td>{{ workout.km }}</td>
+                <td>{{ workout.tss }}</td>
+                <td>{{ workout.tss_method }}</td>
+                <td>{{ workout.heart_rate }}</td>
           </tr>
         </table>
 
@@ -28,12 +39,20 @@
 
 {% endblock %}
 
-{% block extra_scripts %}
-
+   {% block extra_scripts %}
 <script type='text/javascript'>
-$('.datepicker').datepicker({
-    format: "yyyy-mm-dd",
+
+
+$(document).ready(function(){
+$('#activity').select2();
+})
+$(document).ready(function(){
+$('#activity_type').select2();
+});
+$(document).ready(function(){
+$('#tss_method').select2();
 });
 </script>
 
-{% endblock %}
+
+    {% endblock %}
