@@ -10,5 +10,6 @@ urlpatterns = [
     path('workouts/<int:pk>/', views.WorkoutUpdateView.as_view(), name='workout_form'),
     path('workouts/new/<int:day_pk>', views.WorkoutCreateView.as_view(), name='workout_new'),
     path('dairy/upload/', views.diary_upload, name='diary_upload'),
+    path('eddington/', views.eddington_view, name='eddington_numbers'),
 
 ]

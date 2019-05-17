@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.db.utils import IntegrityError
 import json
 from workoutentry.models import Workout, Day, RestingHeartRate, SDNN, RMSSD, KG, FatPercentage
 import dateutil.parser
@@ -28,8 +27,12 @@ def diary_upload(request):
 
             if 'workouts' in d:
                 for w in d['workouts']:
+                    equipment = w['equipmentName']
+                    if equipment == 'Not Set':
+                        equipment = None
                     workout = Workout(activity=w['activityString'],
                                       activity_type=w['activityTypeString'],
+                                      equipment=equipment,
                                       day=day,
                                       duration=datetime.timedelta(seconds=w['seconds']),
                                       rpe=w['rpe'],

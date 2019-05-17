@@ -164,7 +164,7 @@ class TDDataFrames(ABC):
         if key not in self._df_dict:
             dayDF = self.__create_day_time_series(activity_type, equipment)
             if drop_non_numeric:
-                dayDF.drop(['comments', 'sleepQuality', 'type'], axis=1, level=0, inplace=True)
+                dayDF.drop(['comments', 'sleepQuality', 'type'], axis=0, level=0, inplace=True)
             self._df_dict[key] = dayDF
 
         return self._df_dict[key]
@@ -620,7 +620,7 @@ if __name__ == '__main__':
                         datefmt=dateFormatStr)
     import Eddington
 
-    df = TDDataFramesSQLITE('TD.db', 'StevenLordDiary')
+    df = TDDataFramesSQLITE('TD.db')
     bikeMiles = df.get_series('miles', 'Bike', 'Day', day_type='Normal', day_of_week='Sat', month='dec')
     print(bikeMiles)
 

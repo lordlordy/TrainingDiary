@@ -3,6 +3,21 @@ import django_filters
 from django.forms.widgets import TextInput
 from django.forms.widgets import SelectMultiple
 
+# this is to avoid a side effect of building db from scratch. Since these class variables query the DB they fail
+# if DB not there when this is loaded. So instead do this:
+from django.db.utils import OperationalError
+activity_choices = [('Run','Run'), ('Bike', 'Bike'), ('Swim', 'Swim')]
+activity_type_choices = [('Road', 'Road'), ('Squad', 'Squad')]
+tss_method_choices = [('RPE', 'RPE'), ('PacePower', 'PacePower')]
+equipment_choices = [('IF XS', 'IF XS'), ('Roberts', 'Roberts')]
+try:
+    activity_choices = [(a['activity'], a['activity']) for a in Workout.objects.values('activity').distinct()]
+    activity_type_choices = [(a['activity_type'], a['activity_type']) for a in Workout.objects.values('activity_type').distinct()]
+    tss_method_choices = [(a['tss_method'], a['tss_method']) for a in Workout.objects.values('tss_method').distinct()]
+    equipment_choices = [(a['equipment'], a['equipment']) for a in Workout.objects.values('equipment').distinct()]
+except OperationalError:
+    pass
+
 
 class WorkoutFilter(django_filters.FilterSet):
     date_lte = django_filters.DateFilter(field_name='day__date', lookup_expr='lte', label='date (<=)',
@@ -32,16 +47,19 @@ class WorkoutFilter(django_filters.FilterSet):
     duration_gte = django_filters.DurationFilter(field_name='duration', lookup_expr='gte', label='duration (>=)')
     duration_lte = django_filters.DurationFilter(field_name='duration', lookup_expr='lte', label='duration (<=)')
     activity = django_filters.MultipleChoiceFilter(label='Activity', field_name='activity',
-                                                   choices=[(a['activity'], a['activity']) for a in Workout.objects.values('activity').distinct()],
+                                                   choices=activity_choices,
                                                    widget=SelectMultiple(attrs={'class': 'form-control', 'id': 'activity', 'multiple': 'multiple'}))
     activity_type = django_filters.MultipleChoiceFilter(label='Activity Type', field_name='activity_type',
-                                                        choices=[(a['activity_type'], a['activity_type']) for a in
-                                                                 Workout.objects.values('activity_type').distinct()],
+                                                        choices=activity_type_choices,
                                                         widget=SelectMultiple(attrs={'class': 'form-control', 'id': 'activity_type', 'multiple': 'multiple'}))
     tss_method = django_filters.MultipleChoiceFilter(label='TSS Method', field_name='tss_method',
-                                                     choices=[(a['tss_method'], a['tss_method']) for a in
-                                                              Workout.objects.values('tss_method').distinct()],
+                                                     choices=tss_method_choices,
                                                      widget=SelectMultiple(attrs={'class': 'form-control', 'id': 'tss_method', 'multiple': 'multiple'}))
+    equipment = django_filters.MultipleChoiceFilter(label='Equipment', field_name='equipment',
+                                                     choices=equipment_choices,
+                                                     widget=SelectMultiple(
+                                                         attrs={'class': 'form-control', 'id': 'equipment',
+                                                                'multiple': 'multiple'}))
     comments = django_filters.CharFilter(lookup_expr='icontains', label='Comments')
     keywords = django_filters.CharFilter(lookup_expr='icontains', label='Keywords')
     is_race = django_filters.BooleanFilter(label='Race?')

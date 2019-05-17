@@ -17,12 +17,14 @@ def eddingtonHistoryDF(timeSeries):
     annualEdNum = 0
     plusOne = 0
     annualPlusOne = 0
-    currentYear = timeSeries.index[0].year
+    print(timeSeries.index[0])
+    print(timeSeries.index[0][0])
+    currentYear = timeSeries.index[0][0].year
 
     for i,row in timeSeries.iteritems():
-        if i.year != currentYear:
+        if i[0].year != currentYear:
             # reset all the annual stuff
-            currentYear = i.year
+            currentYear = i[0].year
             annualEdNum = 0
             annualPlusOne = 0
             annualContributors = annualContributors + thisYearsAnnualContributors.tolist()
@@ -76,6 +78,11 @@ def eddingtonHistoryDF(timeSeries):
 
 if __name__=='__main__':
     import trainingdiarydataframes as tddf
-    df = tddf.TDDataFramesSQLITE('td.db', 'StevenLordDiary')
-    bikeMiles = df.get_series('miles', 'Bike', 'Day')
+    df = tddf.TDDataFramesSQLITE('td.db')
+    # print(df.get_days_df())
+    # print(df.get_workouts_df())
+    # print(df.get_workouts_aggregators())
+    bikeMiles = df.get_series('miles', 'Day', 'Bike')
+    print(bikeMiles)
     e = eddingtonHistoryDF(bikeMiles)
+    print(e)

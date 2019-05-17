@@ -40,6 +40,7 @@ class WorkoutUpdateView(UpdateView):
     success_url = '/workouts/'
     fields = ['activity',
               'activity_type',
+              'equipment',
               'duration',
               'rpe',
               'tss',
@@ -61,11 +62,50 @@ class WorkoutUpdateView(UpdateView):
         day_pk = self.object.day.id
         return f'/days/{day_pk}'
 
+    def post(self, request, *args, **kwargs):
+        post_reponse = super().post(request, args, kwargs)
+        needs_saving = False
+        if len(request.POST['new_activity']) > 0:
+            self.object.activity = request.POST['new_activity']
+            needs_saving = True
+
+        if len(request.POST['new_activity_type']) > 0:
+            self.object.activity_type = request.POST['new_activity_type']
+            needs_saving = True
+
+        if len(request.POST['new_equipment']) > 0:
+            self.object.equipment = request.POST['new_equipment']
+            needs_saving = True
+
+        if len(request.POST['new_tss_method']) > 0:
+            self.object.tss_method = request.POST['new_tss_method']
+            needs_saving = True
+
+        if needs_saving:
+            self.object.save()
+
+        print(f'new equipment: {request.POST["new_equipment"]}')
+        return post_reponse
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        if 'day' in form.fields:
-            day_field = form.fields['day']
-            day_field.widget.attrs = {'class': "search_single_day form-control"}
+        unique_activities = Workout.objects.values('activity').distinct()
+        unique_activities_types = Workout.objects.values('activity_type').distinct()
+        unique_tss_methods = Workout.objects.values('tss_method').distinct()
+        unique_equipment = Workout.objects.values('equipment').distinct()
+        form.fields['activity'] = forms.CharField(required=True,
+                                              widget=Select(choices=[(a['activity'], a['activity']) for a in unique_activities],
+                                                            attrs={'class': 'form-control', 'id': 'activity'}))
+        form.fields['activity_type'] = forms.CharField(required=True,
+                                              widget=Select(choices=[(a['activity_type'], a['activity_type']) for a in unique_activities_types],
+                                                            attrs={'class': 'form-control', 'id': 'activity_type'}))
+        form.fields['tss_method'] = forms.CharField(required=True,
+                                              widget=Select(choices=[(a['tss_method'], a['tss_method']) for a in unique_tss_methods],
+                                                            attrs={'class': 'form-control', 'id': 'tss_method'}))
+        form.fields['equipment'] = forms.CharField(required=True,
+                                                    widget=Select(choices=[(a['equipment'], a['equipment']) for a in
+                                                                           unique_equipment],
+                                                                  attrs={'class': 'form-control', 'id': 'equipment'}))
         return form
 
 class WorkoutCreateView(CreateView):
@@ -73,6 +113,7 @@ class WorkoutCreateView(CreateView):
     success_url = '/workouts/'
     fields = ['activity',
               'activity_type',
+              'equipment',
               'duration',
               'rpe',
               'tss',
@@ -105,6 +146,7 @@ class WorkoutCreateView(CreateView):
         unique_activities = Workout.objects.values('activity').distinct()
         unique_activities_types = Workout.objects.values('activity_type').distinct()
         unique_tss_methods = Workout.objects.values('tss_method').distinct()
+        unique_equipment = Workout.objects.values('equipment').distinct()
         form.fields['activity'] = forms.CharField(required=True,
                                               widget=Select(choices=[(a['activity'], a['activity']) for a in unique_activities],
                                                             attrs={'class': 'form-control', 'id': 'activity'}))
@@ -114,4 +156,8 @@ class WorkoutCreateView(CreateView):
         form.fields['tss_method'] = forms.CharField(required=True,
                                               widget=Select(choices=[(a['tss_method'], a['tss_method']) for a in unique_tss_methods],
                                                             attrs={'class': 'form-control', 'id': 'tss_method'}))
+        form.fields['equipment'] = forms.CharField(required=True,
+                                                    widget=Select(choices=[(a['equipment'], a['equipment']) for a in
+                                                                           unique_equipment],
+                                                                  attrs={'class': 'form-control', 'id': 'equipment'}))
         return form

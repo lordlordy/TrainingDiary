@@ -1,0 +1,72 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block extra_scripts_start %}
+<script type='text/javascript'>
+
+$(document).ready(function(){
+$('#activity').select2();
+});
+
+$(document).ready(function(){
+$('#activity_type').select2();
+});
+
+$(document).ready(function(){
+$('#equipment').select2();
+});
+
+$(document).ready(function(){
+$('#measure').select2();
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="border-top mb-4">Eddington Numbers</h1>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ selection_form | crispy }}
+                    <button class="btn btn-outline-primary btn-sm" type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table id='dataTable' class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    {% for h in headings %}
+                    <th>{{ h }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                {% for d in data %}
+                <tr>
+                    {% for i in d %}
+                    <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_scripts %}
+
+
+
+{% endblock %}
