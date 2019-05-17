@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     path('', views.days_list_view, name='day_list'),
     path('days/', views.days_list_view, name='day_list'),
@@ -12,4 +15,4 @@ urlpatterns = [
     path('dairy/upload/', views.diary_upload, name='diary_upload'),
     path('eddington/', views.eddington_view, name='eddington_numbers'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
