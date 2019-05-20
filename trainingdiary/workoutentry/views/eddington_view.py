@@ -73,8 +73,8 @@ def eddington_view(request):
 
         ed_num, ltd_hist, annual_hist, annual_summary = DataWarehouse.instance().eddington_history(series)
 
-        save_image(ltd_hist, 'ltd.png')
-        save_image(annual_hist, 'annual.png')
+        save_image(ltd_hist, 'ltd.png', unit)
+        save_image(annual_hist, 'annual.png', unit)
 
         for i in ltd_hist:
             ltd.append((str(i[0]), i[1], i[2], i[3]))
@@ -97,7 +97,7 @@ def eddington_view(request):
                                                                    'popular_form': PopularEddingtonNumberForm()})
 
 
-def save_image(data, file_name):
+def save_image(data, file_name, name):
     df = pd.DataFrame(data, columns=['Date', 'Ed Num', 'Plus One', 'Contributor'])
     df['Date'] = pd.to_datetime(df['Date'])
     df['Plus One'] = df['Ed Num'] + df['Plus One']
@@ -105,6 +105,7 @@ def save_image(data, file_name):
 
     fig = plt.figure(figsize=[24, 13.5])
     ax = fig.gca()
+    ax.set_title(name, fontsize=12)
     ax.grid()
     ax.plot(df['Ed Num'], color='b', label='Ed Num', linewidth=3)
     ax.plot(df['Plus One'], color='y', label='Plus One')

@@ -9,13 +9,24 @@ import trainingdiary
 class DataWarehouse:
 
     popular_numbers = {
+        'Daily Swim KM': {'activity': 'Swim', 'measure': 'km'},
         'Daily Bike Miles': {'activity': 'Bike', 'measure': 'miles'},
         'Daily Run Miles': {'activity': 'Run', 'measure': 'miles'},
-        'Weekly Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'W-Mon'},
+        'Weekly Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'W-Mon'},
         'Weekly Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'W-Mon'},
+        'Weekly Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'W-Mon'},
+        'Monthly Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Month'},
+        'Monthly Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Month'},
+        'Monthly Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Month'},
+        'Rolling Week Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '7'},
+        'Rolling Week Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '7'},
+        'Rolling Week Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '7'},
+        'Rolling Month Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '30'},
+        'Rolling Month Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '30'},
+        'Rolling Month Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '30'},
         'Rolling Year Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
-        'Rolling Year Bike KM': {'activity': 'Bike', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
-        'Rolling Year Run KM': {'activity': 'Run', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
+        'Rolling Year Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
+        'Rolling Year Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
     }
 
     periods = ['Day', 'W-Mon', 'W-Tue', 'W-Wed', 'W-Thu', 'W-Fri', 'W-Sat', 'W-Sun', 'Month', 'Y-Jan',
