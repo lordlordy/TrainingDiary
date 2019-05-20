@@ -38,7 +38,7 @@ class DataWarehouse:
         self.__conn = sqlite3.connect('training_data_warehouse.sqlite3')
 
         sql_str = f'''
-            SELECT * FROM DAY_All_All_All
+            SELECT * FROM Day_All_All_All
             LIMIT 0,5
         '''
 
