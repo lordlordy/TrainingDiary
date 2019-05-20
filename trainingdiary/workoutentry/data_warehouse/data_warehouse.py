@@ -2,6 +2,8 @@ import sqlite3
 import pandas as pd
 import numpy as np
 import dateutil.parser
+import os
+import trainingdiary
 
 
 class DataWarehouse:
@@ -35,7 +37,9 @@ class DataWarehouse:
         return DataWarehouse()
 
     def __init__(self):
-        self.__conn = sqlite3.connect('training_data_warehouse.sqlite3')
+        db_path = os.path.join(trainingdiary.BASE_DIR, 'training_data_warehouse.sqlite3')
+        self.__conn = sqlite3.connect(db_path)
+        # self.__conn = sqlite3.connect('training_data_warehouse.sqlite3')
 
         sql_str = f'''
             SELECT * FROM Day_All_All_All
