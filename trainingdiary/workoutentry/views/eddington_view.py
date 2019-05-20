@@ -68,7 +68,7 @@ def eddington_view(request):
         for i in ltd_hist:
             ltd.append((str(i[0]), i[1], i[2], i[3]))
         for i in annual_hist:
-            annual.append((str(i[0]), i[1], i[2], i[3])
+            annual.append((str(i[0]), i[1], i[2], i[3]))
 
         return render(request, 'workoutentry/eddington_numbers.html',
                       {'selection_form': EddingtonNumberForm(data),
