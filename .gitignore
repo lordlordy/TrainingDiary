@@ -14,3 +14,4 @@ TD.db
 TrainingDiary.log
 Exam.py
 trainingdiary/*.sqlite3
+trainingdiary/media/*
