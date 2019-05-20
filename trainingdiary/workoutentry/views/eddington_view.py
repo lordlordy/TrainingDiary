@@ -78,8 +78,8 @@ def eddington_view(request):
         annual_image_name = f'annual-{unit}'
         print(unit)
 
-        save_image(ltd_hist, 'ltd', unit)
-        save_image(annual_hist, 'annual', unit)
+        save_image(ltd_hist, ltd_image_name, unit)
+        save_image(annual_hist, annual_image_name, unit)
 
         for i in ltd_hist:
             ltd.append((str(i[0]), i[1], i[2], i[3]))
@@ -117,6 +117,6 @@ def save_image(data, file_name, name):
     ax.plot(df['Contributor'], 'r.', label='Contributor')
     ax.legend()
 
-    fig.savefig(os.path.join(settings.MEDIA_ROOT, file_name), bbox_inches='tight')
+    fig.savefig(os.path.join(settings.MEDIA_ROOT, f'tmp/{file_name}'), bbox_inches='tight')
 
     plt.close(fig)
