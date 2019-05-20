@@ -8,6 +8,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
+import datetime
 
 
 def eddington_view(request):
@@ -36,13 +37,12 @@ def eddington_view(request):
                 df = pd.read_csv(uploaded_file)
                 df['Date'] = pd.to_datetime(df['Date'])
                 df.dropna(inplace=True)
-                print(df)
             else:
                 df = pd.read_excel(uploaded_file)
-                print(df)
             series = pd.Series(data=list(df.iloc[0:, 1]), index=df.iloc[0:,0])
             data = default_data
-            unit = df.columns[1]
+            #  added 'now' on to ensure cached image isn't used
+            unit = f'{df.columns[1]}-{datetime.datetime.now().strftime("%Y:%m:%d:%H:%M:%S")}'
         else:
             if 'popular' in request.POST:
                 data = default_data
@@ -73,8 +73,13 @@ def eddington_view(request):
 
         ed_num, ltd_hist, annual_hist, annual_summary = DataWarehouse.instance().eddington_history(series)
 
-        save_image(ltd_hist, 'ltd.png', unit)
-        save_image(annual_hist, 'annual.png', unit)
+
+        ltd_image_name = f'ltd-{unit}'
+        annual_image_name = f'annual-{unit}'
+        print(unit)
+
+        save_image(ltd_hist, ltd_image_name, unit)
+        save_image(annual_hist, annual_image_name, unit)
 
         for i in ltd_hist:
             ltd.append((str(i[0]), i[1], i[2], i[3]))
@@ -90,8 +95,8 @@ def eddington_view(request):
                        'annual_ed_num': annual_summary[len(annual_summary)-1][1],
                        'annual': annual,
                        'annual_summary': annual_summary,
-                       'ltd_img': f'/media/ltd.png',
-                       'annual_img:': f'/media/annual.png'})
+                       'ltd_img': f'tmp/{ltd_image_name}.png',
+                       'annual_img': f'tmp/{annual_image_name}.png'})
 
     return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm(),
                                                                    'popular_form': PopularEddingtonNumberForm()})
@@ -112,5 +117,6 @@ def save_image(data, file_name, name):
     ax.plot(df['Contributor'], 'r.', label='Contributor')
     ax.legend()
 
-    fig.savefig(os.path.join(settings.MEDIA_ROOT, file_name), bbox_inches='tight')
+    fig.savefig(os.path.join(settings.MEDIA_ROOT, f'tmp/{file_name}'), bbox_inches='tight')
+
     plt.close(fig)
