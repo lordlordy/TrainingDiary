@@ -214,6 +214,13 @@ class DataWarehouse:
         annual_plus_one = 0
         current_year = time_series.index[0].year
 
+        time_series.sort_index(inplace=True)
+        print(time_series)
+        print(type(time_series))
+        print(time_series.index)
+
+
+
         for i, v in time_series.iteritems():
             if i.year != current_year:
                 annual_summary.append((current_year, annual_ed_num, annual_plus_one))

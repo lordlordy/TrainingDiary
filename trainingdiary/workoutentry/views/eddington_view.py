@@ -11,15 +11,7 @@ import pandas as pd
 
 
 def eddington_view(request):
-
-    if request.method == 'POST':
-
-        print(request.POST)
-
-        data = request.POST.dict()
-
-        if 'popular' in request.POST:
-            data = {'period': "Day",
+    default_data = {'period': "Day",
                     'aggregation': 'Sum',
                     'activity': 'All',
                     'activity_type': 'All',
@@ -34,24 +26,43 @@ def eddington_view(request):
                     'day_type': 'All',
                     }
 
-            popular_data = DataWarehouse.popular_numbers[request.POST['popular']]
-            data = {**data, **popular_data}
+    if request.method == 'POST':
+        data = request.POST.dict()
 
-        print(data)
+        if 'document' in request.FILES:
+            uploaded_file = request.FILES['document']
+            #  todo there must be a better way to check this
+            if uploaded_file.name[-3:] == 'csv':
+                df = pd.read_csv(uploaded_file)
+                df['Date'] = pd.to_datetime(df['Date'])
+                df.dropna(inplace=True)
+                print(df)
+            else:
+                df = pd.read_excel(uploaded_file)
+                print(df)
+            series = pd.Series(data=list(df.iloc[0:, 1]), index=df.iloc[0:,0])
+            data = default_data
+            unit = df.columns[1]
+        else:
+            if 'popular' in request.POST:
+                data = default_data
 
-        series, unit = DataWarehouse.instance().time_series(period=data['period'],
-                                                            aggregation=data['aggregation'],
-                                                            activity=data['activity'],
-                                                            activity_type=data['activity_type'],
-                                                            equipment=data['equipment'],
-                                                            measure=data['measure'],
-                                                            to_date=data['to_date'] == 'Yes',
-                                                            rolling=data['rolling'] == 'Yes',
-                                                            rolling_periods=int(data['rolling_periods']),
-                                                            rolling_aggregation=data['rolling_aggregation'],
-                                                            day_of_week=data['day_of_week'],
-                                                            month=data['month'],
-                                                            day_type=data['day_type'])
+                popular_data = DataWarehouse.popular_numbers[request.POST['popular']]
+                data = {**data, **popular_data}
+
+            series, unit = DataWarehouse.instance().time_series(period=data['period'],
+                                                                aggregation=data['aggregation'],
+                                                                activity=data['activity'],
+                                                                activity_type=data['activity_type'],
+                                                                equipment=data['equipment'],
+                                                                measure=data['measure'],
+                                                                to_date=data['to_date'] == 'Yes',
+                                                                rolling=data['rolling'] == 'Yes',
+                                                                rolling_periods=int(data['rolling_periods']),
+                                                                rolling_aggregation=data['rolling_aggregation'],
+                                                                day_of_week=data['day_of_week'],
+                                                                month=data['month'],
+                                                                day_type=data['day_type'])
 
         if series is None:
             return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm(),
