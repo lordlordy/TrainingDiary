@@ -70,6 +70,10 @@ def eddington_view(request):
         for i in annual_hist:
             annual.append((str(i[0]), i[1], i[2], i[3]))
 
+        ltd.sort(key=lambda x: x[0], reverse=False)
+        for l in ltd:
+            print(l)
+
         return render(request, 'workoutentry/eddington_numbers.html',
                       {'selection_form': EddingtonNumberForm(data),
                        'popular_form': PopularEddingtonNumberForm(),

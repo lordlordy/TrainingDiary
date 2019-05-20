@@ -58,21 +58,24 @@ $('#popular').select2();
 
     $(document).ready(function(){
         $('#ltd').DataTable({
-        "pagingType": "simple"
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
         });
         $('.dataTables_length').addClass('bs-select');
     });
 
     $(document).ready(function(){
         $('#annual').DataTable({
-        "pagingType": "simple"
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
         });
         $('.dataTables_length').addClass('bs-select');
     });
 
     $(document).ready(function(){
         $('#summary').DataTable({
-        "pagingType": "simple"
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
         });
         $('.dataTables_length').addClass('bs-select');
     });
