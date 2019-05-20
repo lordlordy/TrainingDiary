@@ -1,1 +1,1 @@
-from .eddington_number_form import EddingtonNumberForm
+from .eddington_number_form import EddingtonNumberForm, PopularEddingtonNumberForm

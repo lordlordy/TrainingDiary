@@ -3,6 +3,22 @@ from django.forms.widgets import Select
 from workoutentry.data_warehouse import DataWarehouse
 
 
+class PopularEddingtonNumberForm(forms.Form):
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # popular_numbers = [('Daily Bike KM', 'Daily Bike KM'),
+        #                    ('Daily Run KM', 'Daily Run KM'),
+        #                    ]
+
+        self.fields['popular'] = forms.CharField(required=True, label='',
+                                                 widget=Select(
+                                                     choices=[(k, k) for k in DataWarehouse.popular_numbers],
+                                                     attrs={'class': 'form-control', 'id': 'popular'}))
+
+
 class EddingtonNumberForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -15,7 +31,7 @@ class EddingtonNumberForm(forms.Form):
                                                   widget=Select(
                                                       choices=[(a, a) for a in dw.activities()],
                                                       attrs={'class': 'form-control', 'id': 'activity'}))
-        self.fields['activity_type'] = forms.CharField(required=True,
+        self.fields['activity_type'] = forms.CharField(required=True, label='Activity Type',
                                                        widget=Select(
                                                            choices=[(a, a) for a in dw.activity_types()],
                                                            attrs={'class': 'form-control', 'id': 'activity_type'}))
@@ -27,21 +43,21 @@ class EddingtonNumberForm(forms.Form):
                                                    widget=Select(
                                                        choices=[(i, i) for i in DataWarehouse.periods],
                                                        attrs={'class': 'form-control', 'id': 'period'}))
-        self.fields['to_date'] = forms.CharField(required=True, label='Period To Date?',
+        self.fields['to_date'] = forms.CharField(required=True, label='To Date?',
                                                    widget=Select(
                                                        choices=[('No', 'No'), ('Yes', 'Yes')],
                                                        attrs={'class': 'form-control', 'id': 'to_date'}))
-        self.fields['aggregation'] = forms.CharField(required=False, label='Period Aggregation',
+        self.fields['aggregation'] = forms.CharField(required=False, label='Aggregation',
                                                      widget=Select(
                                                          choices=[(i, i) for i in DataWarehouse.aggregators],
                                                          attrs={'class': 'form-control', 'id': 'aggregation'}))
-        self.fields['rolling'] = forms.CharField(required=True, label='Rolling Periods?',
+        self.fields['rolling'] = forms.CharField(required=True, label='Rolling?',
                                                  widget=Select(
                                                      choices=[('No', 'No'), ('Yes', 'Yes')],
                                                      attrs={'class': 'form-control', 'id': 'rolling'}))
         self.fields['rolling_periods'] = forms.IntegerField(required=True, initial=0, min_value=0,
-                                                            label='# Of Rolling Periods')
-        self.fields['rolling_aggregation'] = forms.CharField(required=False, label='Rolling Aggregation',
+                                                            label='#')
+        self.fields['rolling_aggregation'] = forms.CharField(required=False, label='Aggregation',
                                                      widget=Select(
                                                          choices=[(i, i) for i in DataWarehouse.aggregators],
                                                          attrs={'class': 'form-control', 'id': 'rolling_aggregation'}))

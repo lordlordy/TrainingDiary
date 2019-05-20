@@ -6,6 +6,16 @@ import dateutil.parser
 
 class DataWarehouse:
 
+    popular_numbers = {
+        'Daily Bike Miles': {'activity': 'Bike', 'measure': 'miles'},
+        'Daily Run Miles': {'activity': 'Run', 'measure': 'miles'},
+        'Weekly Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'W-Mon'},
+        'Weekly Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'W-Mon'},
+        'Rolling Year Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
+        'Rolling Year Bike KM': {'activity': 'Bike', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
+        'Rolling Year Run KM': {'activity': 'Run', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
+    }
+
     periods = ['Day', 'W-Mon', 'W-Tue', 'W-Wed', 'W-Thu', 'W-Fri', 'W-Sat', 'W-Sun', 'Month', 'Y-Jan',
                'Y-Feb', 'Y-Mar', 'Y-Apr', 'Y-May', 'Y-Jun', 'Y-Jul', 'Y-Aug', 'Y-Sep', 'Y-Oct', 'Y-Nov', 'Y-Dec',
                'Q-Jan', 'Q-Feb', 'Q-Mar']
@@ -78,6 +88,11 @@ class DataWarehouse:
     def time_series(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
                     measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
                     day_of_week='All', month='All', day_type='All'):
+
+        name = self._name(period=period, aggregation=aggregation, activity=activity, activity_type=activity_type,
+                          equipment=equipment, measure=measure, to_date=to_date, rolling=rolling,
+                          rolling_periods=rolling_periods, rolling_aggregation=rolling_aggregation, day_of_week=day_of_week,
+                          month=month, day_type=day_type)
 
         print(f'Period: {period}')
         print(f'aggregation: {aggregation}')
@@ -175,14 +190,13 @@ class DataWarehouse:
                 elif rolling_aggregation == DataWarehouse.MIN:
                     s = s.rolling(rolling_periods, min_periods=1).min()
 
-            return s
+            return s, name
 
         except Exception as e:
             print('Error in creating series')
             print('Series Index:')
-            print(s.index)
             print(e)
-            return None
+            return None, name
 
 
     def eddington_history(self, time_series):
@@ -215,7 +229,7 @@ class DataWarehouse:
                     # recalc +1
                     plus_one = (ed_num + 1) - ltd_contributors_to_next.size
 
-                ltd_history.append((i, ed_num, plus_one, v))
+                ltd_history.append((i.date(), ed_num, plus_one, round(v, 1)))
 
             if v >= annual_ed_num + 1:
                 # this contributes to annual
@@ -226,12 +240,50 @@ class DataWarehouse:
                     this_years_annual_contributors_to_next = this_years_annual_contributors_to_next[this_years_annual_contributors_to_next >= annual_ed_num+1]
                     # recalc +1
                     annual_plus_one = (annual_ed_num + 1) - this_years_annual_contributors_to_next.size
-                annual_history.append((i, annual_ed_num, annual_plus_one, v))
+                annual_history.append((i.date(), annual_ed_num, annual_plus_one, round(v, 1)))
 
         annual_summary.append((current_year, annual_ed_num, annual_plus_one))
 
 
         return (ed_num, ltd_history, annual_history, annual_summary)
+
+
+    def _name(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
+                    measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
+                    day_of_week='All', month='All', day_type='All'):
+
+        name_components = list()
+        period_parts = list()
+        period_parts.append(period)
+        if to_date:
+            period_parts.append(f'ToDate-{aggregation}')
+        elif aggregation != 'Sum':
+            period_parts.append(aggregation)
+        name_components.append('-'.join(period_parts))
+        if rolling:
+            name_components.append(f'Rolling-{rolling_periods}-period-{rolling_aggregation}')
+        name_components.append(activity)
+        if activity_type != 'All':
+            name_components.append(activity_type)
+        if equipment != "All":
+            name_components.append(equipment)
+        name_components.append(measure)
+
+        name = ':'.join(name_components)
+
+        day_only = list()
+        if day_of_week != 'All':
+            day_only.append(day_of_week)
+        if month != 'All':
+            day_only.append(month)
+        if day_type != 'All':
+            day_only.append(day_type)
+
+        if len(day_only) > 0:
+            day_str = ' and '.join(day_only)
+            name = f'{name} ({day_str})'
+
+        return name
 
 if __name__ == '__main__':
     s = DataWarehouse.instance().activities()

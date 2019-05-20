@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 import os
-from workoutentry.forms import EddingtonNumberForm
+from workoutentry.forms import EddingtonNumberForm, PopularEddingtonNumberForm
 from workoutentry.data_warehouse import DataWarehouse
 import matplotlib
 # this is to prevent trying to show window with image.
@@ -14,30 +14,49 @@ def eddington_view(request):
 
     if request.method == 'POST':
 
-        series = DataWarehouse.instance().time_series(period=request.POST['period'],
-                                                      aggregation=request.POST['aggregation'],
-                                                      activity=request.POST['activity'],
-                                                      activity_type=request.POST['activity_type'],
-                                                      equipment=request.POST['equipment'],
-                                                      measure=request.POST['measure'],
-                                                      to_date=request.POST['to_date'] == 'Yes',
-                                                      rolling=request.POST['rolling'] == 'Yes',
-                                                      rolling_periods=int(request.POST['rolling_periods']),
-                                                      rolling_aggregation=request.POST['rolling_aggregation'],
-                                                      day_of_week=request.POST['day_of_week'],
-                                                      month=request.POST['month'],
-                                                      day_type=request.POST['day_type'])
+        print(request.POST)
+
+        data = request.POST.dict()
+
+        if 'popular' in request.POST:
+            data = {'period': "Day",
+                    'aggregation': 'Sum',
+                    'activity': 'All',
+                    'activity_type': 'All',
+                    'equipment': 'All',
+                    'measure': 'km',
+                    'to_date': 'No',
+                    'rolling': 'No',
+                    'rolling_periods': '1',
+                    'rolling_aggregation': 'Sum',
+                    'day_of_week': 'All',
+                    'month': 'All',
+                    'day_type': 'All',
+                    }
+
+            popular_data = DataWarehouse.popular_numbers[request.POST['popular']]
+            data = {**data, **popular_data}
+
+        print(data)
+
+        series, unit = DataWarehouse.instance().time_series(period=data['period'],
+                                                            aggregation=data['aggregation'],
+                                                            activity=data['activity'],
+                                                            activity_type=data['activity_type'],
+                                                            equipment=data['equipment'],
+                                                            measure=data['measure'],
+                                                            to_date=data['to_date'] == 'Yes',
+                                                            rolling=data['rolling'] == 'Yes',
+                                                            rolling_periods=int(data['rolling_periods']),
+                                                            rolling_aggregation=data['rolling_aggregation'],
+                                                            day_of_week=data['day_of_week'],
+                                                            month=data['month'],
+                                                            day_type=data['day_type'])
 
         if series is None:
-            return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm()})
+            return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm(),
+                                                                           'popular_form': PopularEddingtonNumberForm()})
 
-        unit = (request.POST['activity']
-                + ':' + request.POST['period']
-                + ':' + request.POST['activity_type']
-                + ':' + request.POST['equipment']
-                + ':' + request.POST['measure']
-                + ':' + request.POST['aggregation']
-                )
         ltd = []
         annual = []
 
@@ -52,7 +71,8 @@ def eddington_view(request):
             annual.append((str(i[0]), i[1], i[2], i[3]))
 
         return render(request, 'workoutentry/eddington_numbers.html',
-                      {'selection_form': EddingtonNumberForm(request.POST),
+                      {'selection_form': EddingtonNumberForm(data),
+                       'popular_form': PopularEddingtonNumberForm(),
                        'unit': unit,
                        'ed_num': ed_num,
                        'ltd': ltd,
@@ -62,7 +82,8 @@ def eddington_view(request):
                        'ltd_img': f'/media/ltd.png',
                        'annual_img:': f'/media/annual.png'})
 
-    return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm()})
+    return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm(),
+                                                                   'popular_form': PopularEddingtonNumberForm()})
 
 
 def save_image(data, file_name):
