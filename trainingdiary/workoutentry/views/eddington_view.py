@@ -14,11 +14,19 @@ def eddington_view(request):
 
     if request.method == 'POST':
 
-        series = DataWarehouse.instance().time_series(request.POST['period'],
-                                                      request.POST['activity'],
-                                                      request.POST['activity_type'],
-                                                      request.POST['equipment'],
-                                                      request.POST['measure'])
+        series = DataWarehouse.instance().time_series(period=request.POST['period'],
+                                                      aggregation=request.POST['aggregation'],
+                                                      activity=request.POST['activity'],
+                                                      activity_type=request.POST['activity_type'],
+                                                      equipment=request.POST['equipment'],
+                                                      measure=request.POST['measure'],
+                                                      to_date=request.POST['to_date'] == 'Yes',
+                                                      rolling=request.POST['rolling'] == 'Yes',
+                                                      rolling_periods=int(request.POST['rolling_periods']),
+                                                      rolling_aggregation=request.POST['rolling_aggregation'],
+                                                      day_of_week=request.POST['day_of_week'],
+                                                      month=request.POST['month'],
+                                                      day_type=request.POST['day_type'])
 
         if series is None:
             return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm()})
@@ -27,13 +35,11 @@ def eddington_view(request):
                 + ':' + request.POST['period']
                 + ':' + request.POST['activity_type']
                 + ':' + request.POST['equipment']
-                + ':' + request.POST['measure'])
-        data = []
+                + ':' + request.POST['measure']
+                + ':' + request.POST['aggregation']
+                )
         ltd = []
         annual = []
-
-        for date, value in series.iteritems():
-            data.append((str(date), value))
 
         ed_num, ltd_hist, annual_hist, annual_summary = DataWarehouse.instance().eddington_history(series)
 
@@ -45,9 +51,8 @@ def eddington_view(request):
         for i in annual_hist:
             annual.append((str(i[0]), i[1], i[2], i[3]))
 
-
         return render(request, 'workoutentry/eddington_numbers.html',
-                      {'selection_form': EddingtonNumberForm(),
+                      {'selection_form': EddingtonNumberForm(request.POST),
                        'unit': unit,
                        'ed_num': ed_num,
                        'ltd': ltd,
