@@ -1,1 +1,1 @@
-from .settings import BASE_DIR
+from .settings import BASE_DIR, MEDIA_ROOT, STATICFILES_DIRS
