@@ -1,0 +1,170 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <h1 class="border-top mb-4">SUMMARY</h1>
+    <table class="table table-hover table-bordered table-striped table-sm ">
+        <thead class="thead-light">
+            <tr>
+                <th>Date</th>
+                <th>Duration</th>
+                <th>Type</th>
+                <th>Sleep</th>
+                <th>Quality</th>
+                <th>Fatigue</th>
+                <th>Motivation</th>
+                <th>KG</th>
+                <th>Fat%</th>
+                <th>HR</th>
+                <th>SDNN</th>
+                <th>rMSSD</th>
+            </tr>
+        </thead>
+        <tr >
+            <td>{{ day.date }}</td>
+            <td>{{ day.training_duration }}</td>
+            <td>{{ day.type }}</td>
+            <td>{{ day.sleep }}</td>
+            <td>{{ day.sleep_quality }}</td>
+            <td>{{ day.fatigue }}</td>
+            <td>{{ day.motivation }}</td>
+            <td>{{ day.kg }}</td>
+            <td>{{ day.fat_percentage }}</td>
+            <td>{{ day.hr }}</td>
+            <td>{{ day.sdnn }}</td>
+            <td>{{ day.rmssd }}</td>
+        </tr>
+    </table>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-3">
+        <h2 class="border-bottom mb-4">Day</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ form|crispy }}
+            </fieldset>
+            <button class="btn btn-outline-primary btn-sm" type="submit">Update</button>
+        </form>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="border-bottom mb-4">Physiologicals</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input name='value' type="number" min="50" max="100" step="0.1" value="{% if day.kg %}{{ day.kg }}{% endif %}">
+                    <input class="btn btn-outline-primary btn-sm" name="kg" type="submit" value="Update KG"/>
+                </form>
+            </div>
+            <div class="col-sm">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input name='value' type="number" min="0" max="30" step="0.1" value="{% if day.kg %}{{ day.fat_percentage }}{% endif %}">
+                    <input class="btn btn-outline-primary btn-sm" name="fat" type="submit" value="Update Fat %">
+                </form>
+            </div>
+            <div class="col-sm">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input name='value' type="number" min="20" max="200" step="1" value="{% if day.kg %}{{ day.hr }}{% endif %}">
+                    <input class="btn btn-outline-primary btn-sm" name="hr" type="submit" value="Update HR">
+                </form>
+            </div>
+            <div class="col-sm">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input name='value' type="number" min="0" max="300" step="0.1" value="{% if day.kg %}{{ day.sdnn }}{% endif %}">
+                    <input class="btn btn-outline-primary btn-sm" name="sdnn" type="submit" value="Update SDNN">
+                </form>
+            </div>
+            <div class="col-sm">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input name='value' type="number" min="0" max="300" step="0.1" value="{% if day.kg %}{{ day.rmssd }}{% endif %}">
+                    <input class="btn btn-outline-primary btn-sm" name="rmssd" type="submit" value="Update rMSSD">
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h2 class="border-bottom mb-4">Workouts</h2>
+                {% if day.id %}
+                <form action="{% url 'workout_new' day_pk=day.id %}">
+                    <input class="btn btn-outline-primary btn-sm" type="submit" value="Add Workout"/>
+                </form>
+                    <table class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                            <tr>
+                                <th></th>
+                                <th>day</th>
+                                <th>activity</th>
+                                <th>type</th>
+                                <th>duration</th>
+                                <th>rpe</th>
+                                <th>tss</th>
+                                <th>method</th>
+                                <th>km</th>
+                                <th>kj</th>
+                                <th>ascent</th>
+                                <th>reps</th>
+                                <th>cadence</th>
+                                <th>watts</th>
+                                <th>estimated?</th>
+                                <th>hr</th>
+                                <th>brick?</th>
+                            </tr>
+                        </thead>
+
+                    {% for w in day.workouts %}
+                    <tr onclick="{% url 'workout_form' w.id %}">
+                        <td>
+                            <a href="{% url 'workout_form' w.id %}" class="btn btn-outline-primary btn-sm" role="button">View</a>
+                        </td>
+                        <td>{{ w.day }}</td>
+                        <td>{{ w.activity }}</td>
+                        <td>{{ w.activity_type }}</td>
+                        <td>{{ w.duration }}</td>
+                        <td>{{ w.rpe }}</td>
+                        <td>{{ w.tss }}</td>
+                        <td>{{ w.tss_method }}</td>
+                        <td>{{ w.km }}</td>
+                        <td>{{ w.kj }}</td>
+                        <td>{{ w.ascent_metres }}</td>
+                        <td>{{ w.reps }}</td>
+                        <td>{{ w.cadence }}</td>
+                        <td>{{ w.watts }}</td>
+                        <td>{{ w.watts_estimated }}</td>
+                        <td>{{ w.heart_rate }}</td>
+                        <td>{{ w.is_brick }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+
+<script type='text/javascript'>
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+$(document).ready(function(){
+$('#type').select2();
+})
+$(document).ready(function(){
+$('#sleep_quality').select2();
+});
+</script>
+
+{% endblock %}

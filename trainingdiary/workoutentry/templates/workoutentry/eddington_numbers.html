@@ -1,0 +1,270 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block extra_scripts_start %}
+<script type='text/javascript'>
+
+$(document).ready(function(){
+$('#activity').select2();
+});
+
+$(document).ready(function(){
+$('#activity_type').select2();
+});
+
+$(document).ready(function(){
+$('#equipment').select2();
+});
+
+$(document).ready(function(){
+$('#measure').select2();
+});
+
+$(document).ready(function(){
+$('#period').select2();
+});
+
+$(document).ready(function(){
+$('#aggregation').select2();
+});
+
+$(document).ready(function(){
+$('#to_date').select2();
+});
+
+$(document).ready(function(){
+$('#rolling').select2();
+});
+
+$(document).ready(function(){
+$('#rolling_aggregation').select2();
+});
+
+$(document).ready(function(){
+$('#day_of_week').select2();
+});
+
+$(document).ready(function(){
+$('#month').select2();
+});
+
+$(document).ready(function(){
+$('#day_type').select2();
+});
+
+$(document).ready(function(){
+$('#popular').select2();
+});
+
+    $(document).ready(function(){
+        $('#ltd').DataTable({
+        "pagingType": "simple"
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    $(document).ready(function(){
+        $('#annual').DataTable({
+        "pagingType": "simple"
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    $(document).ready(function(){
+        $('#summary').DataTable({
+        "pagingType": "simple"
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="border-top mb-4">Eddington Numbers</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="border-bottom mb-4">Select</h3>
+                </div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="border-bottom mb-4">Popular:</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-10">
+                        {{ popular_form.popular | as_crispy_field }}
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-outline-primary btn-sm" type="submit">Go</button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="border-bottom mb-4">Adhoc:</h4>
+                </div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-6 mb-0">
+                        {{ selection_form.activity | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-6 mb-0">
+                        {{ selection_form.measure | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6 mb-0">
+                        {{ selection_form.activity_type | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-6 mb-0">
+                        {{ selection_form.equipment | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.period | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.to_date | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.aggregation | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.rolling | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.rolling_periods | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.rolling_aggregation | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.day_of_week | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.month | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ selection_form.day_type | as_crispy_field }}
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary btn-sm" type="submit">Update</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <h3 class="border-bottom mb-4">Life To Date:  {{ ed_num }}</h3>
+            <h4 class="border-bottom mb-4">History</h4>
+
+            <table id='ltd' class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>ed #</th>
+                    <th>+1</th>
+                    <th>contr</th>
+                </tr>
+                </thead>
+                {% for d in ltd %}
+                <tr>
+                    {% for i in d %}
+                    <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-6">
+            <h3 class="border-bottom mb-4">Annual:  {{ annual_ed_num }}</h3>
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="border-bottom mb-4">Summary</h4>
+                    <table id="summary" class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Year</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                        </tr>
+                        </thead>
+                        {% for d in annual_summary %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-6">
+                <h4 class="border-bottom mb-4">History</h4>
+                    <table id='annual' class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                            <th>contr</th>
+                        </tr>
+                        </thead>
+                        {% for d in annual %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-bottom mb-4 text-center">Life To Date {{ unit }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="/media/ltd.png">
+              </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-bottom mb-4 text-center">Annual {{ unit }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="/media/annual.png">
+              </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+    <script type="text/javascript" language="JavaScript">
+
+    </script>
+
+
+
+
+{% block extra_scripts %}
+
+
+
+{% endblock %}

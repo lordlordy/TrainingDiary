@@ -1,0 +1,183 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h2 class="border-bottom mb-4">Workouts</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div id="report_chooser" class="col-md-12">
+            <h3 class="border-bottom mb-4 ">Filter</h3>
+            <form method="post" action="{% url 'workout_list' %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-1 mb-0">
+                        {{ filter.form.activity | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ filter.form.activity_type | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ filter.form.equipment | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.tss_method | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.comments | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.keywords | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.is_race | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.watts_estimated | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.is_brick | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-1 mb-0">
+                        {{ filter.form.date_gte | as_crispy_field }}
+                        {{ filter.form.date_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ filter.form.km_gte | as_crispy_field }}
+                        {{ filter.form.km_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ filter.form.tss_gte | as_crispy_field }}
+                        {{ filter.form.tss_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.kj_gte | as_crispy_field }}
+                        {{ filter.form.kj_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.duration_gte | as_crispy_field }}
+                        {{ filter.form.duration_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.rpe_gte | as_crispy_field }}
+                        {{ filter.form.rpe_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.ascent_gte | as_crispy_field }}
+                        {{ filter.form.ascent_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.watts_gte | as_crispy_field }}
+                        {{ filter.form.watts_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.hr_gte | as_crispy_field }}
+                        {{ filter.form.hr_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.cadence_gte | as_crispy_field }}
+                        {{ filter.form.cadence_lte | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1">
+                        {{ filter.form.reps_gte | as_crispy_field }}
+                        {{ filter.form.reps_lte | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-">
+                        <button type="submit" name='workout_search' class="btn btn-outline-primary btn-sm">search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+    <div class="col-md-12">
+        <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+            <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    <th>day</th>
+                    <th>activity</th>
+                    <th>type</th>
+                    <th>equipment</th>
+                    <th>duration</th>
+                    <th>rpe</th>
+                    <th>tss</th>
+                    <th>method</th>
+                    <th>km</th>
+                    <th>kj</th>
+                    <th>ascent</th>
+                    <th>reps</th>
+                    <th>race?</th>
+                    <th>cadence</th>
+                    <th>watts</th>
+                    <th>estimated?</th>
+                    <th>hr</th>
+                    <th>brick?</th>
+                    <th>keywords</th>
+                    <th>comments</th>
+                </tr>
+            </thead>
+        {% if workouts %}
+        {% for w in workouts %}
+        <tr onclick="{% url 'workout_form' w.id %}">
+            <td>
+                <a href="{% url 'workout_form' w.id %}" class="btn btn-outline-primary btn-sm" role="button">View</a>
+            </td>
+            <td>{{ w.day }}</td>
+            <td>{{ w.activity }}</td>
+            <td>{{ w.activity_type }}</td>
+            <td>{{ w.equipment }}</td>
+            <td>{{ w.duration }}</td>
+            <td>{{ w.rpe }}</td>
+            <td>{{ w.tss }}</td>
+            <td>{{ w.tss_method }}</td>
+            <td>{{ w.km }}</td>
+            <td>{{ w.kj }}</td>
+            <td>{{ w.ascent_metres }}</td>
+            <td>{{ w.reps }}</td>
+            <td>{{ w.is_race }}</td>
+            <td>{{ w.cadence }}</td>
+            <td>{{ w.watts }}</td>
+            <td>{{ w.watts_estimated }}</td>
+            <td>{{ w.heart_rate }}</td>
+            <td>{{ w.is_brick }}</td>
+            <td>{{ w.keywords }}</td>
+            <td>{{ w.comments }}</td>
+
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </table>
+    </div>
+</div>
+    </div>
+
+
+{% endblock %}
+
+
+   {% block extra_scripts %}
+<script type='text/javascript'>
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+$(document).ready(function(){
+$('#activity').select2();
+})
+$(document).ready(function(){
+$('#activity_type').select2();
+});
+$(document).ready(function(){
+$('#tss_method').select2();
+});
+$(document).ready(function(){
+$('#equipment').select2();
+});
+</script>
+
+
+    {% endblock %}
