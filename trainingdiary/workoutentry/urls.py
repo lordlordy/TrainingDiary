@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', views.days_list_view, name='eddington_numbers'),
+    path('', views.eddington_view, name='eddington_numbers'),
     path('days/', views.days_list_view, name='day_list'),
     path('days/<int:pk>/', views.DayUpdateView.as_view(), name='day_form'),
     path('days/new/', views.DayCreateView.as_view(), name='day_new'),
