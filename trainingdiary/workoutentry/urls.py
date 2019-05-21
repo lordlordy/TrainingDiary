@@ -15,4 +15,4 @@ urlpatterns = [
     path('dairy/upload/', views.diary_upload, name='diary_upload'),
     path('eddington/', views.eddington_view, name='eddington_numbers'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
