@@ -124,6 +124,6 @@ def save_image(data, file_name, name):
     ax.plot(df['Contributor'], 'r.', label='Contributor')
     ax.legend()
 
-    fig.savefig(os.path.join(settings.MEDIA_ROOT, f'tmp/{file_name}'), bbox_inches='tight')
+    fig.savefig(os.path.join(settings.STATIC_ROOT, f'tmp/{file_name}'), bbox_inches='tight')
 
     plt.close(fig)
