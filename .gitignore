@@ -15,3 +15,4 @@ TrainingDiary.log
 Exam.py
 trainingdiary/*.sqlite3
 trainingdiary/media/*
+trainingdiary/workoutentry/static/tmp/*
