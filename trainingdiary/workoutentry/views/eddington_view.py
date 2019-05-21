@@ -78,6 +78,7 @@ def eddington_view(request):
         annual_image_name = f'annual-{unit}'
         print(unit)
         print(f'BASE_DIR: {settings.BASE_DIR}')
+        print(f'STATIC_ROOT: {settings.STATIC_ROOT}')
         print(f'MEDIA_ROOT: {settings.MEDIA_ROOT}')
         print(f'STATICFILES_DIRS: {settings.STATICFILES_DIRS}')
 
