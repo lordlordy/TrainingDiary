@@ -238,6 +238,17 @@ def save_multiplot_image(graphs, scatter_graphs, file_name, colour_map='rainbow'
             width = -float(test) / len(time_series.values)
             ax.bar(time_series.index.values, time_series.values, label=name, color=c_map(color_idx[i]),
                    align='edge', width=width, alpha=0.5)
+        elif graph.is_histogram():
+            min_x = np.nanmin(time_series.values)
+            max_x = np.nanmax(time_series.values)
+            x_width = (max_x - min_x) / graph.size()
+            # to avoid plotting loads of zeroes
+            increment = 0
+            if graph.is_day_not_rolling():
+                increment = 0.01
+            xbins = np.arange(min_x + increment, max_x + x_width, x_width)
+
+            ax.hist(time_series.values, bins=xbins, color=c_map(color_idx[i]), alpha=0.5)
         else:
             ax.plot(time_series, color=c_map(color_idx[i]), label=name, linewidth=graph.size(),
                     markersize=graph.size(), linestyle=graph.line_style(), marker=graph.marker())
@@ -281,7 +292,20 @@ def save_image(graphs, file_name, colour_map='rainbow', background='whitesmoke',
             width = -float(test) / len(time_series.values)
             ax.bar(time_series.index.values, time_series.values, label=name, color=c_map(color_idx[i]),
                    align='edge', width=width, alpha=0.5)
+        elif graph.is_histogram():
+            print('in histogram')
+            min_x = np.nanmin(time_series.values)
+            max_x = np.nanmax(time_series.values)
+            x_width = (max_x - min_x) / graph.size()
+            # to avoid plotting loads of zeroes
+            increment = 0
+            if graph.is_day_not_rolling():
+                increment = 0.01
+            xbins = np.arange(min_x + increment, max_x + x_width, x_width)
+
+            ax.hist(time_series.values, bins=xbins, color=c_map(color_idx[i]))
         else:
+            print('in time-series graph')
             ax.plot(time_series, color=c_map(color_idx[i]), label=name, linewidth=graph.size(),
                     markersize=graph.size(), linestyle=graph.line_style(), marker=graph.marker())
             if graph.is_fill():
