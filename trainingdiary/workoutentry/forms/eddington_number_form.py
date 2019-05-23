@@ -9,10 +9,6 @@ class PopularEddingtonNumberForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # popular_numbers = [('Daily Bike KM', 'Daily Bike KM'),
-        #                    ('Daily Run KM', 'Daily Run KM'),
-        #                    ]
-
         self.fields['popular'] = forms.CharField(required=True, label='',
                                                  widget=Select(
                                                      choices=[(k, k) for k in DataWarehouse.popular_numbers],

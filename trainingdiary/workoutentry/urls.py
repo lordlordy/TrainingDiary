@@ -14,5 +14,6 @@ urlpatterns = [
     path('workouts/new/<int:day_pk>', views.WorkoutCreateView.as_view(), name='workout_new'),
     path('dairy/upload/', views.diary_upload, name='diary_upload'),
     path('eddington/', views.eddington_view, name='eddington_numbers'),
+    path('graphs/', views.graph_view, name='graphs'),
 
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

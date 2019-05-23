@@ -1,0 +1,236 @@
+{% extends 'workoutentry/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_scripts_start %}
+<script type='text/javascript'>
+
+$(document).ready(function(){
+$('#activity').select2();
+});
+
+$(document).ready(function(){
+$('#activity_type').select2();
+});
+
+$(document).ready(function(){
+$('#equipment').select2();
+});
+
+$(document).ready(function(){
+$('#measure').select2();
+});
+
+$(document).ready(function(){
+$('#period').select2();
+});
+
+$(document).ready(function(){
+$('#aggregation').select2();
+});
+
+$(document).ready(function(){
+$('#to_date').select2();
+});
+
+$(document).ready(function(){
+$('#rolling').select2();
+});
+
+$(document).ready(function(){
+$('#rolling_aggregation').select2();
+});
+
+$(document).ready(function(){
+$('#day_of_week').select2();
+});
+
+$(document).ready(function(){
+$('#month').select2();
+});
+
+$(document).ready(function(){
+$('#day_type').select2();
+});
+
+$(document).ready(function(){
+$('#colour_map').select2();
+});
+
+$(document).ready(function(){
+$('#graphs').select2();
+});
+
+$(document).ready(function(){
+$('#axis').select2();
+});
+
+$(document).ready(function(){
+$('#graph_type').select2();
+});
+
+$(document).ready(function(){
+$('#background').select2();
+});
+
+
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <form method="post">
+        <div class="row">
+            <div class="col-3">
+                <!--<h2 class="border-bottom mb-4">Select</h2>-->
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="border-bottom mb-4">Create:</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-6 mb-0">
+                                {{ selection_form.activity | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-6 mb-0">
+                                {{ selection_form.measure | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-6 mb-0">
+                                {{ selection_form.activity_type | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-6 mb-0">
+                                {{ selection_form.equipment | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.period | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.to_date | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.aggregation | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.rolling | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.rolling_periods | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.rolling_aggregation | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.day_of_week | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.month | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.day_type | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.graph_type | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.axis | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.size | as_crispy_field }}
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">Add</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="border-bottom mb=4">Graphing</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-2 mb-0">
+                        {{ selection_form.colour_map | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ selection_form.background | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ selection_form.graphs | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ selection_form.from | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ selection_form.to | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="border-bottom mb-4">Graphs</h4>
+                        <table id='graph' class="table table-hover table-bordered table-striped table-sm ">
+                            <thead class="thead-light">
+                            <tr>
+                                <th></th>
+                                {% for h in graph_headings %}
+                                <th>{{ h }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            {% for g in graphs %}
+                            <tr>
+                                <td><input type="button" value="Delete" onclick="deleteRow(this)"></td>
+                                {% for k,v in g %}
+                                <td><input type="hidden" name={{k}} value={{v}}>{{ v }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        <button class="btn btn-outline-primary btn-sm btn-block" name="refresh" type="submit">Refresh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-top mb-4 text-center">{{ title }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="{% static graph_img %}">
+              </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function deleteRow(r) {
+  var i = r.parentNode.parentNode.rowIndex;
+  document.getElementById("graph").deleteRow(i);
+}
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+
+</script>
+{% endblock %}
