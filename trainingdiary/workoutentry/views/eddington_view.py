@@ -73,15 +73,8 @@ def eddington_view(request):
 
         ed_num, ltd_hist, annual_hist, annual_summary = DataWarehouse.instance().eddington_history(series)
 
-
         ltd_image_name = f'ltd-{unit}'
         annual_image_name = f'annual-{unit}'
-        print(unit)
-        print(f'BASE_DIR: {settings.BASE_DIR}')
-        print(f'STATIC_ROOT: {settings.STATIC_ROOT}')
-        print(f'MEDIA_ROOT: {settings.MEDIA_ROOT}')
-        print(f'STATICFILES_DIRS: {settings.STATICFILES_DIRS}')
-
         save_image(ltd_hist, ltd_image_name, unit)
         save_image(annual_hist, annual_image_name, unit)
 
@@ -89,9 +82,6 @@ def eddington_view(request):
             ltd.append((str(i[0]), i[1], i[2], i[3]))
         for i in annual_hist:
             annual.append((str(i[0]), i[1], i[2], i[3]))
-
-
-
 
         return render(request, 'workoutentry/eddington_numbers.html',
                       {'selection_form': EddingtonNumberForm(data),

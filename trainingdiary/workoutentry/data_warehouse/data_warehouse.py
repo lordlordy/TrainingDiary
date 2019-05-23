@@ -8,25 +8,42 @@ import trainingdiary
 
 class DataWarehouse:
 
+    PERIOD = 'period'
+    AGGREGATION = 'aggregation'
+    ACTIVITY = 'activity'
+    ACTIVITY_TYPE = 'activity_type'
+    EQUIPMENT = 'equipment'
+    MEASURE = 'measure'
+    TO_DATE = 'to_date'
+    ROLLING = 'rolling'
+    ROLLING_PERIODS = 'rolling_periods'
+    ROLLING_AGGREGATION = 'rolling_aggregation'
+    DAY_OF_WEEK = 'day_of_week'
+    MONTH = 'month'
+    DAY_TYPE = 'day_type'
+
+    TIME_SERIES_VARIABLES = [PERIOD, AGGREGATION, ACTIVITY, ACTIVITY_TYPE, EQUIPMENT, MEASURE, TO_DATE, ROLLING,
+                             ROLLING_PERIODS, ROLLING_AGGREGATION, DAY_OF_WEEK, MONTH, DAY_TYPE]
+
     popular_numbers = {
-        'Daily Swim KM': {'activity': 'Swim', 'measure': 'km'},
-        'Daily Bike Miles': {'activity': 'Bike', 'measure': 'miles'},
-        'Daily Run Miles': {'activity': 'Run', 'measure': 'miles'},
-        'Weekly Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'W-Mon'},
-        'Weekly Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'W-Mon'},
-        'Weekly Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'W-Mon'},
-        'Monthly Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Month'},
-        'Monthly Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Month'},
-        'Monthly Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Month'},
-        'Rolling Week Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '7'},
-        'Rolling Week Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '7'},
-        'Rolling Week Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '7'},
-        'Rolling Month Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '30'},
-        'Rolling Month Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '30'},
-        'Rolling Month Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '30'},
-        'Rolling Year Swim KM': {'activity': 'Swim', 'measure': 'km', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
-        'Rolling Year Bike Miles': {'activity': 'Bike', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
-        'Rolling Year Run Miles': {'activity': 'Run', 'measure': 'miles', 'period': 'Day', 'rolling': 'Yes', 'rolling_periods': '365'},
+        'Daily Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km'},
+        'Daily Bike Miles': {ACTIVITY: 'Bike', MEASURE: 'miles'},
+        'Daily Run Miles': {ACTIVITY: 'Run', MEASURE: 'miles'},
+        'Weekly Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km', PERIOD: 'W-Mon'},
+        'Weekly Bike Miles': {ACTIVITY: 'Bike', MEASURE: 'miles', PERIOD: 'W-Mon'},
+        'Weekly Run Miles': {ACTIVITY: 'Run', MEASURE: 'miles', PERIOD: 'W-Mon'},
+        'Monthly Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km', PERIOD: 'Month'},
+        'Monthly Bike Miles': {ACTIVITY: 'Bike', MEASURE: 'miles', PERIOD: 'Month'},
+        'Monthly Run Miles': {ACTIVITY: 'Run', MEASURE: 'miles', PERIOD: 'Month'},
+        'Rolling Week Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '7'},
+        'Rolling Week Bike Miles': {ACTIVITY: 'Bike', MEASURE: 'miles', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '7'},
+        'Rolling Week Run Miles': {ACTIVITY: 'Run', MEASURE: 'miles', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '7'},
+        'Rolling Month Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '30'},
+        'Rolling Month Bike Miles': {ACTIVITY: 'Bike', MEASURE: 'miles', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '30'},
+        'Rolling Month Run Miles': {ACTIVITY: 'Run', MEASURE: 'miles', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '30'},
+        'Rolling Year Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '365'},
+        'Rolling Year Bike Miles': {ACTIVITY: 'Bike', MEASURE: 'miles', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '365'},
+        'Rolling Year Run Miles': {ACTIVITY: 'Run', MEASURE: 'miles', PERIOD: 'Day', ROLLING: 'Yes', ROLLING_PERIODS: '365'},
     }
 
     periods = ['Day', 'W-Mon', 'W-Tue', 'W-Wed', 'W-Thu', 'W-Fri', 'W-Sat', 'W-Sun', 'Month', 'Y-Jan',
@@ -79,6 +96,14 @@ class DataWarehouse:
     def day_types(self):
         dt = self.__conn.execute(f'SELECT DISTINCT day_type FROM Day_All_All_All')
         return ['All'] + sorted([t[0] for t in dt])
+
+    def max_date(self):
+        date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
+        return [d[0] for d in date][0]
+
+    def min_date(self):
+        date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
+        return [d[0] for d in date][0]
 
     def activities(self):
         activities = self.__conn.execute(f'SELECT DISTINCT activity FROM Tables')
