@@ -265,7 +265,7 @@ def save_multiplot_image(graphs, scatter_graphs, file_name, share_axis, colour_m
                 increment = 0.01
             xbins = np.arange(min_x + increment, max_x + x_width, x_width)
 
-            ax.hist(time_series.values, bins=xbins, color=c_map(color_idx[i]), alpha=0.5)
+            ax.hist(time_series.values, bins=xbins, color=c_map(color_idx[i]), alpha=0.5, edgecolor='black', linewidth=1.0)
         else:
             ax.plot(time_series, color=c_map(color_idx[i]), label=name, linewidth=graph.size(),
                     markersize=graph.size(), linestyle=graph.line_style(), marker=graph.marker())
