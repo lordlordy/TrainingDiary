@@ -7,6 +7,26 @@ class ScatterGraph:
         self.x = x_graph
         self.y = y_graph
 
+    def include_histogram(self):
+        return self.x.is_histogram() or self.y.is_histogram()
+
+    def size(self):
+        return min(self.x.size(), self.y.size())
+
+    def time_series(self):
+        x_series, x_name = self.x.time_series()
+        y_series, y_name = self.y.time_series()
+
+        #  need to ensure same length
+        combined_index = x_series.index.union(y_series.index)
+        x_series = x_series.reindex(combined_index, fill_value=0)
+        y_series = y_series.reindex(combined_index, fill_value=0)
+
+        return x_series, y_series, f'X: {x_name} vs Y: {y_name}', x_name, y_name
+
+    def is_heatmap(self):
+        return self.x.is_heat() or self.y.is_heat()
+
 
 class Graph:
 
@@ -20,12 +40,13 @@ class Graph:
     T_BAR = 'Bar'
     T_POINT = 'Point'
     T_SCATTER = 'Scatter'
+    T_SCATTER_HISTOGRAM = 'Scatter-Hist'
     T_HEATMAP = 'Heatmap'
 
     AXIS_PRIMARY = 'Primary'
     AXIS_SECONDARY = 'Secondary'
 
-    GRAPH_TYPES = [T_LINE, T_FILL, T_POINT, T_BAR, T_SCATTER, T_HEATMAP]
+    GRAPH_TYPES = [T_LINE, T_FILL, T_POINT, T_BAR, T_SCATTER, T_SCATTER_HISTOGRAM, T_HEATMAP]
     GRAPH_AXES = [AXIS_PRIMARY, AXIS_SECONDARY]
 
     def __init__(self, **kwargs):
@@ -69,11 +90,22 @@ class Graph:
     def is_point(self):
         return self.__graph_dict[Graph.TYPE] == Graph.T_POINT
 
+    def is_fill(self):
+        return self.__graph_dict[Graph.TYPE] == Graph.T_FILL
+
     def is_bar(self):
         return self.__graph_dict[Graph.TYPE] == Graph.T_BAR
 
     def is_scatter(self):
-        return self.__graph_dict[Graph.TYPE] == Graph.T_SCATTER
+        return (self.__graph_dict[Graph.TYPE] == Graph.T_SCATTER
+                or self.__graph_dict[Graph.TYPE] == Graph.T_SCATTER_HISTOGRAM
+                or self.__graph_dict[Graph.TYPE] == Graph.T_HEATMAP)
+
+    def is_histogram(self):
+        return self.__graph_dict[Graph.TYPE] == Graph.T_SCATTER_HISTOGRAM
+
+    def is_heat(self):
+        return self.__graph_dict[Graph.TYPE] == Graph.T_HEATMAP
 
     def size(self):
         return self.__graph_dict[Graph.SIZE]

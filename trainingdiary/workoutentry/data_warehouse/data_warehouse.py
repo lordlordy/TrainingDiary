@@ -97,6 +97,14 @@ class DataWarehouse:
         dt = self.__conn.execute(f'SELECT DISTINCT day_type FROM Day_All_All_All')
         return ['All'] + sorted([t[0] for t in dt])
 
+    def max_date(self):
+        date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
+        return [d[0] for d in date][0]
+
+    def min_date(self):
+        date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
+        return [d[0] for d in date][0]
+
     def activities(self):
         activities = self.__conn.execute(f'SELECT DISTINCT activity FROM Tables')
         return sorted([a[0] for a in activities])

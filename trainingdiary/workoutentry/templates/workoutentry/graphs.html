@@ -58,7 +58,7 @@ $('#colour_map').select2();
 });
 
 $(document).ready(function(){
-$('#graphs').select2();
+$('#graph_display_type').select2();
 });
 
 $(document).ready(function(){
@@ -73,6 +73,10 @@ $(document).ready(function(){
 $('#background').select2();
 });
 
+$(document).ready(function(){
+$('#popular').select2();
+});
+
 
 
 </script>
@@ -81,10 +85,27 @@ $('#background').select2();
 
 {% block content %}
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-3">
+            <form method="post">
+                <div class="row">
+                    {% csrf_token %}
+                    <div class="col-9">
+                        {{ popular_form.popular | as_crispy_field }}
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">Go</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-9">
+            <h2 class="border-bottom mb=4">Graphing</h2>
+        </div>
+    </div>
     <form method="post">
         <div class="row">
             <div class="col-3">
-                <!--<h2 class="border-bottom mb-4">Select</h2>-->
                 <div class="row">
                     <div class="col-6">
                         <h5 class="border-bottom mb-4">Create:</h5>
@@ -159,11 +180,6 @@ $('#background').select2();
             </div>
             <div class="col-9">
                 <div class="row">
-                    <div class="col-12">
-                        <h2 class="border-bottom mb=4">Graphing</h2>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="form-group col-2 mb-0">
                         {{ selection_form.colour_map | as_crispy_field }}
                     </div>
@@ -171,7 +187,7 @@ $('#background').select2();
                         {{ selection_form.background | as_crispy_field }}
                     </div>
                     <div class="form-group col-2 mb-0">
-                        {{ selection_form.graphs | as_crispy_field }}
+                        {{ selection_form.graph_display_type | as_crispy_field }}
                     </div>
                     <div class="form-group col-2 mb-0">
                         {{ selection_form.from | as_crispy_field }}

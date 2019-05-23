@@ -1,9 +1,21 @@
 from .eddington_number_form import EddingtonNumberForm
-from workoutentry.data_warehouse import Graph
+from workoutentry.data_warehouse import Graph, POPULAR_GRAPHS
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from django import forms
 from django.forms.widgets import Select, TextInput
+
+
+class PopularGraphsForm(forms.Form):
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['popular'] = forms.CharField(required=True, label='',
+                                                 widget=Select(
+                                                     choices=[(k, k) for k in POPULAR_GRAPHS],
+                                                     attrs={'class': 'form-control', 'id': 'popular'}))
 
 
 class GraphForm(EddingtonNumberForm):
@@ -21,10 +33,10 @@ class GraphForm(EddingtonNumberForm):
                                                       choices=[(i, m) for i, m in GraphForm.colour_map.items()],
                                                       attrs={'class': 'form-control', 'id': 'colour_map'}))
 
-        self.fields['graphs'] = forms.CharField(required=True,
+        self.fields['graph_display_type'] = forms.CharField(required=True,
                                                   widget=Select(
                                                       choices=[(i, i) for i in GraphForm.TYPES],
-                                                      attrs={'class': 'form-control', 'id': 'graphs'}))
+                                                      attrs={'class': 'form-control', 'id': 'graph_display_type'}))
 
 
         self.fields['axis'] = forms.CharField(required=True,
@@ -39,7 +51,7 @@ class GraphForm(EddingtonNumberForm):
 
         self.fields['size'] = forms.IntegerField(required=True, initial=3, min_value=1)
 
-        self.fields['background'] =  forms.CharField(required=False,
+        self.fields['background'] = forms.CharField(required=False,
                                                     widget=Select(
                                                       choices=[(i, i) for i in mcolors.CSS4_COLORS],
                                                       attrs={'class': 'form-control', 'id': 'background'}))
@@ -49,4 +61,5 @@ class GraphForm(EddingtonNumberForm):
 
         self.fields['to'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
                                                                                   'placeholder': 'from: yyyy-mm-dd'}))
+
 
