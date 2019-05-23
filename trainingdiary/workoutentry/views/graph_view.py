@@ -230,6 +230,8 @@ def save_multiplot_image(graphs, scatter_graphs, file_name, share_axis, colour_m
 
     is_first = True
     first_ax = None
+    is_first_width = True
+    first_width = 1.0
 
     for graph in graphs:
         time_series, name = graph.time_series()
@@ -263,6 +265,12 @@ def save_multiplot_image(graphs, scatter_graphs, file_name, share_axis, colour_m
             increment = 0
             if graph.is_day_not_rolling():
                 increment = 0.01
+            if share_axis == Graph.SHARE_BOTH:
+                if is_first_width:
+                    first_width = x_width
+                    is_first_width = False
+                x_width = first_width
+
             xbins = np.arange(min_x + increment, max_x + x_width, x_width)
 
             ax.hist(time_series.values, bins=xbins, color=c_map(color_idx[i]), alpha=0.5, edgecolor='black', linewidth=1.0)
