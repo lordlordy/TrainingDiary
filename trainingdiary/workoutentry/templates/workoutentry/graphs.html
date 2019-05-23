@@ -78,6 +78,10 @@ $('#popular').select2();
 });
 
 
+$(document).ready(function(){
+$('#share_axis').select2();
+});
+
 
 </script>
 
@@ -188,6 +192,9 @@ $('#popular').select2();
                     </div>
                     <div class="form-group col-2 mb-0">
                         {{ selection_form.graph_display_type | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ selection_form.share_axis | as_crispy_field }}
                     </div>
                     <div class="form-group col-2 mb-0">
                         {{ selection_form.from | as_crispy_field }}

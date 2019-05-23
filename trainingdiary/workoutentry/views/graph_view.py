@@ -22,7 +22,6 @@ def graph_view(request):
     if request.method == 'POST':
         graphs = []
         title = "All Dates"
-        form_defaults = dict()
 
         print(request.POST)
         for key, value in request.POST.dict().items():
@@ -40,6 +39,8 @@ def graph_view(request):
                     g.append((a, popular_graph[a][i]))
                 graphs.append(g)
             display_type = popular_graph['graph_display_type']
+            share_axis = popular_graph['share_axis']
+
             kwargs = {'colour_map': GraphForm.colour_map[int(popular_graph['colour_map'])],
                       'background': popular_graph['background'],
                       'from_date': popular_graph['from'],
@@ -53,7 +54,7 @@ def graph_view(request):
             form_defaults['from'] = popular_graph['from']
             form_defaults['to'] = popular_graph['to']
             form_defaults['graph_display_type'] = display_type
-            print(form_defaults)
+            form_defaults['share_axis'] = share_axis
         else:
             form_defaults = request.POST
             if ARRAY_NAMES[0] in request.POST:
@@ -69,6 +70,7 @@ def graph_view(request):
                 graphs.append(new)
 
             display_type = request.POST['graph_display_type']
+            share_axis = request.POST['share_axis']
 
             kwargs = {'colour_map': GraphForm.colour_map[int(request.POST['colour_map'])],
                       'background': request.POST['background']}
@@ -102,7 +104,7 @@ def graph_view(request):
             if len(time_series_graphs) == 0 and len(scatter_graphs) == 1:
                 save_scatter_image(scatter_graphs[0], file_name, **kwargs)
             else:
-                save_multiplot_image(time_series_graphs, scatter_graphs, file_name, **kwargs)
+                save_multiplot_image(time_series_graphs, scatter_graphs, file_name, share_axis, **kwargs)
 
         return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(form_defaults),
                                                             'popular_form': PopularGraphsForm(),
@@ -215,7 +217,7 @@ def add_scatter_to(scatter_graph, fig, grid_spec=None, colour_map='rainbow', bac
     fig.subplots_adjust(wspace=0, hspace=0)
 
 
-def save_multiplot_image(graphs, scatter_graphs, file_name, colour_map='rainbow', background='whitesmoke',
+def save_multiplot_image(graphs, scatter_graphs, file_name, share_axis, colour_map='rainbow', background='whitesmoke',
                          from_date=datetime.date(2000,1,1), to_date=datetime.date(2020,1,1)):
 
     fig = plt.figure(figsize=[24, 13.5])
@@ -226,10 +228,25 @@ def save_multiplot_image(graphs, scatter_graphs, file_name, colour_map='rainbow'
     color_idx = np.linspace(0, 1, len(graphs))
     c_map = plt.get_cmap(colour_map)
 
+    is_first = True
+    first_ax = None
+
     for graph in graphs:
         time_series, name = graph.time_series()
         time_series = time_series.loc[from_date:to_date]
-        ax = plt.Subplot(fig, gs[i])
+        if is_first:
+            ax = plt.Subplot(fig, gs[i])
+            first_ax = ax
+            is_first = False
+        else:
+            if share_axis == Graph.SHARE_NONE:
+                ax = plt.Subplot(fig, gs[i])
+            elif share_axis == Graph.SHARE_BOTH:
+                ax = plt.Subplot(fig, gs[i], sharex=first_ax, sharey=first_ax)
+            elif share_axis == Graph.SHARE_X:
+                ax = plt.Subplot(fig, gs[i], sharex=first_ax)
+            elif share_axis == Graph.SHARE_Y:
+                ax = plt.Subplot(fig, gs[i], sharey=first_ax)
         ax.grid()
         ax.set_facecolor(background)
         ax.title.set_text(name)

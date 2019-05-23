@@ -47,8 +47,14 @@ class Graph:
     AXIS_PRIMARY = 'Primary'
     AXIS_SECONDARY = 'Secondary'
 
+    SHARE_NONE = 'None'
+    SHARE_BOTH = 'Both'
+    SHARE_X = 'X Axis'
+    SHARE_Y = 'Y Axis'
+
     GRAPH_TYPES = [T_LINE, T_FILL, T_POINT, T_BAR, T_SCATTER, T_SCATTER_HISTOGRAM, T_HEATMAP, T_HISTOGRAM]
     GRAPH_AXES = [AXIS_PRIMARY, AXIS_SECONDARY]
+    AXIS_SHARE_OPTIONS = [SHARE_NONE, SHARE_BOTH, SHARE_X, SHARE_Y]
 
     def __init__(self, **kwargs):
 

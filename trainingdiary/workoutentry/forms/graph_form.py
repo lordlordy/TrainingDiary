@@ -38,11 +38,16 @@ class GraphForm(EddingtonNumberForm):
                                                       choices=[(i, i) for i in GraphForm.TYPES],
                                                       attrs={'class': 'form-control', 'id': 'graph_display_type'}))
 
-
         self.fields['axis'] = forms.CharField(required=True,
                                                   widget=Select(
                                                       choices=[(i, i) for i in Graph.GRAPH_AXES],
                                                       attrs={'class': 'form-control', 'id': 'axis'}))
+
+
+        self.fields['share_axis'] = forms.CharField(required=True,
+                                                    widget=Select(
+                                                        choices=[(i, i) for i in Graph.AXIS_SHARE_OPTIONS],
+                                                        attrs={'class': 'form-control', 'id': 'share_axis'}))
 
         self.fields['graph_type'] = forms.CharField(required=True,
                                                     widget=Select(
