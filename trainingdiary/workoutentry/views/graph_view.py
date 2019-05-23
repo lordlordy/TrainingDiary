@@ -88,20 +88,21 @@ def graph_view(request):
             if len(title_components) > 0:
                 title = ' '.join(title_components)
 
+        file_name = f'graph-{datetime.datetime.now().strftime("%Y:%m:%d:%H:%M:%S")}'
 
         time_series_graphs, scatter_graphs = create_graphs_for_plotting(graphs)
 
         if display_type == GraphForm.SINGLE or len(graphs) == 1:
             if len(time_series_graphs) == 0:
                 if len(scatter_graphs) > 0:
-                    save_scatter_image(scatter_graphs[0], 'test', **kwargs)
+                    save_scatter_image(scatter_graphs[0], file_name, **kwargs)
             else:
-                save_image(time_series_graphs, 'test', **kwargs)
+                save_image(time_series_graphs, file_name, **kwargs)
         else:
             if len(time_series_graphs) == 0 and len(scatter_graphs) == 1:
-                save_scatter_image(scatter_graphs[0], 'test', **kwargs)
+                save_scatter_image(scatter_graphs[0], file_name, **kwargs)
             else:
-                save_multiplot_image(time_series_graphs, scatter_graphs, 'test', **kwargs)
+                save_multiplot_image(time_series_graphs, scatter_graphs, file_name, **kwargs)
 
         return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(form_defaults),
                                                             'popular_form': PopularGraphsForm(),
@@ -109,7 +110,7 @@ def graph_view(request):
                                                                                + Graph.GRAPH_VARIABLES),
                                                             'graphs': graphs,
                                                             'title': title,
-                                                            'graph_img': f'tmp/test.png'})
+                                                            'graph_img': f'tmp/{file_name}.png'})
 
     return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(), 'popular_form': PopularGraphsForm()})
 
