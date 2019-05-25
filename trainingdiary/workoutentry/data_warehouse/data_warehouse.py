@@ -58,7 +58,8 @@ class DataWarehouse:
     MAX = 'Max'
     MEDIAN = 'Median'
     MIN = 'Min'
-    aggregators = [SUM, MEAN, MAX, MEDIAN, MIN]
+    STD_DEV = 'Std_Dev'
+    aggregators = [SUM, MEAN, MAX, MEDIAN, MIN, STD_DEV]
 
     @classmethod
     def instance(cls):
@@ -215,6 +216,11 @@ class DataWarehouse:
                         s = s.groupby(pd.Grouper(freq=period)).expanding().min()
                     else:
                         s = s.groupby(pd.Grouper(freq=period)).min()
+                elif aggregation == DataWarehouse.STD_DEV:
+                    if to_date:
+                        s = s.groupby(pd.Grouper(freq=period)).expanding().std()
+                    else:
+                        s = s.groupby(pd.Grouper(freq=period)).std()
                 if to_date:
                     s = s.reset_index(level=0, drop=True)
 
@@ -229,7 +235,8 @@ class DataWarehouse:
                     s = s.rolling(rolling_periods, min_periods=1).median()
                 elif rolling_aggregation == DataWarehouse.MIN:
                     s = s.rolling(rolling_periods, min_periods=1).min()
-
+                elif rolling_aggregation == DataWarehouse.STD_DEV:
+                    s = s.rolling(rolling_periods, min_periods=1).std()
             return s, name
 
         except Exception as e:
