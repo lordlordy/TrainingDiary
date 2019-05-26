@@ -102,7 +102,7 @@ table_names = set()
 
 DB_NAME = 'training_data_warehouse.sqlite3'
 
-def populate():
+def populate(print_progress=False):
 
     st = datetime.datetime.now()
     conn = sqlite3.connect(DB_NAME)
@@ -124,14 +124,15 @@ def populate():
         for t in table_names:
             if not day_exists(d_date, t, conn):
                 execute_day_sql(conn, d_date, d['type'], day_col_names, d_values, table_name=t)
-        print(f'{datetime.datetime.now() - st} {d_date}',end='\r')
+        if print_progress:
+            print(f'{datetime.datetime.now() - st} {d_date}',end='\r')
 
     conn.commit()
     conn.close()
     print(f'{datetime.datetime.now() - st} {d_date}')
 
 
-def populate_kg_fat_percent():
+def populate_kg_fat_percent(print_progress=False):
 
     st = datetime.datetime.now()
     conn = sqlite3.connect(DB_NAME)
@@ -157,7 +158,8 @@ def populate_kg_fat_percent():
             if fat > 0:
                 fat_dates.append(d_date)
                 fat_percent.append(fatpercent)
-            print(f'{datetime.datetime.now() - st} {d_date}', end='\r')
+            if print_progress:
+                print(f'{datetime.datetime.now() - st} {d_date}', end='\r')
 
     print(f'{datetime.datetime.now() - st} {d_date}           ')
 
@@ -177,20 +179,22 @@ def populate_kg_fat_percent():
             lbs = round(value * 2.20462, 1)
             sql_str = f'UPDATE {table} SET kg={round(value,1)}, lbs={lbs} WHERE date="{str(d.date())}"'
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
         for d, value in fat_series.iteritems():
             if math.isnan(value):
                 value = 0
             sql_str = f'UPDATE {table} SET fat_percentage={round(value,1)} WHERE date="{str(d.date())}"'
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
 
     conn.commit()
     conn.close()
     print(f'100% {datetime.datetime.now() - st} {table}                   ')
 
 
-def populate_hr_sdnn_rmssd():
+def populate_hr_sdnn_rmssd(print_progress=False):
 
     st = datetime.datetime.now()
     conn = sqlite3.connect(DB_NAME)
@@ -226,7 +230,8 @@ def populate_hr_sdnn_rmssd():
             if rmssd > 0:
                 rmssd_dates.append(d_date)
                 rmssd_array.append(sdnn)
-            print(f'{datetime.datetime.now() - st} {d_date}', end='\r')
+            if print_progress:
+                print(f'{datetime.datetime.now() - st} {d_date}', end='\r')
 
     print(f'{datetime.datetime.now() - st} {d_date}')
 
@@ -247,19 +252,22 @@ def populate_hr_sdnn_rmssd():
                 value = 0
             sql_str = f'UPDATE {table} SET resting_hr={value} WHERE date="{str(d.date())}"'
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
         for d, value in sdnn_series.iteritems():
             if value is None or math.isnan(value):
                 value = 0
             sql_str = f'UPDATE {table} SET sdnn={round(value,1)} WHERE date="{str(d.date())}"'
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
         for d, value in rmssd_series.iteritems():
             if value is None or math.isnan(value):
                 value = 0
             sql_str = f'UPDATE {table} SET rmssd={round(value,1)} WHERE date="{str(d.date())}"'
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
 
     print(f'100% {datetime.datetime.now() - st} {table}', '               ')
 
@@ -273,7 +281,7 @@ def table_list(conn):
     return [r[0] for r in results]
 
 
-def calculate_all_tsb():
+def calculate_all_tsb(print_progress=False):
     st = datetime.datetime.now()
     conn = sqlite3.connect(DB_NAME)
 
@@ -301,14 +309,15 @@ def calculate_all_tsb():
                 ctl={ctl}, atl={atl}, tsb={tsb}, rpe_ctl={rpe_ctl}, rpe_atl={rpe_atl}, rpe_tsb={rpe_tsb} 
                 WHERE id={id}'''
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table_name}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table_name}', '               ', end='\r')
 
     conn.commit()
     conn.close()
     print(f'100% {datetime.datetime.now() - st} {table_name}', '               ')
 
 
-def calculate_all_strain():
+def calculate_all_strain(print_progress=False):
     st = datetime.datetime.now()
     conn = sqlite3.connect(DB_NAME)
 
@@ -334,7 +343,8 @@ def calculate_all_strain():
                 WHERE id={row['id']}
             '''
             conn.cursor().execute(sql_str)
-            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table_name}', '               ', end='\r')
+            if print_progress:
+                print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table_name}', '               ', end='\r')
 
     conn.commit()
     conn.close()
@@ -586,11 +596,15 @@ FAT = 'fat'
 HRV = 'hrv'
 TSB = 'tsb'
 STRAIN = 'strain'
+PRINT_PROGRESS = 'pp'
 
 import sys
 if __name__ == '__main__':
 
     all =day = fat = hrv = tsb = strain = False
+    print_progress = False
+    if PRINT_PROGRESS in sys.argv:
+        print_progress = True
 
     if ALL in sys.argv or len(sys.argv) == 0:
         all = True
@@ -607,21 +621,21 @@ if __name__ == '__main__':
 
     if all or day:
         print('Basic day info...')
-        populate()
+        populate(print_progress)
 
     if all or fat:
         print('KG / Fat%...')
-        populate_kg_fat_percent()
+        populate_kg_fat_percent(print_progress)
 
     if all or hrv:
         print('HRV...')
-        populate_hr_sdnn_rmssd()
+        populate_hr_sdnn_rmssd(print_progress)
 
     if all or tsb:
         print('Calculating TSB ...')
-        calculate_all_tsb()
+        calculate_all_tsb(print_progress)
 
     if all or strain:
         print('Calculating Strain ...')
-        calculate_all_strain()
+        calculate_all_strain(print_progress)
 
