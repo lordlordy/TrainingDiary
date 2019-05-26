@@ -75,15 +75,22 @@ calculated_map = [{DB_COL: 'ctl', TYPE: REAL, DEFAULT: 0.0, AGGREGATION_METHOD: 
 
 calculated_col_creation = ','.join(f"{m[DB_COL]} {m[TYPE]} DEFAULT {m[DEFAULT]}" for m in calculated_map)
 
-physiological_map = [{DB_COL: 'kg', TYPE: REAL},
-                  {DB_COL: 'lbs', TYPE: REAL},
-                  {DB_COL: 'fat_percentage', TYPE: REAL},
-                  {DB_COL: 'resting_hr', TYPE: INTEGER},
-                  {DB_COL: 'sdnn', TYPE: REAL},
-                  {DB_COL: 'rmssd', TYPE: REAL},
-                  ]
+physiological_map = [
+    {DB_COL: 'kg', TYPE: REAL, DEFAULT: 0.0},
+    {DB_COL: 'lbs', TYPE: REAL, DEFAULT: 0.0},
+    {DB_COL: 'fat_percentage', TYPE: REAL, DEFAULT: 0.0},
+    {DB_COL: 'resting_hr', TYPE: INTEGER, DEFAULT: 0.0},
+    {DB_COL: 'sdnn', TYPE: REAL, DEFAULT: 0.0},
+    {DB_COL: 'rmssd', TYPE: REAL, DEFAULT: 0.0},
+    {DB_COL: 'kg_recorded', TYPE: BOOLEAN, DEFAULT: 0},
+    {DB_COL: 'lbs_recorded', TYPE: BOOLEAN, DEFAULT: 0},
+    {DB_COL: 'fat_percentage_recorded', TYPE: BOOLEAN, DEFAULT: 0},
+    {DB_COL: 'resting_hr_recorded', TYPE: BOOLEAN, DEFAULT: 0},
+    {DB_COL: 'sdnn_recorded', TYPE: BOOLEAN, DEFAULT: 0},
+    {DB_COL: 'rmssd_recorded', TYPE: BOOLEAN, DEFAULT: 0},
+]
 
-physiological_col_creation = ','.join(f"{m[DB_COL]} {m[TYPE]}" for m in physiological_map)
+physiological_col_creation = ','.join(f"{m[DB_COL]} {m[TYPE]} DEFAULT {m[DEFAULT]}" for m in physiological_map)
 
 ACTIVITY = 'activityString'
 ACTIVITY_TYPE = 'activityTypeString'
@@ -189,6 +196,23 @@ def populate_kg_fat_percent(print_progress=False):
             if print_progress:
                 print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
 
+    print(f'100% {datetime.datetime.now() - st} {table}                   ')
+
+    print('setting flag on recorded ...')
+    kg_date_str = ', '.join([f"'{str(d)}'" for d in kg_dates])
+    fat_date_str = ', '.join([f"'{str(d)}'" for d in fat_dates])
+    t_count = 0
+    for table in t_list:
+        t_count += 1
+        sql_str = f'UPDATE {table} SET kg_recorded=1, lbs_recorded=1 WHERE date IN ({kg_date_str})'
+        conn.cursor().execute(sql_str)
+        if print_progress:
+            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+        sql_str = f'UPDATE {table} SET fat_percentage_recorded=1 WHERE date IN ({fat_date_str})'
+        conn.cursor().execute(sql_str)
+        if print_progress:
+            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+
     conn.commit()
     conn.close()
     print(f'100% {datetime.datetime.now() - st} {table}                   ')
@@ -271,8 +295,29 @@ def populate_hr_sdnn_rmssd(print_progress=False):
 
     print(f'100% {datetime.datetime.now() - st} {table}', '               ')
 
+    print('setting flag on recorded ...')
+    hr_date_str = ', '.join([f"'{str(d)}'" for d in hr_dates])
+    sdnn_date_str = ', '.join([f"'{str(d)}'" for d in sdnn_dates])
+    rmssd_date_str = ', '.join([f"'{str(d)}'" for d in rmssd_dates])
+    t_count = 0
+    for table in t_list:
+        t_count += 1
+        sql_str = f'UPDATE {table} SET resting_hr_recorded=1 WHERE date IN ({hr_date_str})'
+        conn.cursor().execute(sql_str)
+        if print_progress:
+            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+        sql_str = f'UPDATE {table} SET sdnn_recorded=1 WHERE date IN ({sdnn_date_str})'
+        conn.cursor().execute(sql_str)
+        if print_progress:
+            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+        sql_str = f'UPDATE {table} SET rmssd_recorded=1 WHERE date IN ({rmssd_date_str})'
+        conn.cursor().execute(sql_str)
+        if print_progress:
+            print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+
     conn.commit()
     conn.close()
+    print(f'100% {datetime.datetime.now() - st} {table}                   ')
 
 
 def table_list(conn):
@@ -608,15 +653,15 @@ if __name__ == '__main__':
 
     if ALL in sys.argv or len(sys.argv) == 0:
         all = True
-    elif DAY in sys.argv:
+    if DAY in sys.argv:
         day = True
-    elif FAT in sys.argv:
+    if FAT in sys.argv:
         fat = True
-    elif HRV in sys.argv:
+    if HRV in sys.argv:
         hrv = True
-    elif TSB in sys.argv:
+    if TSB in sys.argv:
         tsb = True
-    elif STRAIN in sys.argv:
+    if STRAIN in sys.argv:
         strain = True
 
     if all or day:
