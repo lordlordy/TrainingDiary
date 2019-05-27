@@ -1,6 +1,7 @@
 from django.views.generic import ListView, UpdateView, CreateView
 from django.forms.widgets import Select
 from django import forms
+from django.contrib.auth.decorators import login_required
 
 from workoutentry.models import (Workout, Day)
 from workoutentry.filters import WorkoutFilter
@@ -9,6 +10,7 @@ import datetime
 from django.shortcuts import render
 
 
+@login_required
 def workouts_list_view(request):
     context = dict()
     if request.method == 'POST':

@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 import json
 from workoutentry.models import Workout, Day, RestingHeartRate, SDNN, RMSSD, KG, FatPercentage
 import dateutil.parser
 import datetime
 
 
+@login_required
 def diary_upload(request):
     if (request.method == 'POST')and ('document' in request.FILES):
         uploaded_file = request.FILES['document']
