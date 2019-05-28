@@ -19,10 +19,10 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path('', include('workoutentry.urls')),
+    path('', include('mainsite.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    # path('workouts/', include('workoutentry.urls')),
+    path('workouts/', include('workoutentry.urls')),
 ]
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns

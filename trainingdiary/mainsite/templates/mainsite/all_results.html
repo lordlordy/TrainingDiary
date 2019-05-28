@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+ <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="border-bottom mb-4">Results</h2>
+        </div>
+        <div class="table-responsive">
+            <table id="results" class="table table-hover table-bordered table-striped table-sm ">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>date</th>
+                        <th>brand</th>
+                        <th>name</th>
+                        <th>type</th>
+                        <th>distance</th>
+                        <th>ag</th>
+                        <th>cat</th>
+                        <th>overall</th>
+                        <th>total</th>
+                        <th>swim</th>
+                        <th>t1</th>
+                        <th>bike</th>
+                        <th>t2</th>
+                        <th>run</th>
+                    </tr>
+                    </thead>
+                    {% for r in race_results %}
+                        <td>{{ r.date | date:'Y-m-d' }}</td>
+                        <td>{{ r.brand }}</td>
+                        <td>{{ r.name }}</td>
+                        <td>{{ r.type }}</td>
+                        <td>{{ r.distance }}</td>
+                        <td>{{ r.category }}</td>
+                        <td>{{ r.category_position }}</td>
+                        <td>{{ r.overall_position }}</td>
+                        <td>{{ r.total_time }}</td>
+                        <td>{{ r.swim }}</td>
+                        <td>{{ r.t1 }}</td>
+                        <td>{{ r.bike }}</td>
+                        <td>{{ r.t2 }}</td>
+                        <td>{{ r.run }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+    </div>
+ </div>
+
+
+{% endblock %}
+
+   {% block extra_scripts %}
+<script>
+    $(document).ready(function(){
+        $('#results').DataTable({
+            "pageLength": 50
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+</script>
+    {% endblock %}

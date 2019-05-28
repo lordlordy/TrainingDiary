@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com', 'lordlordy.pyt
 # Application definition
 
 INSTALLED_APPS = [
+    'mainsite.apps.MainsiteConfig',
     'workoutentry.apps.WorkoutentryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -83,6 +84,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+
+    'test': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'test.sqlite3'),
     }
 }
 

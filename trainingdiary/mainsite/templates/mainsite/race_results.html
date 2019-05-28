@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+ <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="border-bottom mb-4">Race Results</h2>
+        </div>
+        <div class="table-responsive">
+            {% for year, races in race_results.items %}
+            <ul class="borderless sm">
+                                <li class="list-group-item list-group-item-info "><h2>{{ year.year }}</h2></li>
+                {% for r in races %}
+                <li class="list-group-item">{{ r.name }} ({{ r.date | date:'d M'}}): {{ r.total_time }} {{r.category_position_str}} {{r.overall_position_str}}</li>
+                {% endfor %}
+            </ul>
+
+            {% endfor %}
+            </div>
+    </div>
+ </div>
+
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+
+
+    {% endblock %}
