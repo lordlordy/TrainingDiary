@@ -16,7 +16,7 @@ urlpatterns = [
     path('workouts/new/<int:day_pk>', login_required(views.WorkoutCreateView.as_view()), name='workout_new'),
     path('dairy/upload/', login_required(views.diary_upload), name='diary_upload'),
     path('eddington/', views.eddington_view, name='eddington_numbers'),
-    # path('accounts/profile/', views.eddington_view, name='eddington_numbers'),
     path('graphs/', views.graph_view, name='graphs'),
+    path('training_diary/summary/', views.summary_view, name='training_diary_summary'),
 
-] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]

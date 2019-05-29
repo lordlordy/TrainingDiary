@@ -14,7 +14,6 @@ def diary_upload(request):
         for d in data['days']:
             date = dateutil.parser.parse(d['iso8061DateString'])
             if Day.objects.filter(date=date).exists():
-                print(f'{date} EXISTS!!')
                 continue
             day = Day(date=date,
                       sleep=datetime.timedelta(hours=d['sleep']),
@@ -25,7 +24,6 @@ def diary_upload(request):
                       comments=d['comments'])
 
             day.save()
-            print(day)
 
             if 'workouts' in d:
                 for w in d['workouts']:
@@ -53,55 +51,47 @@ def diary_upload(request):
                                       keywords=w['keywords'],
                                       comments=w['comments'])
                     workout.save()
-                    print(workout)
         for p in data['physiologicals']:
             date = dateutil.parser.parse(p['iso8061DateString'])
-            print(date)
             if 'restingHR' in p:
                 if p['restingHR'] is not None:
                     if RestingHeartRate.objects.filter(date=date).exists():
-                        print('HR exists')
+                        pass
                     else:
                         resting_hr = RestingHeartRate(date=date, value=round(p['restingHR'],1))
                         resting_hr.save()
-                        print(resting_hr)
             if 'restingSDNN' in p:
                 if p['restingSDNN'] is not None:
                     if SDNN.objects.filter(date=date).exists():
-                        print('SDNN exists')
+                        pass
                     else:
                         sdnn = SDNN(date=date, value=round(p['restingSDNN'],1))
                         sdnn.save()
-                        print(sdnn)
 
             if 'restingRMSSD' in p:
                 if p['restingRMSSD'] is not None:
                     if RMSSD.objects.filter(date=date):
-                        print('RMSSD exists')
+                        pass
                     else:
                         rmssd = RMSSD(date=date, value=round(p['restingRMSSD'],1))
                         rmssd.save()
-                        print(rmssd)
 
         for p in data['weights']:
             date = dateutil.parser.parse(p['iso8061DateString'])
-            print(date)
             if 'kg' in p:
                 if p['kg'] is not None and p['kg'] > 0.0:
                     if KG.objects.filter(date=date).exists():
-                        print('KG exists')
+                        pass
                     else:
                         kg = KG(date=date, value=round(p['kg'],1))
                         kg.save()
-                        print(kg)
 
             if 'fatPercent' in p:
                 if p['fatPercent'] is not None and p['fatPercent'] > 0.0:
                     if FatPercentage.objects.filter(date=date).exists():
-                        print('Fat% exists')
+                        pass
                     else:
                         fat_percentage = FatPercentage(date=date, value=round(p['fatPercent'],1))
                         fat_percentage.save()
-                        print(fat_percentage)
 
     return render(request, 'workoutentry/diary_upload.html')

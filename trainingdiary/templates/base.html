@@ -58,18 +58,18 @@
         <a class="nav-link dropdown-toggle" href="#" id="nutritionDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Nutrition</a>
         <div class="dropdown-menu" aria-labelledby="nutritionDropDown">
-          <a class="dropdown-item" href="#">Dietary Dogma</a>
-          <a class="dropdown-item" href="#">Books</a>
-          <a class="dropdown-item" href="#">Useful Links</a>
+          <a class="dropdown-item" href="/nutrition/dietary-dogma/">Dietary Dogma</a>
+          <a class="dropdown-item" href="/nutrition/books/">Books</a>
+          <a class="dropdown-item" href="/nutrition/useful-links/">Useful Links</a>
         </div>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="postPetroleumDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Post Petroleum</a>
         <div class="dropdown-menu" aria-labelledby="postPetroleumDropDown">
-          <a class="dropdown-item" href="#">Dietary Dogma</a>
-          <a class="dropdown-item" href="#">Books</a>
-          <a class="dropdown-item" href="#">Useful Links</a>
+          <a class="dropdown-item" href="#">blag</a>
+          <a class="dropdown-item" href="#">blah</a>
+          <a class="dropdown-item" href="#">balb</a>
         </div>
       </li>
       <li class="nav-item">
@@ -78,11 +78,16 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'graphs' %}">Graphs</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/blog/">Blog</a>
+      </li>
 
         {% if user.is_authenticated %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="trainingDiaryDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Training Diary</a>
         <div class="dropdown-menu" aria-labelledby="trainingDiaryDropDown">
+          <a class="dropdown-item" href="{% url 'training_diary_summary' %}">Summary</a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{% url 'day_list' %}">Days</a>
           <a class="dropdown-item" href="{% url 'workout_list' %}">Workouts</a>
           <a class="dropdown-item" href="#">Physiological</a>

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load workoutentry_extras %}
+{% block content %}
+ <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="border-0 text-center">
+                <li class="list-group-item list-group-item-info "><h2>SUMMARY</h2></li>
+                {% for activity, values in ytd.items %}
+
+                <li class="list-group-item ">YTD {{activity}}: {{values.duration | duration}} {{ values.km | floatformat }}km </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+ </div>
+
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+
+
+    {% endblock %}
