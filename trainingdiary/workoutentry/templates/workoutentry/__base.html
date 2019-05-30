@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+      <title>Training Diary</title>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+      <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+      <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
+      <!--This is for searchable drop downs-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.min.css"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker.min.css"/>
+          <!--This is for searchable drop downs-->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css"/>
+
+      <!-- our custom stylesheet -->
+
+      {% block extra_head %}
+      {% endblock %}
+      {% block extra_scripts_start %}
+      {% endblock %}
+  </head>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Training Diary</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'eddington_numbers' %}">Eddington Numbers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'graphs' %}">Graphs</a>
+      </li>
+
+        {% if user.is_authenticated %}
+              <li class="nav-item">
+        <a class="nav-link" href="{% url 'diary_upload' %}">Upload</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Browse
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{% url 'day_list' %}">Days</a>
+          <a class="dropdown-item" href="{% url 'workout_list' %}">Workouts</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Physiological</a>
+        </div>
+      </li>
+        {% endif %}
+    </ul>
+      <span class="nav-item">
+          {% if user.is_authenticated %}
+
+                  <a class="nav-link" href="{% url 'logout' %}">Logout {{ user.username }}</a>
+
+          {% else %}
+        <a class="nav-link" href="{% url 'login' %}">Login</a>
+          {% endif %}
+      </span>
+  </div>
+</nav>
+<body>
+
+        <div class="container-fluid">
+            {% if messages %}
+            <h5 class="border-bottom mb-4 ">Info / Warnings / Errors</h5>
+            <ul class="messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+    <script>
+      $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+    <script type="text/javascript" language="JavaScript">
+    $(document).ready(function(){
+        $('#dataTable').DataTable({
+            "pageLength": 10
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+    </script>
+
+    {% block extra_scripts %}
+    {% endblock %}
+
+</body>
+</html>

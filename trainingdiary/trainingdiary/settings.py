@@ -31,15 +31,33 @@ ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com', 'lordlordy.pyt
 # Application definition
 
 INSTALLED_APPS = [
+    'mainsite.apps.MainsiteConfig',
     'workoutentry.apps.WorkoutentryConfig',
+    'blog.apps.BlogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'crispy_forms',
+    'django_registration',
 
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
+
+    'modelcluster',
+    'taggit',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -52,6 +70,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'trainingdiary.urls'
@@ -59,7 +80,7 @@ ROOT_URLCONF = 'trainingdiary.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,8 +103,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+
+    'training_diary_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'training_diary.sqlite3',
     }
 }
+
+DATABASE_ROUTERS = ['trainingdiary.db_routers.WorkoutEntryRouter']
 
 
 # Password validation
@@ -127,7 +155,10 @@ STATICFILES_DIRS = [
     os.path.join(STATIC_ROOT, 'tmp'),
 ]
 
-MEDIA_ROOT = ''
-MEDIA_URL = ''
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+WAGTAIL_SITE_NAME = 'Blog'

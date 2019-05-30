@@ -1,0 +1,910 @@
+[
+  {"model": "workoutentry.raceresult", "pk": 1, "fields":
+  {"date": "2005-08-21", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman UK", "category": "M35-39",
+    "overall_position": 27, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:50:45", "t1": "00:03:32", "bike": "05:44:34", "t2": "00:01:47", "run": "03:30:52",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 2, "fields":
+  {"date": "2005-10-15", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Kona", "category": "M35-39",
+    "overall_position": 289, "number_of_participants": null,
+    "category_position": 51, "number_in_category": null,
+    "swim": "01:03:00", "t1": "00:03:16", "bike": "05:18:17", "t2": "00:03:03", "run": "03:23:31",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 3, "fields":
+  {"date": "2006-07-22", "type": "Triathlon", "brand": "Independent", "distance": "Ironman", "name": "The Longest Day", "category": "M35-39",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": "00:58:00", "t1": "00:02:56", "bike": "05:04:00", "t2": "00:01:45", "run": "03:08:48",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 4, "fields":
+  {"date": "2006-11-04", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Florida", "category": "M35-39",
+    "overall_position": 43, "number_of_participants": null,
+    "category_position": 7, "number_in_category": null,
+    "swim": "00:58:13", "t1": "00:02:51", "bike": "05:11:16", "t2": "00:01:46", "run": "03:18:22",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 5, "fields":
+  {"date": "2007-05-19", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Lanzarote", "category": "M35-39",
+    "overall_position": 16, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:56:18", "t1": "00:04:51", "bike": "05:22:46", "t2": "00:02:04", "run": "03:20:35",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 6, "fields":
+  {"date": "2007-06-23", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Switzerland", "category": "M35-39",
+    "overall_position": 42, "number_of_participants": null,
+    "category_position": 11, "number_in_category": null,
+    "swim": "00:54:07", "t1": "00:01:17", "bike": "05:03:43", "t2": "00:01:17", "run": "03:24:19",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 7, "fields":
+  {"date": "2007-10-13", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Kona", "category": "M35-39",
+    "overall_position": 332, "number_of_participants": null,
+    "category_position": 66, "number_in_category": null,
+    "swim": "01:00:02", "t1": "00:03:03", "bike": "05:16:55", "t2": "00:03:43", "run": "03:37:04",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 8, "fields":
+  {"date": "2008-03-01", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman New Zealand", "category": "M35-39",
+    "overall_position": 33, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "01:00:02", "t1": "00:03:03", "bike": "05:16:55", "t2": "00:03:43", "run": "03:37:04",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 9, "fields":
+  {"date": "2008-07-06", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Germany", "category": "M35-39",
+    "overall_position": 302, "number_of_participants": null,
+    "category_position": 85, "number_in_category": null,
+    "swim": "00:49:24", "t1": "00:03:24", "bike": "05:08:22", "t2": "00:01:17", "run": "03:55:15",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 10, "fields":
+  {"date": "2008-09-17", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Wisconsin", "category": "M35-39",
+    "overall_position": 28, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:52:25", "t1": "00:05:32", "bike": "05:18:20", "t2": "00:01:35", "run": "03:25:47",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 11, "fields":
+  {"date": "2008-10-11", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Kona", "category": "M35-39",
+    "overall_position": 568, "number_of_participants": null,
+    "category_position": 136, "number_in_category": null,
+    "swim": "00:55:29", "t1": "00:02:34", "bike": "05:29:50", "t2": "00:03:30", "run": "04:00:28",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 12, "fields":
+  {"date": "2009-10-10", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Kona", "category": "M40-44",
+    "overall_position": 968, "number_of_participants": null,
+    "category_position": 172, "number_in_category": null,
+    "swim": "00:56:42", "t1": "00:03:04", "bike": "05:08:53", "t2": "00:03:39", "run": "05:16:24",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 13, "fields":
+  {"date": "2009-12-04", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Western Australia", "category": "M40-44",
+    "overall_position": 123, "number_of_participants": null,
+    "category_position": 15, "number_in_category": null,
+    "swim": "00:52:51", "t1": "00:01:50", "bike": "04:46:54", "t2": "00:02:22", "run": "04:30:23",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 14, "fields":
+  {"date": "2010-03-06", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman New Zealand", "category": "M40-44",
+    "overall_position": 95, "number_of_participants": null,
+    "category_position": 15, "number_in_category": null,
+    "swim": "00:51:19", "t1": "00:05:55", "bike": "05:09:01", "t2": "00:00:55", "run": "03:51:241",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 15, "fields":
+  {"date": "2010-05-22", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Lanzarote", "category": "M40-44",
+    "overall_position": 43, "number_of_participants": null,
+    "category_position": 9, "number_in_category": null,
+    "swim": "00:52:31", "t1": "00:03:54", "bike": "05:20:31", "t2": "00:03:24", "run": "03:32:46",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 16, "fields":
+  {"date": "2010-10-09", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Kona", "category": "M40-44",
+    "overall_position": 736, "number_of_participants": null,
+    "category_position": 140, "number_in_category": null,
+    "swim": "00:57:39", "t1": "00:02:16", "bike": "05:21:40", "t2": "00:04:17", "run": "04:01:26",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 17, "fields":
+  {"date": "2010-12-05", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Western Australia", "category": "M40-44",
+    "overall_position": 32, "number_of_participants": null,
+    "category_position": 5, "number_in_category": null,
+    "swim": "00:50:21", "t1": "00:02:20", "bike": "04:49:43", "t2": "00:01:40", "run": "03:36:53",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 18, "fields":
+  {"date": "2011-01-15", "type": "Triathlon", "brand": "Challenge", "distance": "Ironman", "name": "Challenge Wanaka", "category": "M40-44",
+    "overall_position": 12, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": "00:54:15", "t1": "00:02:48", "bike": "05:32:23", "t2": "00:01:26", "run": "03:43:27",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 19, "fields":
+  {"date": "2011-03-05", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman New Zealand", "category": "M40-44",
+    "overall_position": 186, "number_of_participants": null,
+    "category_position": 29, "number_in_category": null,
+    "swim": "00:53:03", "t1": "00:05:07", "bike": "05:22:36", "t2": "00:02:12", "run": "03:51:54",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 20, "fields":
+  {"date": "2011-07-03", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Austria", "category": "M40-44",
+    "overall_position": 135, "number_of_participants": null,
+    "category_position": 31, "number_in_category": null,
+    "swim": "00:50:42", "t1": "00:04:04", "bike": "04:58:54", "t2": "00:04:01", "run": "03:21:36",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 21, "fields":
+  {"date": "2011-09-11", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Wales", "category": "M40-44",
+    "overall_position": 82, "number_of_participants": null,
+    "category_position": 16, "number_in_category": null,
+    "swim": "00:47:43", "t1": "00:09:41", "bike": "05:50:08", "t2": "00:02:35", "run": "03:45:39",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 22, "fields":
+  {"date": "2011-10-08", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Kona", "category": "M40-44",
+    "overall_position": 1077, "number_of_participants": null,
+    "category_position": 190, "number_in_category": null,
+    "swim": "00:56:56", "t1": "00:02:55", "bike": "05:13:25", "t2": "00:04:34", "run": "04:53:34",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 23, "fields":
+  {"date": "2012-07-08", "type": "Triathlon", "brand": "Challenge", "distance": "Ironman", "name": "Challenge Roth", "category": "M40-44",
+    "overall_position": 149, "number_of_participants": null,
+    "category_position": 18, "number_in_category": null,
+    "swim": "00:47:31", "t1": "00:02:08", "bike": "05:00:16", "t2": "00:01:33", "run": "03:49:45",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 24, "fields":
+  {"date": "2012-09-16", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Wales", "category": "M40-44",
+    "overall_position": 83, "number_of_participants": null,
+    "category_position": 13, "number_in_category": null,
+    "swim": "00:48:25", "t1": "00:08:00", "bike": "05:42:22", "t2": "00:02:20", "run": "03:26:22",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 25, "fields":
+  {"date": "2012-12-09", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Western Australia", "category": "M40-44",
+    "overall_position": 257, "number_of_participants": null,
+    "category_position": 54, "number_in_category": null,
+    "swim": "00:52:16", "t1": "00:02:52", "bike": "05:11:22", "t2": "00:03:00", "run": "04:36:54",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 26, "fields":
+  {"date": "2013-09-08", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Wales", "category": "M40-44",
+    "overall_position": 97, "number_of_participants": null,
+    "category_position": 20, "number_in_category": null,
+    "swim": "00:55:53", "t1": "00:12:14", "bike": "05:56:19", "t2": "00:02:28", "run": "04:00:22",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 27, "fields":
+  {"date": "2013-11-02", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Florida", "category": "M40-44",
+    "overall_position": 280, "number_of_participants": null,
+    "category_position": 48, "number_in_category": null,
+    "swim": "00:54:56", "t1": "00:04:12", "bike": "05:00:57", "t2": "00:02:26", "run": "04:18:19",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 28, "fields":
+  {"date": "2014-07-20", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman UK", "category": "M45-49",
+    "overall_position": 86, "number_of_participants": null,
+    "category_position": 7, "number_in_category": null,
+    "swim": "00:53:32", "t1": "00:03:49", "bike": "05:40:04", "t2": "00:04:01", "run": "04:04:38",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 29, "fields":
+  {"date": "2014-09-14", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Wales", "category": "M45-49",
+    "overall_position": 135, "number_of_participants": null,
+    "category_position": 17, "number_in_category": null,
+    "swim": "00:58:26", "t1": "00:08:21", "bike": "06:14:59", "t2": "00:02:31", "run": "04:09:29",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 30, "fields":
+  {"date": "2014-10-05", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Barcelona", "category": "M45-49",
+    "overall_position": 510, "number_of_participants": null,
+    "category_position": 54, "number_in_category": null,
+    "swim": "00:52:40", "t1": "00:03:24", "bike": "04:48:04", "t2": "00:01:04", "run": "04:19:12",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 31, "fields":
+  {"date": "2015-03-29", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman South Africa", "category": "M45-49",
+    "overall_position": 271, "number_of_participants": null,
+    "category_position": 34, "number_in_category": null,
+    "swim": "00:54:08", "t1": "00:03:35", "bike": "06:08:36", "t2": "00:06:56", "run": "04:14:44",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 32, "fields":
+  {"date": "2016-05-14", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Texas", "category": "M45-49",
+    "overall_position": 181, "number_of_participants": null,
+    "category_position": 15, "number_in_category": null,
+    "swim": "00:55:11", "t1": "00:03:51", "bike": "04:11:58", "t2": "00:05:27", "run": "03:58:09",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 33, "fields":
+  {"date": "2016-09-11", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman Weymouth", "category": "M45-49",
+    "overall_position": 68, "number_of_participants": null,
+    "category_position": 14, "number_in_category": null,
+    "swim": "00:52:58", "t1": "00:06:05", "bike": "05:43:59", "t2": "00:02:16", "run": "04:08:44",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 34, "fields":
+  {"date": "2017-04-02", "type": "Triathlon", "brand": "Ironman", "distance": "Ironman", "name": "Ironman South Africa", "category": "M45-49",
+    "overall_position": 287, "number_of_participants": null,
+    "category_position": 36, "number_in_category": null,
+    "swim": "00:53:12", "t1": "00:03:53", "bike": "05:18:47", "t2": "00:03:46", "run": "04:12:28",
+    "swim_km": "3.8", "bike_km": "180.0", "run_km": "42.2", "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 35, "fields":
+  {"date": "2002-10-01", "type": "Mountain Marathon", "brand": "Karimor", "distance": "C Class", "name": "KIMM C-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 23, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 36, "fields":
+  {"date": "2003-06-01", "type": "Mountain Marathon", "brand": "Lowe Alpine", "distance": "C Class", "name": "LAMM C-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 6, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 37, "fields":
+  {"date": "2003-07-01", "type": "Mountain Marathon", "brand": "Saunders", "distance": "Kirkfell Class", "name": "SLMM Kirkfell Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 38, "fields":
+  {"date": "2003-10-01", "type": "Mountain Marathon", "brand": "Karimor", "distance": "C Class", "name": "KIMM C-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 11, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 39, "fields":
+  {"date": "2004-06-20", "type": "Mountain Marathon", "brand": "Lowe Alpine", "distance": "A Class", "name": "LAMM A-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 10, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "13:03:00",
+    "swim_km": null, "bike_km": null, "run_km": 71, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 40, "fields":
+  {"date": "2005-06-20", "type": "Mountain Marathon", "brand": "Lowe Alpine", "distance": "A Class", "name": "LAMM C-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 15, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "16:52:00",
+    "swim_km": null, "bike_km": null, "run_km": 79, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 41, "fields":
+  {"date": "2005-07-03", "type": "Mountain Marathon", "brand": "Saunders", "distance": "Kirkfell Class", "name": "SLMM Kirkfell Class", "category": "Mixed Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 12, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "12:11:00",
+    "swim_km": null, "bike_km": null, "run_km": 56, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 42, "fields":
+  {"date": "2005-10-30", "type": "Mountain Marathon", "brand": "Karimor", "distance": "C Class", "name": "KIMM C-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 6, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "08:16:00",
+    "swim_km": null, "bike_km": null, "run_km": 50, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 43, "fields":
+  {"date": "2006-06-18", "type": "Mountain Marathon", "brand": "Lowe Alpine", "distance": "A Class", "name": "LAMM A-Class", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 35, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "16:10:00",
+    "swim_km": null, "bike_km": null, "run_km": 72, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 44, "fields":
+  {"date": "2006-07-01", "type": "Mountain Marathon", "brand": "Saunders", "distance": "Kirkfell Class", "name": "SLMM Kirkfell Class", "category": "Mixed Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "11:20:00",
+    "swim_km": null, "bike_km": null, "run_km": 56, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 45, "fields":
+  {"date": "2003-07-01", "type": "Fell Run", "brand": "Independent", "distance": "", "name": "Stretton Skyline", "category": "Open",
+    "overall_position": 10, "number_of_participants": null,
+    "category_position": 10, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "03:05:55",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 46, "fields":
+  {"date": "2003-08-01", "type": "Fell Run", "brand": "Independent", "distance": "", "name": "Race The Train", "category": "Male",
+    "overall_position": 76, "number_of_participants": null,
+    "category_position": 76, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "01:43:54",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 47, "fields":
+  {"date": "2003-05-01", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "Eton Supersprint", "category": "M30-34",
+    "overall_position": 50, "number_of_participants": null,
+    "category_position": 17, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "01:02:20",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 48, "fields":
+  {"date": "2003-07-01", "type": "Triathlon", "brand": "Ironman", "distance": "Half Ironman", "name": "UK Half Ironman", "category": "M30-34",
+    "overall_position": 97, "number_of_participants": null,
+    "category_position": 29, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "04:26:49",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 49, "fields":
+  {"date": "2003-06-01", "type": "Triathlon", "brand": "Independent", "distance": "Olympic", "name": "London Triathlon", "category": "M30-34",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "02:12:28",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 50, "fields":
+  {"date": "2004-04-18", "type": "Run", "brand": "Independent", "distance": "Marathon", "name": "London Marathon", "category": "M30-34",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "02:54:29",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 51, "fields":
+  {"date": "2004-06-09", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "Leybourne Lakes Sprint", "category": "M30-34",
+    "overall_position": 2, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "00:06:66", "t1": null, "bike": "00:32:00", "t2": null, "run": "00:18:23",
+    "swim_km": 0.5, "bike_km": 20, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 52, "fields":
+  {"date": "2004-05-16", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "Eton Supersprint", "category": "M30-34",
+    "overall_position": 7, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+    "swim": "00:07:30", "t1": null, "bike": "00:29:35", "t2": null, "run": "00:17:50",
+    "swim_km": 0.5, "bike_km": 20, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 53, "fields":
+  {"date": "2004-07-17", "type": "Triathlon", "brand": "Independent", "distance": "Middle", "name": "Helvellyn Triathlon", "category": "M30-39",
+    "overall_position": 3, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+    "swim": "00:23:00", "t1": null, "bike": "01:55:00", "t2": null, "run": "1:33:00",
+    "swim_km": 1.6, "bike_km": 61, "run_km": 13, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 54, "fields":
+  {"date": "2004-08-15", "type": "Triathlon", "brand": "Independent", "distance": "Olympic", "name": "Cambridge Triathlon", "category": "M30-34",
+    "overall_position": 2, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+    "swim": "00:21:00", "t1": "00:01:14", "bike": "00:57:00", "t2": "00:00:55", "run": "00:37:00",
+    "swim_km": 1.5, "bike_km": 40, "run_km": 10, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 55, "fields":
+  {"date": "2004-08-07", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "National Relays", "category": "Male team",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": "00:07:00", "t1": null, "bike": "00:30:00", "t2": null, "run": "00:17:30",
+    "swim_km": 0.5, "bike_km": 20, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 56, "fields":
+  {"date": "2004-08-07", "type": "Run", "brand": "Independent", "distance": "10k", "name": "Eastleigh 10k", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "00:34:43",
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 56, "fields":
+  {"date": "2004-11-28", "type": "Swim", "brand": "Independent", "distance": "1500m", "name": "Barnet 1500 Gala", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "00:19:02", "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 1.5, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 57, "fields":
+  {"date": "2005-02-13", "type": "Run", "brand": "Independent", "distance": "Half Marathon", "name": "Wokingham Half Marathonn", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "01:15:31",
+    "swim_km": null, "bike_km": null, "run_km": 21.1, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 58, "fields":
+  {"date": "2005-03-13", "type": "Run", "brand": "Independent", "distance": "10k", "name": "Eastleigh 10k", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "00:33:58",
+    "swim_km": null, "bike_km": null, "run_km": 10, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 59, "fields":
+  {"date": "2005-04-17", "type": "Run", "brand": "Independent", "distance": "Marathon", "name": "London Marathon", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "02:44:32",
+    "swim_km": null, "bike_km": null, "run_km": 42.2, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 60, "fields":
+  {"date": "2005-04-17", "type": "Triathlon", "brand": "Independent", "distance": "League", "name": "UK Triathlon League", "category": "Open",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 61, "fields":
+  {"date": "2005-05-18", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "Leybourne Lakes Sprint", "category": "M35-39",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "00:06:45", "t1": null, "bike": "00:39:57", "t2": null, "run": "00:19:06",
+    "swim_km": 0.5, "bike_km": 25, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 62, "fields":
+  {"date": "2005-06-12", "type": "Triathlon", "brand": "Independent", "distance": "Olympic", "name": "Shropshire Triathlon", "category": "M35-39",
+    "overall_position": 12, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:21:38", "t1": null, "bike": "01:02:26", "t2": null, "run": "00:36:05",
+    "swim_km": 1.5, "bike_km": 40, "run_km": 10, "comments": "Swim included T1 and bike included T2"}},
+
+  {"model": "workoutentry.raceresult", "pk": 63, "fields":
+  {"date": "2005-06-25", "type": "Triathlon", "brand": "Independent", "distance": "Olympic", "name": "Dambuster Triathlon", "category": "M35-9",
+    "overall_position": 10, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:19:00", "t1": null, "bike": "01:07:56", "t2": null, "run": "00:36:00",
+    "swim_km": 1.5, "bike_km": 40, "run_km": 10, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 64, "fields":
+  {"date": "2005-09-10", "type": "Triathlon", "brand": "Independent", "distance": "Middle", "name": "Helvellyn Triathlon", "category": "M30-39",
+    "overall_position": 16, "number_of_participants": null,
+    "category_position": 13, "number_in_category": null,
+    "swim": "00:20:59", "t1": null, "bike": "01:58:05", "t2": null, "run": "01:39:54",
+    "swim_km": 1.5, "bike_km": 61, "run_km": 13, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 65, "fields":
+  {"date": "2005-08-06", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "National Relays", "category": "Mixed team",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 0.5, "bike_km": 20, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 66, "fields":
+  {"date": "2005-10-09", "type": "Triathlon", "brand": "ITU", "distance": "Olympic", "name": "World Age Group Champs, Honolulu", "category": "M35-39",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 20, "number_in_category": null,
+    "swim": "00:22:19", "t1": null, "bike": "01:05:32", "t2": "00:00:54", "run": "00:35:39",
+    "swim_km": 1.5, "bike_km": 61, "run_km": 13, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 67, "fields":
+  {"date": "2006-04-23", "type": "Run", "brand": "Independent", "distance": "Marathon", "name": "London Marathon", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "02:58:04",
+    "swim_km": null, "bike_km": null, "run_km": 42.2, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 68, "fields":
+  {"date": "2006-06-11", "type": "Triathlon", "brand": "Independent", "distance": "Olympic", "name": "Shropshire Triathlon", "category": "M35-39",
+    "overall_position": 30, "number_of_participants": null,
+    "category_position": 10, "number_in_category": null,
+    "swim": "00:22:30", "t1": null, "bike": "01:03:43", "t2": null, "run": "00:35:58",
+    "swim_km": 1.5, "bike_km": 40, "run_km": 10, "comments": "Swim included T1 and bike included T2"}},
+
+  {"model": "workoutentry.raceresult", "pk": 69, "fields":
+  {"date": "2006-06-24", "type": "Triathlon", "brand": "Independent", "distance": "Olympic", "name": "Dambuster Triathlon", "category": "M35-9",
+    "overall_position": 11, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+    "swim": "00:21:00", "t1": null, "bike": "01:09:09", "t2": null, "run": "00:36:00",
+    "swim_km": 1.5, "bike_km": 40, "run_km": 10, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 70, "fields":
+  {"date": "2006-08-05", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "National Relays", "category": "Mixed team",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+    "swim": "00:07:00", "t1": null, "bike": "00:22:00", "t2": null, "run": "00:18:00",
+    "swim_km": 0.5, "bike_km": 16, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 71, "fields":
+  {"date": "2006-09-02", "type": "Triathlon", "brand": "ITU", "distance": "Olympic", "name": "World Age Group Champs, Lausanne", "category": "M35-39",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 35, "number_in_category": null,
+    "swim": "00:21:17", "t1": null, "bike": null, "t2": null, "run": "01:56:13",
+    "swim_km": 1.5, "bike_km": 61, "run_km": 13, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 72, "fields":
+  {"date": "2006-08-13", "type": "Triathlon", "brand": "Independent", "distance": "Middle", "name": "Wensleydale Triathlon", "category": "M35-39",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": "00:30:00", "t1": null, "bike": "2:30:49", "t2": null, "run": "01:35:00",
+    "swim_km": 1.9, "bike_km": 68, "run_km": 19, "comments": ""}},
+
+   {"model": "workoutentry.raceresult", "pk": 73, "fields":
+  {"date": "2007-04-22", "type": "Run", "brand": "Independent", "distance": "Marathon", "name": "London Marathon", "category": "Open",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "03:10:54",
+    "swim_km": null, "bike_km": null, "run_km": 42.2, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 74, "fields":
+  {"date": "2007-01-01", "type": "Triathlon", "brand": "Independent", "distance": "League", "name": "UK Endurance Triathlon League", "category": "Open",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": "New record score of 632.04"}},
+
+    {"model": "workoutentry.raceresult", "pk": 75, "fields":
+  {"date": "2007-01-01", "type": "Triathlon", "brand": "Independent", "distance": "League", "name": "UK Triathlon League", "category": "Open",
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": null, "bike_km": null, "run_km": null, "comments": "New record score of 808.16"}},
+
+    {"model": "workoutentry.raceresult", "pk": 76, "fields":
+  {"date": "2007-08-11", "type": "Triathlon", "brand": "Independent", "distance": "Sprint", "name": "National Relays", "category": "Mixed team",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:07:00", "t1": null, "bike": "00:22:00", "t2": null, "run": "00:18:00",
+    "swim_km": 0.5, "bike_km": 16, "run_km": 5, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 77, "fields":
+  {"date": "2007-07-15", "type": "Triathlon", "brand": "ITU", "distance": "O2", "name": "World Long Course Champs, Lorient", "category": "M35-39",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 7, "number_in_category": null,
+    "swim": "00:44:30", "t1": "00:03:00", "bike": "01:59:39", "t2": "00:02:05", "run": "01:20:38",
+    "swim_km": 3, "bike_km": 80, "run_km": 20, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 78, "fields":
+  {"date": "2008-06-15", "type": "Triathlon", "brand": "Epic", "distance": "Camp", "name": "Epic Camp Italy", "category": null,
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "07:42:00", "t1": null, "bike": "42:20:00", "t2": null, "run": "10:02:00",
+    "swim_km": 30, "bike_km": 1205, "run_km": 110, "comments": "8 day camp"}},
+
+  {"model": "workoutentry.raceresult", "pk": 78, "fields":
+  {"date": "2008-05-03", "type": "Triathlon", "brand": "Independent", "distance": "Ultra", "name": "Mid Wales Ultra", "category": null,
+    "overall_position": 2, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "00:25:00", "t1": "00:35:00", "bike": "11:00:00", "t2": "00:10:00", "run": "06:35:00",
+    "swim_km": 1.8, "bike_km": 267, "run_km": 52, "comments": "8 day camp"}},
+
+  {"model": "workoutentry.raceresult", "pk": 79, "fields":
+  {"date": "2008-08-10", "type": "Triathlon", "brand": "Independent", "distance": "Middle", "name": "Wensleydale Triathlon", "category": null,
+    "overall_position": 16, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "00:06:00", "t1": null, "bike": "2:45:00", "t2": null, "run": "02:04:00",
+    "swim_km": 0.4, "bike_km": 68, "run_km": 19, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 80, "fields":
+  {"date": "2009-02-09", "type": "Triathlon", "brand": "Epic", "distance": "Camp", "name": "Epic Camp New Zealand", "category": null,
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": "07:33:00", "t1": null, "bike": "49:25:00", "t2": null, "run": "11:03:00",
+    "swim_km": 28.5, "bike_km": 1430, "run_km": 123, "comments": "8 day camp"}},
+
+  {"model": "workoutentry.raceresult", "pk": 81, "fields":
+  {"date": "2009-09-06", "type": "Triathlon", "brand": "Independent", "distance": "Half Ironman", "name": "Vitruvian", "category": "M40-44",
+    "overall_position": 148, "number_of_participants": null,
+    "category_position": 22, "number_in_category": null,
+    "swim": "00:24:31", "t1": "00:02:30", "bike": "2:18:45", "t2": "00:01:33", "run": "02:04:57",
+    "swim_km": 1.9, "bike_km": 85, "run_km": 21, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 82, "fields":
+  {"date": "2010-01-18", "type": "Triathlon", "brand": "Epic", "distance": "Camp", "name": "Epic Camp Length Of New Zealand", "category": null,
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": "10:47:00", "t1": null, "bike": "75:14:00", "t2": null, "run": "18:32:00",
+    "swim_km": 40.25, "bike_km": 2256, "run_km": 199, "comments": "15 day camp"}},
+
+     {"model": "workoutentry.raceresult", "pk": 83, "fields":
+  {"date": "2010-04-11", "type": "Run", "brand": "Independent", "distance": "Marathon", "name": "Taunton Marathon", "category": null,
+    "overall_position": 31, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "03:18:05",
+    "swim_km": null, "bike_km": null, "run_km": 42.2, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 84, "fields":
+  {"date": "2010-06-26", "type": "Triathlon", "brand": "ETU", "distance": "O3", "name": "ETU Long Course Champs, Vitoria-Gasteiz", "category": "M40-44",
+    "overall_position": 4, "number_of_participants": null,
+    "category_position": 4, "number_in_category": null,
+    "swim": "00:56:36", "t1": "00:01:24", "bike": "03:11:19", "t2": "00:01:07", "run": "02:22:58",
+    "swim_km": 4, "bike_km": 120, "run_km": 30, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 85, "fields":
+  {"date": "2010-06-26", "type": "Bike", "brand": "Five Passes", "distance": "Multi Day", "name": "5 Passes Tour", "category": "GC A Class",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 8, "number_in_category": null,
+    "swim": null, "t1": null, "bike": "12:52:44", "t2": null, "run": null,
+    "swim_km": null, "bike_km": 675, "run_km": null, "comments": "Time is for timed sections"}},
+
+  {"model": "workoutentry.raceresult", "pk": 86, "fields":
+  {"date": "2010-11-20", "type": "Triathlon", "brand": "Independent", "distance": "Half Ironman", "name": "South Island Half Ironman", "category": "Team",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": "00:23:18", "t1": "00:00:26", "bike": "2:16:38", "t2": "00:00:26", "run": "01:29:49",
+    "swim_km": 1.9, "bike_km": 90, "run_km": 21, "comments": "I did swim, Jo the run and James Gibson the bike"}},
+
+  {"model": "workoutentry.raceresult", "pk": 87, "fields":
+  {"date": "2010-12-23", "type": "Beer Mile", "brand": "Independent", "distance": "Mile", "name": "DCM Beer Mile", "category": null,
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": null, "t1": null, "bike": null, "t2": null, "run": "00:09:58",
+    "swim_km": null, "bike_km": null, "run_km": 1.609, "comments": "3rd Last"}},
+
+ {"model": "workoutentry.raceresult", "pk": 88, "fields":
+  {"date": "2011-06-19", "type": "Triathlon", "brand": "Ironman", "distance": "Half Ironman", "name": "UK 70.3 Wimbleball", "category": "M40-44",
+    "overall_position": 41, "number_of_participants": null,
+    "category_position": 7, "number_in_category": null,
+    "swim": "00:27:02", "t1": "00:03:54", "bike": "2:57:47", "t2": "00:02:21", "run": "01:38:05",
+    "swim_km": 1.9, "bike_km": 90, "run_km": 21, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 89, "fields":
+  {"date": "2011-08-11", "type": "Triathlon", "brand": "Epic", "distance": "Camp", "name": "Epic Camp Length Of New Zealand", "category": null,
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": "04:15:00", "t1": null, "bike": "41:45:00", "t2": null, "run": "09:34:00",
+    "swim_km": 17, "bike_km": 1081, "run_km": 97, "comments": "8 day camp"}},
+
+  {"model": "workoutentry.raceresult", "pk": 90, "fields":
+  {"date": "2012-02-26", "type": "Aquathlon", "brand": "Independent", "distance": "Std", "name": "Taunton Aquathlon", "category": "Vet",
+    "overall_position": 9, "number_of_participants": null,
+    "category_position": 4, "number_in_category": null,
+  "swim": "00:14:15", "t1": null, "bike": null, "t2": null, "run": "00:38:00",
+    "swim_km": 1, "bike_km": null, "run_km": 10, "comments": ""}},
+
+ {"model": "workoutentry.raceresult", "pk": 91, "fields":
+  {"date": "2012-06-17", "type": "Triathlon", "brand": "Ironman", "distance": "Half Ironman", "name": "UK 70.3 Wimbleball", "category": "M40-44",
+    "overall_position": 25, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+    "swim": "00:24:33", "t1": "00:04:54", "bike": "2:48:12", "t2": "00:01:58", "run": "01:32:31",
+    "swim_km": 1.9, "bike_km": 90, "run_km": 21, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 92, "fields":
+  {"date": "2013-02-17", "type": "Aquathlon", "brand": "Independent", "distance": "Std", "name": "Taunton Aquathlon", "category": "Vet",
+    "overall_position": 4, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+  "swim": "00:13:26", "t1": null, "bike": null, "t2": null, "run": "00:39:09",
+    "swim_km": 1, "bike_km": null, "run_km": 10, "comments": ""}},
+
+ {"model": "workoutentry.raceresult", "pk": 93, "fields":
+  {"date": "2013-06-16", "type": "Triathlon", "brand": "Ironman", "distance": "Half Ironman", "name": "UK 70.3 Wimbleball", "category": "M40-44",
+    "overall_position": 55, "number_of_participants": null,
+    "category_position": 4, "number_in_category": null,
+    "swim": "00:27:32", "t1": "00:05:54", "bike": "2:55:51", "t2": "00:02:23", "run": "01:47:54",
+    "swim_km": 1.9, "bike_km": 90, "run_km": 21, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 94, "fields":
+  {"date": "2014-02-16", "type": "Aquathlon", "brand": "Independent", "distance": "Std", "name": "Taunton Aquathlon", "category": "Vet",
+    "overall_position": 13, "number_of_participants": null,
+    "category_position": 7, "number_in_category": null,
+  "swim": "00:13:16", "t1": null, "bike": null, "t2": null, "run": "00:42:38",
+    "swim_km": 1, "bike_km": null, "run_km": 10, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 95, "fields":
+  {"date": "2014-09-01", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO World Championship", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": 37, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "11:24:16",
+    "swim_km": 9.6, "bike_km": null, "run_km": 65, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 96, "fields":
+  {"date": "2015-02-15", "type": "Aquathlon", "brand": "Independent", "distance": "Std", "name": "Taunton Aquathlon", "category": "Vet",
+    "overall_position": 3, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+  "swim": "00:13:14", "t1": null, "bike": null, "t2": null, "run": "00:38:20",
+    "swim_km": 1, "bike_km": null, "run_km": 10, "comments": ""}},
+
+ {"model": "workoutentry.raceresult", "pk": 97, "fields":
+  {"date": "2015-06-28", "type": "Triathlon", "brand": "Ironman", "distance": "Half Ironman", "name": "UK 70.3 Wimbleball", "category": "M45-49",
+    "overall_position": 58, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+    "swim": "00:24:28", "t1": "00:05:03", "bike": "2:57:58", "t2": "00:02:13", "run": "01:43:54",
+    "swim_km": 1.9, "bike_km": 90, "run_km": 21, "comments": ""}},
+
+ {"model": "workoutentry.raceresult", "pk": 98, "fields":
+  {"date": "2015-08-30", "type": "Triathlon", "brand": "Ironman", "distance": "Half Ironman", "name": "70.3 World Championship, Zell Am See", "category": "M45-49",
+    "overall_position": 1498, "number_of_participants": null,
+    "category_position": 165, "number_in_category": null,
+    "swim": "00:25:57", "t1": "00:05:35", "bike": "2:36:38", "t2": "00:07:25", "run": "02:21:50",
+    "swim_km": 1.9, "bike_km": 90, "run_km": 21, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 99, "fields":
+  {"date": "2016-07-10", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Engadin", "category": "Male Pair",
+    "overall_position": 29, "number_of_participants": null,
+    "category_position": 22, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "07:41:04",
+    "swim_km": 6, "bike_km": null, "run_km": 47, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 100, "fields":
+  {"date": "2016-09-24", "type": "SwimRun", "brand": "Breca", "distance": "Sprint", "name": "Breca Jersey", "category": "Mixed Pair",
+    "overall_position": 2, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "03:07:00",
+    "swim_km": 4.6, "bike_km": null, "run_km": 13.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 101, "fields":
+{"date": "2016-10-08", "type": "Run", "brand": "Independent", "distance": "Ultra", "name": "Lakes In A Day", "category": null,
+    "overall_position": 2, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "16:04:05",
+    "swim_km": null, "bike_km": null, "run_km": 81, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 102, "fields":
+  {"date": "2017-02-12", "type": "Aquathlon", "brand": "Independent", "distance": "Std", "name": "Taunton Aquathlon", "category": "M40-49",
+    "overall_position": 12, "number_of_participants": null,
+    "category_position": 3, "number_in_category": null,
+  "swim": "00:13:57", "t1": null, "bike": null, "t2": null, "run": "00:40:47",
+    "swim_km": 1, "bike_km": null, "run_km": 10, "comments": ""}},
+
+  {"model": "workoutentry.raceresult", "pk": 103, "fields":
+  {"date": "2017-04-23", "type": "Run", "brand": "Independent", "distance": "Marathon", "name": "London Marathon", "category": "M45-49",
+    "overall_position": 6140, "number_of_participants": null,
+    "category_position": 36, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "03:29:15",
+    "swim_km": null, "bike_km": null, "run_km": 42.2, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 104, "fields":
+  {"date": "2017-06-17", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Scilly Isles ", "category": "Male Pair",
+    "overall_position": 18, "number_of_participants": null,
+    "category_position": 12, "number_in_category": null,
+  "swim": "02:29:36", "t1": null, "bike": null, "t2": null, "run": "03:12:55",
+    "swim_km": 8, "bike_km": null, "run_km": 29.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 105, "fields":
+  {"date": "2017-06-18", "type": "SwimRun", "brand": "OtillO", "distance": "Sprint", "name": "OtillO Scilly Isles Sprint", "category": "Mixed Pair",
+    "overall_position": 6, "number_of_participants": null,
+    "category_position": 4, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "02:34:56",
+    "swim_km": 3.2, "bike_km": null, "run_km": 12.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 106, "fields":
+  {"date": "2017-07-08", "type": "SwimRun", "brand": "Independent", "distance": "Sprint", "name": "Clevedon Swim Run", "category": null,
+    "overall_position": 1, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "01:01:44",
+    "swim_km": 2, "bike_km": null, "run_km": 7.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 107, "fields":
+  {"date": "2017-07-23", "type": "Triathlon", "brand": "Castle Series", "distance": "Olympic", "name": "Castle Howard Standard", "category": "M40-49",
+    "overall_position": 49, "number_of_participants": null,
+    "category_position": 15, "number_in_category": null,
+  "swim": "00:22:28", "t1": "00:01:33", "bike": "01:24:39", "t2": "00:01:07", "run": "00:47:06",
+    "swim_km": 1.5, "bike_km": 45, "run_km": 10, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 108, "fields":
+  {"date": "2017-07-29", "type": "SwimRun", "brand": "Breca", "distance": "Long Course", "name": "Breca Buttermere", "category": "Male Pair",
+    "overall_position": 17, "number_of_participants": null,
+    "category_position": 13, "number_in_category": null,
+  "swim": "01:33:21", "t1": null, "bike": null, "t2": null, "run": "05:41:15",
+    "swim_km": 6.1, "bike_km": null, "run_km": 36.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 109, "fields":
+  {"date": "2017-09-09", "type": "SwimRun", "brand": "Breca", "distance": "Sprint", "name": "Breca Jersey", "category": "Mixed Pair",
+    "overall_position": 4, "number_of_participants": null,
+    "category_position": 1, "number_in_category": null,
+  "swim": "01:57:14", "t1": null, "bike": null, "t2": null, "run": "01:50:45",
+    "swim_km": 4.6, "bike_km": null, "run_km": 14.5, "comments": ""}},
+
+
+    {"model": "workoutentry.raceresult", "pk": 110, "fields":
+  {"date": "2018-04-07", "type": "SwimRun", "brand": "OtillO", "distance": "Sprint", "name": "OtillO Hvar Sprint", "category": "Mixed Pair",
+    "overall_position": 16, "number_of_participants": null,
+    "category_position": 6, "number_in_category": null,
+  "swim": "01:00:00", "t1": null, "bike": null, "t2": null, "run": "01:21:11",
+    "swim_km": 3, "bike_km": null, "run_km": 10, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 111, "fields":
+  {"date": "2018-04-08", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Hvar ", "category": "Male Pair",
+    "overall_position": 46, "number_of_participants": null,
+    "category_position": 32, "number_in_category": null,
+  "swim": "02:27:46", "t1": null, "bike": null, "t2": null, "run": "04:40:25",
+    "swim_km": 9.3, "bike_km": null, "run_km": 32.7, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 112, "fields":
+  {"date": "2018-06-09", "type": "SwimRun", "brand": "OtillO", "distance": "Sprint", "name": "OtillO Scilly Isles Sprint", "category": "Mixed Pair",
+    "overall_position": 11, "number_of_participants": null,
+    "category_position": 6, "number_in_category": null,
+  "swim": "01:10:00", "t1": null, "bike": null, "t2": null, "run": "01:25:11",
+    "swim_km": 3.2, "bike_km": null, "run_km": 12.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 113, "fields":
+  {"date": "2018-06-10", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Scilly Isles ", "category": "Male Pair",
+    "overall_position": 25, "number_of_participants": null,
+    "category_position": 18, "number_in_category": null,
+  "swim": "02:17:33", "t1": null, "bike": null, "t2": null, "run": "03:13:57",
+    "swim_km": 9.3, "bike_km": null, "run_km": 32.7, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 114, "fields":
+  {"date": "2018-07-07", "type": "SwimRun", "brand": "Breca", "distance": "Sprint", "name": "Breca Gower Sprint", "category": "Mixed Pair",
+    "overall_position": 16, "number_of_participants": null,
+    "category_position": 4, "number_in_category": null,
+  "swim": "00:45:00", "t1": null, "bike": null, "t2": null, "run": "02:15:00",
+    "swim_km": 2.5, "bike_km": null, "run_km": 18, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 115, "fields":
+  {"date": "2018-08-11", "type": "SwimRun", "brand": "Breca", "distance": "Sprint", "name": "Breca Buttermere Sprint", "category": "Mixed Pair",
+    "overall_position": 4, "number_of_participants": null,
+    "category_position": 2, "number_in_category": null,
+  "swim": "01:10:00", "t1": null, "bike": null, "t2": null, "run": "01:43:08",
+    "swim_km": 3.3, "bike_km": null, "run_km": 15.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 116, "fields":
+  {"date": "2018-08-12", "type": "SwimRun", "brand": "Breca", "distance": "Long Course", "name": "Breca Buttermere ", "category": "Male Pair",
+    "overall_position": 13, "number_of_participants": null,
+    "category_position": 9, "number_in_category": null,
+  "swim": "01:37:48", "t1": null, "bike": null, "t2": null, "run": "05:41:59",
+    "swim_km": 7, "bike_km": null, "run_km": 39, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 117, "fields":
+  {"date": "2018-10-20", "type": "SwimRun", "brand": "OtillO", "distance": "Sprint", "name": "OtillO Cannes Sprint", "category": "Mixed Pair",
+    "overall_position": 13, "number_of_participants": null,
+    "category_position": 6, "number_in_category": null,
+  "swim": "01:01:44", "t1": null, "bike": null, "t2": null, "run": "01:29:06",
+    "swim_km": 3.75, "bike_km": null, "run_km": 12.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 118, "fields":
+  {"date": "2018-10-21", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Cannes ", "category": "Male Pair",
+    "overall_position": 35, "number_of_participants": null,
+    "category_position": 27, "number_in_category": null,
+  "swim": "02:27:20", "t1": null, "bike": null, "t2": null, "run": "03:16:47",
+    "swim_km": 9.3, "bike_km": null, "run_km": 32.7, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 119, "fields":
+  {"date": "2019-04-06", "type": "SwimRun", "brand": "OtillO", "distance": "Sprint", "name": "OtillO Hvar Sprint", "category": "Mixed Pair",
+    "overall_position": 22, "number_of_participants": null,
+    "category_position": 6, "number_in_category": null,
+  "swim": "00:32:00", "t1": null, "bike": null, "t2": null, "run": "01:02:21",
+    "swim_km": 2, "bike_km": null, "run_km": 10, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 120, "fields":
+  {"date": "2019-04-07", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Hvar ", "category": "Male Pair",
+    "overall_position": 33, "number_of_participants": null,
+    "category_position": 23, "number_in_category": null,
+  "swim": "02:15:06", "t1": null, "bike": null, "t2": null, "run": "03:51:44",
+    "swim_km": 9.1, "bike_km": null, "run_km": 31.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 121, "fields":
+  {"date": "2019-04-28", "type": "Run", "brand": "Virgin", "distance": "Marathon", "name": "London Marathon ", "category": "M45-49",
+    "overall_position": 6003, "number_of_participants": null,
+    "category_position": 834, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": "03:26:57",
+    "swim_km": null, "bike_km": null, "run_km": 42.2, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 122, "fields":
+  {"date": "2019-06-08", "type": "SwimRun", "brand": "OtillO", "distance": "Sprint", "name": "OtillO Scilly Isles Sprint", "category": "Mixed Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 3.2, "bike_km": null, "run_km": 12.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 123, "fields":
+  {"date": "2019-06-09", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO Scilly Isles ", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 9.3, "bike_km": null, "run_km": 32.7, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 124, "fields":
+  {"date": "2019-08-10", "type": "SwimRun", "brand": "Breca", "distance": "Sprint", "name": "Breca Buttermere Sprint", "category": "Mixed Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 3.3, "bike_km": null, "run_km": 15.5, "comments": ""}},
+
+    {"model": "workoutentry.raceresult", "pk": 125, "fields":
+  {"date": "2019-08-11", "type": "SwimRun", "brand": "Breca", "distance": "Long Course", "name": "Breca Buttermere ", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 7, "bike_km": null, "run_km": 39, "comments": ""}},
+
+
+    {"model": "workoutentry.raceresult", "pk": 126, "fields":
+  {"date": "2019-09-02", "type": "SwimRun", "brand": "OtillO", "distance": "Long Course", "name": "OtillO World Championships ", "category": "Male Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 7, "bike_km": null, "run_km": 39, "comments": ""}},
+
+
+    {"model": "workoutentry.raceresult", "pk": 127, "fields":
+  {"date": "2019-09-07", "type": "SwimRun", "brand": "Breca", "distance": "Sprint", "name": "Breca Jersey Sprint ", "category": "Mixed Pair",
+    "overall_position": null, "number_of_participants": null,
+    "category_position": null, "number_in_category": null,
+  "swim": null, "t1": null, "bike": null, "t2": null, "run": null,
+    "swim_km": 7, "bike_km": null, "run_km": 39, "comments": ""}}
+
+
+
+]

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+{% load crispy_forms_tags %}
+
+{% block body_class %}template-blogpage{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <p class="meta">{{ page.date }}</p>
+
+{% with categories=page.categories.all %}
+    {% if page.categories.all %}
+        <h6>Posted in:</h6>
+            {% for category in page.categories.all %}
+                        <a href="{% slugurl 'categories' %}?category={{ category }}"><button class="btn btn-info btn-sm" type="button">{{ category }}</button></a>
+            {% endfor %}
+    {% endif %}
+{% endwith %}
+
+    <div class="intro">{{ page.intro }}</div>
+
+    {{ page.body|richtext }}
+
+
+    <p><a href="{{ page.get_parent.url }}">Return to blog</a></p>
+{% if page.tags.all.count %}
+    <div class="tags">
+        <h6>Tags</h6>
+        {% for tag in page.tags.all %}
+            <a href="{% slugurl 'tags' %}?tag={{ tag }}"><button class="btn btn-info btn-sm" type="button">{{ tag }}</button></a>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}
