@@ -5,7 +5,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django import forms
 from django.forms.widgets import Select
-from django.contrib.auth.decorators import login_required
 import datetime
 
 
@@ -94,7 +93,7 @@ class DayUpdateView(UpdateView):
         if physio is not None:
             physio.save()
 
-        return HttpResponseRedirect(f'/days/{day.id}')
+        return HttpResponseRedirect(f'/trainingdiary/days/{day.id}')
 
 
     def get_form(self, form_class=None):
@@ -112,7 +111,6 @@ class DayUpdateView(UpdateView):
                                                             attrs={'class': 'form-control', 'id': 'sleep_quality'}))
         return form
 
-
 class DayCreateView(CreateView):
     model = Day
     fields = ['date',
@@ -126,7 +124,7 @@ class DayCreateView(CreateView):
 
     def get_success_url(self):
         day_pk = self.object.id
-        return f'/days/{day_pk}'
+        return f'/trainingdiary/days/{day_pk}'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)

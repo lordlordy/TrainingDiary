@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+
 {% block content %}
 <div class="row">
     <h1 class="border-top mb-4">SUMMARY</h1>
@@ -117,6 +118,7 @@
                                 <th>estimated?</th>
                                 <th>hr</th>
                                 <th>brick?</th>
+                                <th></th>
                             </tr>
                         </thead>
 
@@ -141,6 +143,9 @@
                         <td>{{ w.watts_estimated }}</td>
                         <td>{{ w.heart_rate }}</td>
                         <td>{{ w.is_brick }}</td>
+                        <td>
+                            <a href="{% url 'workout_delete' w.id%}" class="btn btn-outline-danger btn-sm" role="button">DELETE</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -165,6 +170,8 @@ $('#type').select2();
 $(document).ready(function(){
 $('#sleep_quality').select2();
 });
+
+
 </script>
 
 {% endblock %}

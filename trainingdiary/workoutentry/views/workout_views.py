@@ -1,7 +1,6 @@
-from django.views.generic import ListView, UpdateView, CreateView
+from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from django.forms.widgets import Select
 from django import forms
-from django.contrib.auth.decorators import login_required
 
 from workoutentry.models import (Workout, Day)
 from workoutentry.filters import WorkoutFilter
@@ -10,7 +9,6 @@ import datetime
 from django.shortcuts import render
 
 
-@login_required
 def workouts_list_view(request):
     context = dict()
     if request.method == 'POST':
@@ -62,7 +60,7 @@ class WorkoutUpdateView(UpdateView):
 
     def get_success_url(self):
         day_pk = self.object.day.id
-        return f'/days/{day_pk}'
+        return f'/trainingdiary/days/{day_pk}'
 
     def post(self, request, *args, **kwargs):
         post_reponse = super().post(request, args, kwargs)
@@ -95,20 +93,21 @@ class WorkoutUpdateView(UpdateView):
         unique_activities_types = Workout.objects.values('activity_type').distinct()
         unique_tss_methods = Workout.objects.values('tss_method').distinct()
         unique_equipment = Workout.objects.values('equipment').distinct()
-        form.fields['activity'] = forms.CharField(required=True,
+        form.fields['activity'] = forms.CharField(required=False,
                                               widget=Select(choices=[(a['activity'], a['activity']) for a in unique_activities],
                                                             attrs={'class': 'form-control', 'id': 'activity'}))
-        form.fields['activity_type'] = forms.CharField(required=True,
+        form.fields['activity_type'] = forms.CharField(required=False,
                                               widget=Select(choices=[(a['activity_type'], a['activity_type']) for a in unique_activities_types],
                                                             attrs={'class': 'form-control', 'id': 'activity_type'}))
-        form.fields['tss_method'] = forms.CharField(required=True,
+        form.fields['tss_method'] = forms.CharField(required=False,
                                               widget=Select(choices=[(a['tss_method'], a['tss_method']) for a in unique_tss_methods],
                                                             attrs={'class': 'form-control', 'id': 'tss_method'}))
-        form.fields['equipment'] = forms.CharField(required=True,
+        form.fields['equipment'] = forms.CharField(required=False,
                                                     widget=Select(choices=[(a['equipment'], a['equipment']) for a in
                                                                            unique_equipment],
                                                                   attrs={'class': 'form-control', 'id': 'equipment'}))
         return form
+
 
 class WorkoutCreateView(CreateView):
     model = Workout
@@ -136,7 +135,7 @@ class WorkoutCreateView(CreateView):
 
     def get_success_url(self):
         day_pk = self.object.day.id
-        return f'/days/{day_pk}'
+        return f'/trainingdiary/days/{day_pk}'
 
     def form_valid(self, form):
         day = Day.objects.get(pk=self.kwargs['day_pk'])
@@ -149,17 +148,26 @@ class WorkoutCreateView(CreateView):
         unique_activities_types = Workout.objects.values('activity_type').distinct()
         unique_tss_methods = Workout.objects.values('tss_method').distinct()
         unique_equipment = Workout.objects.values('equipment').distinct()
-        form.fields['activity'] = forms.CharField(required=True,
+        form.fields['activity'] = forms.CharField(required=False,
                                               widget=Select(choices=[(a['activity'], a['activity']) for a in unique_activities],
                                                             attrs={'class': 'form-control', 'id': 'activity'}))
-        form.fields['activity_type'] = forms.CharField(required=True,
+        form.fields['activity_type'] = forms.CharField(required=False,
                                               widget=Select(choices=[(a['activity_type'], a['activity_type']) for a in unique_activities_types],
                                                             attrs={'class': 'form-control', 'id': 'activity_type'}))
-        form.fields['tss_method'] = forms.CharField(required=True,
+        form.fields['tss_method'] = forms.CharField(required=False,
                                               widget=Select(choices=[(a['tss_method'], a['tss_method']) for a in unique_tss_methods],
                                                             attrs={'class': 'form-control', 'id': 'tss_method'}))
-        form.fields['equipment'] = forms.CharField(required=True,
+        form.fields['equipment'] = forms.CharField(required=False,
                                                     widget=Select(choices=[(a['equipment'], a['equipment']) for a in
                                                                            unique_equipment],
                                                                   attrs={'class': 'form-control', 'id': 'equipment'}))
         return form
+
+
+class WorkoutDeleteView(DeleteView):
+    model = Workout
+    template_name = 'workoutentry/confirm_delete.html'
+
+    def get_success_url(self):
+        day_pk = self.object.day.id
+        return f'/trainingdiary/days/{day_pk}'

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="border-bottom mb-4">Confirm Delete</h2>
+<form method="post">
+    {% csrf_token %}
+    Are you sure you want to delete "{{ object }}" ?<br>
+    <input class="btn btn-outline-info btn-sm" type="button" value="No. Go Back" onclick="window.history.go(-1);"/>
+    <input type="submit" value="Yes. Delete" class="btn btn-outline-danger btn-sm" />
+</form>
+{% endblock %}

@@ -5,13 +5,26 @@
  <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <ul class="border-0 text-center">
+            <ul class="border-0 text-left">
                 <li class="list-group-item list-group-item-info "><h2>SUMMARY</h2></li>
-                {% for activity, values in ytd.items %}
-
-                <li class="list-group-item ">YTD {{activity}}: {{values.duration | duration}} {{ values.km | floatformat }}km </li>
-                {% endfor %}
             </ul>
+            <table class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    {% for h in headings %}
+                    <th>{{h}}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                {% for d in data %}
+                <tr>
+                    {% for i in d %}
+                    <td>{{i | summary_filter}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
         </div>
 
     </div>
