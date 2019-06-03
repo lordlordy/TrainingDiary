@@ -8,6 +8,10 @@ class RestingHeartRate(models.Model):
     def __str__(self):
         return f'{self.date.strftime("%Y-%m-%d")} HR: {self.value}'
 
+    def data_dictionary(self):
+        return {'iso8601DateString': self.date.isoformat(),
+                'value': float(self.value)}
+
 
 class RMSSD(models.Model):
     date = models.DateField(unique=True)
@@ -15,6 +19,10 @@ class RMSSD(models.Model):
 
     def __str__(self):
         return f'{self.date.strftime("%Y-%m-%d")} rMSSD: {self.value}'
+
+    def data_dictionary(self):
+        return {'iso8601DateString': self.date.isoformat(),
+                'value': float(self.value)}
 
 
 class SDNN(models.Model):
@@ -24,6 +32,10 @@ class SDNN(models.Model):
     def __str__(self):
         return f'{self.date.strftime("%Y-%m-%d")} SDNN: {self.value}'
 
+    def data_dictionary(self):
+        return {'iso8601DateString': self.date.isoformat(),
+                'value': float(self.value)}
+
 
 class KG(models.Model):
     date = models.DateField(unique=True)
@@ -32,6 +44,10 @@ class KG(models.Model):
     def __str__(self):
         return f'{self.date.strftime("%Y-%m-%d")} KG: {self.value}'
 
+    def data_dictionary(self):
+        return {'iso8601DateString': self.date.isoformat(),
+                'value': float(self.value)}
+
 
 class FatPercentage(models.Model):
     date = models.DateField(unique=True)
@@ -39,3 +55,7 @@ class FatPercentage(models.Model):
 
     def __str__(self):
         return f'{self.date.strftime("%Y-%m-%d")} Fat%: {self.value}'
+
+    def data_dictionary(self):
+        return {'iso8601DateString': self.date.isoformat(),
+                'value': float(self.value)}

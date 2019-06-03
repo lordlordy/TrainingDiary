@@ -10,7 +10,7 @@ from numpy.polynomial.polynomial import polyfit
 from django.shortcuts import render
 from django.conf import settings
 from workoutentry.forms import GraphForm, PopularGraphsForm
-from workoutentry.data_warehouse import DataWarehouse, Graph, ScatterGraph, POPULAR_GRAPHS
+from workoutentry.data_warehouse import DataWarehouse, Graph, ScatterGraph
 
 HEADINGS = DataWarehouse.TIME_SERIES_VARIABLES + Graph.GRAPH_VARIABLES
 ARRAY_NAMES = [f'{h}_array' for h in HEADINGS]
@@ -31,7 +31,7 @@ def graph_view(request):
         if 'popular' in request.POST:
             title = request.POST['popular']
 
-            popular_graph = POPULAR_GRAPHS[title]
+            popular_graph = DataWarehouse.instance().popular_graphs[title]
             for i in range(popular_graph['number_of_plots']):
                 g = []
                 for a in ARRAY_NAMES:

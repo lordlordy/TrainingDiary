@@ -1,3 +1,4 @@
 from .data_warehouse import DataWarehouse
 from .graphs import Graph, ScatterGraph
-from .popular_graphs import POPULAR_GRAPHS
+from .popular_graphs import create_popular_graphs
+from .data_warehouse_manager import DataWarehouseManager

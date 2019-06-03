@@ -9,7 +9,7 @@
         <div class="table-responsive">
             {% for year, races in race_results.items %}
             <ul class="borderless sm">
-                                <li class="list-group-item list-group-item-info "><h2>{{ year.year }}</h2></li>
+                <li class="list-group-item list-group-item-info "><h2>{{ year.year }}</h2></li>
                 {% for r in races %}
                 <li class="list-group-item">{{ r.name }} ({{ r.date | date:'d M'}}): {{ r.total_time }} {{r.category_position_str}} {{r.overall_position_str}}</li>
                 {% endfor %}

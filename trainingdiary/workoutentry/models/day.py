@@ -72,3 +72,15 @@ class Day(models.Model):
             return RMSSD.objects.get(date=self.date).value
         else:
             return None
+
+    def data_dictionary(self):
+
+        w = [w.data_dictionary() for w in self.workouts]
+        return {"type": self.type,
+                "fatigue": float(self.fatigue),
+                "iso8601DateString": self.date.isoformat(),
+                "sleepQuality": self.sleep_quality,
+                "comments": self.comments,
+                "motivation": float(self.motivation),
+                "sleep": self.sleep.seconds / (60 * 60),
+                "workouts": w}

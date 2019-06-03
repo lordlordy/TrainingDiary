@@ -1,10 +1,12 @@
 import sqlite3
 import pandas as pd
+from pandas.io.sql import DatabaseError
 import numpy as np
 import dateutil.parser
+import datetime
 import os
 import trainingdiary
-
+from .popular_graphs import create_popular_graphs
 
 class DataWarehouse:
 
@@ -63,30 +65,39 @@ class DataWarehouse:
 
     @classmethod
     def instance(cls):
-        return DataWarehouse()
+        dw = DataWarehouse()
+        if dw.base_table_built:
+            dw.popular_graphs = create_popular_graphs(dw)
+        return dw
 
     def __init__(self):
         db_path = os.path.join(trainingdiary.BASE_DIR, 'training_data_warehouse.sqlite3')
         self.__conn = sqlite3.connect(db_path)
-        # self.__conn = sqlite3.connect('training_data_warehouse.sqlite3')
+        self.__float64_cols = []
+        self.__int64_cols = []
+        self.popular_graphs = []
+        self.base_table_built = True
 
         sql_str = f'''
             SELECT * FROM Day_All_All_All
             LIMIT 0,5
         '''
 
-        df = pd.read_sql_query(sql_str, self.__conn)
+        try:
+            df = pd.read_sql_query(sql_str, self.__conn)
 
-        self.__float64_cols = []
-        self.__int64_cols = []
+            for key, value in df.dtypes.iteritems():
+                if key == 'id': continue
 
-        for key, value in df.dtypes.iteritems():
-            if key == 'id': continue
+                if value == np.float64:
+                    self.__float64_cols.append(key)
+                elif value == np.int64:
+                    self.__int64_cols.append(key)
+        except DatabaseError as e:
+            print('DataWarehouse instance not instantiated')
+            print(e)
+            self.base_table_built = False
 
-            if value == np.float64:
-                self.__float64_cols.append(key)
-            elif value == np.int64:
-                self.__int64_cols.append(key)
 
     def float_column_names(self):
         return self.__float64_cols
@@ -99,12 +110,18 @@ class DataWarehouse:
         return ['All'] + sorted([t[0] for t in dt])
 
     def max_date(self):
-        date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
-        return [d[0] for d in date][0]
+        if self.base_table_built:
+            date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
+            return [d[0] for d in date][0]
+        else:
+            return datetime.datetime.now().date()
 
     def min_date(self):
-        date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
-        return [d[0] for d in date][0]
+        if self.base_table_built:
+            date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
+            return [d[0] for d in date][0]
+        else:
+            return datetime.datetime.now().date()
 
     def activities(self):
         activities = self.__conn.execute(f'SELECT DISTINCT activity FROM Tables')
@@ -262,8 +279,6 @@ class DataWarehouse:
         print(type(time_series))
         print(time_series.index)
 
-
-
         for i, v in time_series.iteritems():
             if i.year != current_year:
                 annual_summary.append((current_year, annual_ed_num, annual_plus_one))
@@ -298,9 +313,7 @@ class DataWarehouse:
 
         annual_summary.append((current_year, annual_ed_num, annual_plus_one))
 
-
-        return (ed_num, ltd_history, annual_history, annual_summary)
-
+        return ed_num, ltd_history, annual_history, annual_summary
 
     def _name(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
                     measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
@@ -338,6 +351,33 @@ class DataWarehouse:
             name = f'{name} ({day_str})'
 
         return name
+
+    # def most_recent_kg_recorded(self):
+    #     return self.__most_recent_recorded('kg')
+    #
+    # def most_recent_fat_percentage_recorded(self):
+    #     return self.__most_recent_recorded('fat_percentage')
+    #
+    # def most_recent_resting_hr_recorded(self):
+    #     return self.__most_recent_recorded('resting_hr')
+    #
+    # def most_recent_sdnn_recorded(self):
+    #     return self.__most_recent_recorded('sdnn')
+    #
+    # def most_recent_rmssd_recorded(self):
+    #     return self.__most_recent_recorded('rmssd')
+
+    def most_recent_recorded(self, item_name, before_date=None):
+        if before_date is None:
+            sql_str = f'SELECT date, {item_name} from day_All_All_All WHERE {item_name}_recorded=1 ORDER BY date DESC LIMIT 1'
+        else:
+            sql_str = f'SELECT date, {item_name} from day_All_All_All WHERE {item_name}_recorded=1 AND date<"{before_date}" ORDER BY date DESC LIMIT 1'
+        data = self.__conn.cursor().execute(sql_str).fetchall()
+        if len(data) > 0:
+            return dateutil.parser.parse(data[0][0]).date(), data[0][1]
+        else:
+            return None, None
+
 
 if __name__ == '__main__':
     s = DataWarehouse.instance().activities()

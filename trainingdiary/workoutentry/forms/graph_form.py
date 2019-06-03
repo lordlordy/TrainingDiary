@@ -1,5 +1,5 @@
 from .eddington_number_form import EddingtonNumberForm
-from workoutentry.data_warehouse import Graph, POPULAR_GRAPHS
+from workoutentry.data_warehouse import Graph, DataWarehouse
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from django import forms
@@ -8,13 +8,12 @@ from django.forms.widgets import Select, TextInput
 
 class PopularGraphsForm(forms.Form):
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields['popular'] = forms.CharField(required=True, label='',
                                                  widget=Select(
-                                                     choices=[(k, k) for k in POPULAR_GRAPHS],
+                                                     choices=[(k, k) for k in DataWarehouse.instance().popular_graphs],
                                                      attrs={'class': 'form-control', 'id': 'popular'}))
 
 

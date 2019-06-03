@@ -28,3 +28,23 @@ class Workout(models.Model):
     def __str__(self):
         return str(self.day.date) + ':' + self.activity
 
+    def data_dictionary(self):
+        return {"hr": self.heart_rate,
+                "seconds": self.duration.seconds,
+                "ascentMetres": self.ascent_metres,
+                "activityString": self.activity,
+                "activityTypeString": self.activity_type,
+                "cadence": self.cadence,
+                "watts": self.watts,
+                "brick": self.watts_estimated,
+                "isRace": self.is_race,
+                "kj": self.kj,
+                "comments": self.comments,
+                "km": float(self.km),
+                "keywords": self.keywords,
+                "tss": float(self.tss),
+                "equipmentName": self.equipment,
+                "rpe": float(self.rpe),
+                "tssMethod": self.tss_method,
+                "reps": self.reps,
+                "wattsEstimated": self.watts_estimated}

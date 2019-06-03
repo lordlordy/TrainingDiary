@@ -1,27 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
-<div clas="container">
+<div clas="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <h2 class="border-bottom mb-4">Diary Upload</h2>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <h5 class="border-bottom mb=4">Training Diary</h5>
+        <div class="col-md-4">
+            <h5 class="border-bottom mb=4">Data Import</h5>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
                 <input class="btn btn-outline-primary btn-sm" type="file" name="document">
                 <input class="btn btn-outline-primary btn-sm" type="submit" value="Upload">
             </form>
-            <ul>
-                {% for i in info %}
-                <li>{{i}}</li>
-                {% endfor %}
-            </ul>
+        </div>
+        <div class="col-md-3">
+            <h5 class="border-bottom mb=4">Data Warehouse</h5>
+            <a href="{% url 'date_warehouse_update' %}" class="btn btn-outline-primary btn-sm" role="button">Update Data Warehoue</a>
+        </div>
+        <div class="col-md-5">
+            <h5 class="border-bottom mb=4">Data Export</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-5">
+                        <input class="datepicker form-control" name="from_date" placeholder="From: YYYY-MM-DD" type="text">
+                    </div>
+                    <div class="col-md-5">
+                        <input class="datepicker form-control" name="to_date" placeholder="To: YYYY-MM-DD" type="text">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="btn btn-outline-primary btn-sm" name="export" type="submit" value="Export"/>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+<script type='text/javascript'>
+
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+
+</script>
 
 {% endblock %}
