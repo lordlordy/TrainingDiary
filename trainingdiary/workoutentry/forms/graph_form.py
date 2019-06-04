@@ -32,7 +32,7 @@ class GraphForm(EddingtonNumberForm):
                                                       choices=[(i, m) for i, m in GraphForm.colour_map.items()],
                                                       attrs={'class': 'form-control', 'id': 'colour_map'}))
 
-        self.fields['graph_display_type'] = forms.CharField(required=True,
+        self.fields['graph_display_type'] = forms.CharField(required=True, label='Type',
                                                   widget=Select(
                                                       choices=[(i, i) for i in GraphForm.TYPES],
                                                       attrs={'class': 'form-control', 'id': 'graph_display_type'}))
@@ -61,9 +61,9 @@ class GraphForm(EddingtonNumberForm):
                                                       attrs={'class': 'form-control', 'id': 'background'}))
 
         self.fields['from'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
-                                                                                    'placeholder': 'from: yyyy-mm-dd'}))
+                                                                                    'placeholder': 'yyyy-mm-dd'}))
 
         self.fields['to'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
-                                                                                  'placeholder': 'from: yyyy-mm-dd'}))
+                                                                                  'placeholder': 'yyyy-mm-dd'}))
 
 

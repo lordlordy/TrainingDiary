@@ -15,7 +15,9 @@ urlpatterns = [
     path('dairy/upload/', login_required(views.diary_upload), name='diary_upload'),
     path('warehouse/update/', login_required(views.data_warehouse_update), name='date_warehouse_update'),
     path('eddington/', views.eddington_view, name='eddington_numbers'),
+    path('eddington/simple', views.popular_eddington_view, name='eddington_numbers_simple'),
     path('graphs/', views.graph_view, name='graphs'),
+    path('graphs/popular', views.popular_graph_view, name='popular_graphs'),
     path('training_diary/summary/', views.summary_view, name='training_diary_summary'),
 
 ]

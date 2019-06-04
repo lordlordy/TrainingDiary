@@ -18,6 +18,14 @@ HEADING_MAPPINGS = dict(zip(ARRAY_NAMES, HEADINGS))
 
 
 def graph_view(request):
+    return _graph_view(request, 'workoutentry/graphs.html')
+
+
+def popular_graph_view(request):
+    return _graph_view(request, 'workoutentry/graphs_popular.html')
+
+
+def _graph_view(request, template):
 
     if request.method == 'POST':
         graphs = []
@@ -35,24 +43,34 @@ def graph_view(request):
             for i in range(popular_graph['number_of_plots']):
                 g = []
                 for a in ARRAY_NAMES:
-                    print(a)
                     g.append((a, popular_graph[a][i]))
                 graphs.append(g)
             display_type = popular_graph['graph_display_type']
             share_axis = popular_graph['share_axis']
 
+            from_date = popular_graph['from']
+            to_date = popular_graph['to']
+
+            if 'from' in request.POST:
+                if len(request.POST['from']) > 0:
+                    from_date = request.POST['from']
+
+            if 'to' in request.POST:
+                if len(request.POST['to']) > 0:
+                    to_date = request.POST['to']
+
             kwargs = {'colour_map': GraphForm.colour_map[int(popular_graph['colour_map'])],
                       'background': popular_graph['background'],
-                      'from_date': popular_graph['from'],
-                      'to_date': popular_graph['to']
+                      'from_date': from_date,
+                      'to_date': to_date
                       }
             form_defaults = dict()
             for i in graphs[0]:
                 form_defaults[i[0].replace('_array','')] = i[1]
             form_defaults['colour_map'] = popular_graph['colour_map']
             form_defaults['background'] = popular_graph['background']
-            form_defaults['from'] = popular_graph['from']
-            form_defaults['to'] = popular_graph['to']
+            form_defaults['from'] = from_date
+            form_defaults['to'] = to_date
             form_defaults['graph_display_type'] = display_type
             form_defaults['share_axis'] = share_axis
         else:
@@ -69,11 +87,18 @@ def graph_view(request):
                 new = list(zip(ARRAY_NAMES, new_graph))
                 graphs.append(new)
 
-            display_type = request.POST['graph_display_type']
-            share_axis = request.POST['share_axis']
+            display_type = GraphForm.SINGLE     # this is the default
+            if 'graph_display_type' in request.POST:
+                display_type = request.POST['graph_display_type']
+            if 'share_axis' in request.POST:
+                share_axis = request.POST['share_axis']
 
-            kwargs = {'colour_map': GraphForm.colour_map[int(request.POST['colour_map'])],
-                      'background': request.POST['background']}
+            kwargs = dict()
+
+            if 'colour_map' in request.POST:
+                kwargs['colour_map'] = GraphForm.colour_map[int(request.POST['colour_map'])]
+            if 'background' in request.POST:
+                kwargs['background'] = request.POST['background']
 
             title_components = []
 
@@ -106,15 +131,14 @@ def graph_view(request):
             else:
                 save_multiplot_image(time_series_graphs, scatter_graphs, file_name, share_axis, **kwargs)
 
-        return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(form_defaults),
-                                                            'popular_form': PopularGraphsForm(),
-                                                            'graph_headings': (DataWarehouse.TIME_SERIES_VARIABLES
-                                                                               + Graph.GRAPH_VARIABLES),
-                                                            'graphs': graphs,
-                                                            'title': title,
-                                                            'graph_img': f'tmp/{file_name}.png'})
+        return render(request, template, {'selection_form': GraphForm(form_defaults),
+                                          'popular_form': PopularGraphsForm(),
+                                          'graph_headings': (DataWarehouse.TIME_SERIES_VARIABLES + Graph.GRAPH_VARIABLES),
+                                          'graphs': graphs,
+                                          'title': title,
+                                          'graph_img': f'tmp/{file_name}.png'})
 
-    return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(), 'popular_form': PopularGraphsForm()})
+    return render(request, template, {'selection_form': GraphForm(), 'popular_form': PopularGraphsForm()})
 
 
 def save_scatter_image(scatter_graph, file_name, colour_map='rainbow', background='whitesmoke',

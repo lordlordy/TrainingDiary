@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_scripts_start %}
+<script type='text/javascript'>
+
+$(document).ready(function(){
+$('#popular').select2();
+});
+
+    $(document).ready(function(){
+        $('#ltd').DataTable({
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    $(document).ready(function(){
+        $('#annual').DataTable({
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    $(document).ready(function(){
+        $('#summary').DataTable({
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="border-bottom mb=4">Eddington Numbers</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="row">
+                <div class="col-6">
+                    <h5 class="border-bottom mb=4">Choose:</h5>
+                </div>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="row">
+                    {% csrf_token %}
+                    <div class="col-8">
+                        {{ popular_form.popular | as_crispy_field }}
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">Go</button>
+                    </div>
+                </div>
+            </form>
+            <small>Eddington Numbers explained <a href="https://stevenlord.me.uk/eddington-numbers/">here</a></small>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-3">
+            <form method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <h5 class="border-bottom mb=4">Upload Own Data</h5>
+                    <div class="col-8">
+                        {% csrf_token %}
+                        <input class="btn btn-outline-info btn-sm btn-block" type="file" name="document">
+                    </div>
+                    <div class="col-4">
+                        <input class="btn btn-outline-info btn-sm btn-block" type="submit" value="Upload">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-5">
+            <div class="row">
+                <div class="col-12">
+                    <small class="text-muted">File should be excel or csv. Two columns by any number of rows. The first column is dates with the first row being the heading and labelled "Date". The second column are the values with the first row being used as the name. The data is not saved</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-2">
+            <h4 class="border-bottom mb-4 text-primary">Life To Date: {{ ed_num }}</h4>
+        </div>
+        <div class="col-2">
+            <h4 class="border-bottom mb-4 text-primary">Annual: {{ annual_ed_num }}</h4>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-bottom mb-4 text-center">Life To Date {{ unit }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="{% static ltd_img %}">
+              </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-bottom mb-4 text-center">Annual {{ unit }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="{% static annual_img %}">
+              </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <h4 class="border-bottom mb-4">LTD History</h4>
+            <table id='ltd' class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>ed #</th>
+                    <th>+1</th>
+                    <th>contr</th>
+                </tr>
+                </thead>
+                {% for d in ltd %}
+                <tr>
+                    {% for i in d %}
+                    <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="border-bottom mb-4">Annual</h4>
+                    <table id="summary" class="table table-hover table-bordered table-striped table-sm ">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Year</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                        </tr>
+                        </thead>
+                        {% for d in annual_summary %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-6">
+                <h4 class="border-bottom mb-4">Annual History</h4>
+                    <table id='annual' class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                            <th>contr</th>
+                        </tr>
+                        </thead>
+                        {% for d in annual %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -27,7 +27,7 @@ class EddingtonNumberForm(forms.Form):
                                                   widget=Select(
                                                       choices=[(a, a) for a in dw.activities()],
                                                       attrs={'class': 'form-control', 'id': 'activity'}))
-        self.fields['activity_type'] = forms.CharField(required=True, label='Activity Type',
+        self.fields['activity_type'] = forms.CharField(required=True, label='Type',
                                                        widget=Select(
                                                            choices=[(a, a) for a in dw.activity_types()],
                                                            attrs={'class': 'form-control', 'id': 'activity_type'}))
@@ -62,7 +62,7 @@ class EddingtonNumberForm(forms.Form):
                                                      choices=col_choices,
                                                      attrs={'class': 'form-control', 'id': 'measure'}))
 
-        self.fields['day_of_week'] = forms.CharField(required=True,
+        self.fields['day_of_week'] = forms.CharField(required=True, label='Day',
                                                      widget=Select(
                                                          choices=[(d, d) for d in DataWarehouse.days_of_week],
                                                          attrs={'class': 'form-control', 'id': 'day_of_week'}))

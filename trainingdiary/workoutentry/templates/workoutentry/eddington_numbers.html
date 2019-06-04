@@ -87,27 +87,16 @@ $('#popular').select2();
 
 {% block content %}
 <div class="container-fluid">
-
+    <div class="row">
+        <div class="col-12">
+            <h2 class="border-bottom mb=4">Eddington Numbers</h2>
+        </div>
+    </div>
     <div class="row">
         <div class="col-3">
-            <h2 class="border-bottom mb-4">Select</h2>
-            <small>Eddington Numbers explained <a href="https://stevenlord.me.uk/eddington-numbers/">here</a></small>
-            <form method="post">
-                <div class="row">
-                {% csrf_token %}
-                    <div class="col-9">
-                        {{ popular_form.popular | as_crispy_field }}
-                    </div>
-                    <div class="col-3">
-                        <!--<input class="btn btn-outline-info btn-sm btn-block" type="submit" value="Go">-->
-
-                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">Go</button>
-                    </div>
-                </div>
-            </form>
             <div class="row">
                 <div class="col-6">
-                    <h5 class="border-bottom mb-4">Adhoc:</h5>
+                    <h3 class="border-bottom mb-4">Select:</h3>
                 </div>
             </div>
             <div class="row">
@@ -163,35 +152,13 @@ $('#popular').select2();
                                 {{ selection_form.day_type | as_crispy_field }}
                             </div>
                         </div>
-                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">Update</button>
+                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">CALCULATE</button>
                     </form>
                 </div>
             </div>
-            <form method="post" enctype="multipart/form-data">
-                <div class="row">
-                    <h5 class="border-bottom mb=4">Upload Own Data</h5>
-                    <div class="col-8">
-                        {% csrf_token %}
-                        <input class="btn btn-outline-info btn-sm btn-block" type="file" name="document">
-                    </div>
-                    <div class="col-4">
-                        <input class="btn btn-outline-info btn-sm btn-block" type="submit" value="Upload">
-                    </div>
-                </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <small class="text-muted">File should be excel or csv. Two columns by any number of rows. The first column is dates with the first row being the heading and labelled "Date". The second column are the values with the first row being used as the name. The data is not saved</small>
-
-                        </div>
-                    </div>
-            </form>
         </div>
         <div class="col-9">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="border-bottom mb=4">Eddington Numbers</h2>
-                </div>
-            </div>
+
             <div class="row">
                 <div class="col-4">
                     <h3 class="border-bottom mb-4">Life To Date:  {{ ed_num }}</h3>

@@ -12,6 +12,14 @@ import datetime
 
 
 def eddington_view(request):
+    return _eddington_view(request, 'workoutentry/eddington_numbers.html')
+
+
+def popular_eddington_view(request):
+    return _eddington_view(request, 'workoutentry/eddington_numbers_simple.html')
+
+
+def _eddington_view(request, template):
     default_data = {'period': "Day",
                     'aggregation': 'Sum',
                     'activity': 'All',
@@ -29,6 +37,8 @@ def eddington_view(request):
 
     if request.method == 'POST':
         data = request.POST.dict()
+
+        print(data)
 
         if 'document' in request.FILES:
             uploaded_file = request.FILES['document']
@@ -65,8 +75,8 @@ def eddington_view(request):
                                                                 day_type=data['day_type'])
 
         if series is None:
-            return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm(),
-                                                                           'popular_form': PopularEddingtonNumberForm()})
+            return render(request, template, {'selection_form': EddingtonNumberForm(),
+                                              'popular_form': PopularEddingtonNumberForm()})
 
         ltd = []
         annual = []
@@ -83,7 +93,7 @@ def eddington_view(request):
         for i in annual_hist:
             annual.append((str(i[0]), i[1], i[2], i[3]))
 
-        return render(request, 'workoutentry/eddington_numbers.html',
+        return render(request, template,
                       {'selection_form': EddingtonNumberForm(data),
                        'popular_form': PopularEddingtonNumberForm(),
                        'unit': unit,
@@ -95,8 +105,8 @@ def eddington_view(request):
                        'ltd_img': f'tmp/{ltd_image_name}.png',
                        'annual_img': f'tmp/{annual_image_name}.png'})
 
-    return render(request, 'workoutentry/eddington_numbers.html', {'selection_form': EddingtonNumberForm(),
-                                                                   'popular_form': PopularEddingtonNumberForm()})
+    return render(request, template, {'selection_form': EddingtonNumberForm(),
+                                      'popular_form': PopularEddingtonNumberForm()})
 
 
 def save_image(data, file_name, name):

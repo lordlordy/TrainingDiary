@@ -72,11 +72,21 @@
           <a class="dropdown-item" href="#">balb</a>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'eddington_numbers' %}">Eddington Numbers</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="eddingtonDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Eddington Numbers</a>
+        <div class="dropdown-menu" aria-labelledby="eddingtonDropDown">
+          <a class="dropdown-item" href="{% url 'eddington_numbers_simple' %}">Popular</a>
+          <a class="dropdown-item" href="{% url 'eddington_numbers' %}">Adhoc</a>
+        </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'graphs' %}">Graphs</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="graphDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Graphs</a>
+        <div class="dropdown-menu" aria-labelledby="graphDropDown">
+          <a class="dropdown-item" href="{% url 'popular_graphs' %}">Popular</a>
+          <a class="dropdown-item" href="{% url 'graphs' %}">Adhoc</a>
+        </div>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/blog/">Blog</a>

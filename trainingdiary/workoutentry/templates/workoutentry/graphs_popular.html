@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_scripts_start %}
+<script type='text/javascript'>
+
+$(document).ready(function(){
+$('#popular').select2();
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <h2 class="border-bottom mb=4">Graphing</h2>
+        </div>
+        <form method="post" class="form-inline">
+            {% csrf_token %}
+            <div class="form-group mx-2">
+                {{ popular_form.popular | as_crispy_field }}
+            </div>
+            <div class="form-group mx-4">
+                <button class="btn btn-outline-primary btn-sm btn-block" name="refresh" type="submit">Generate</button>
+            </div>
+            <div class="form-group mx-2">
+                {{ selection_form.from | as_crispy_field }}
+            </div>
+            <div class="form-group mx-2">
+                {{ selection_form.to | as_crispy_field }}
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-top mb-4 text-center">{{ title }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="{% static graph_img %}">
+              </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+</script>
+{% endblock %}
