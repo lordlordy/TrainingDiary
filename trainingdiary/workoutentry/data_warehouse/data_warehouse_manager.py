@@ -165,19 +165,13 @@ class DataWarehouseManager:
         from_date = None
         if dw.base_table_built:
             from_date = DataWarehouse.instance().max_date()
-        print('Basic day info...')
+        print('Days...')
         self.populate_days(print_progress)
-        print('KG...')
-        self.populate_kg(print_progress)
-        print('LBS...')
-        self.populate_lbs(print_progress)
-        print('Fat%...')
         self.populate_fat_percent(print_progress)
-        print('HR...')
+        self.populate_kg(print_progress)
+        self.populate_lbs(print_progress)
         self.populate_hr(print_progress)
-        print('SDNN...')
         self.populate_sdnn(print_progress)
-        print('RMSSD...')
         self.populate_rmssd(print_progress)
         print('Calculating TSB ...')
         self.calculate_all_tsb(from_date=from_date, print_progress=print_progress)
@@ -227,9 +221,9 @@ class DataWarehouseManager:
 
     def populate_fat_percent(self, print_progress=False):
 
-        if 'fatPercentage' in self.__data:
+        if 'fatPercent' in self.__data:
             data_value_array = [(parser.parse(d['iso8601DateString']).date(), float(d['value'])) for d in
-                                self.__data['fatPercentage']]
+                                self.__data['fatPercent']]
             self.__populate_and_interpolate_values('fat_percentage', data_value_array, print_progress=print_progress)
 
     def populate_hr(self, print_progress=False):
@@ -255,6 +249,7 @@ class DataWarehouseManager:
 
     def __populate_and_interpolate_values(self, column_name, date_value_list, print_progress=False):
 
+        print(f'{column_name}...')
         if len(date_value_list) == 0:
             return
 
@@ -294,7 +289,7 @@ class DataWarehouseManager:
                 sql_str = f'UPDATE {table} SET {column_name}={round(value,1)} WHERE date="{str(d.date())}"'
                 conn.cursor().execute(sql_str)
                 if print_progress:
-                    print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {table}', '               ', end='\r')
+                    print(f'{t_count/t_total:.2%} {datetime.datetime.now() - st} {value:0.2f} {table} ', '               ', end='\r')
 
         print(f'100% {datetime.datetime.now() - st} {table}', '               ')
 

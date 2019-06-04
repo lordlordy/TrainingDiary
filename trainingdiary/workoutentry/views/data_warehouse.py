@@ -35,7 +35,7 @@ def data_warehouse_update(request):
                          'restingRMSSD': [d.data_dictionary() for d in rmssd]}
 
     dwm = DataWarehouseManager(training_diary_dd)
-    dwm.populate_all(print_progress=True)
+    dwm.populate_all(print_progress=False)
     messages.info(request, 'DONE')
 
 
