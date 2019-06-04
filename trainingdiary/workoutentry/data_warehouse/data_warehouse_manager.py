@@ -214,7 +214,7 @@ class DataWarehouseManager:
     def populate_kg(self, print_progress=False):
 
         if 'kg' in self.__data:
-            data_value_array = [(parser.parse(d['iso8601DateString']).date(), float(d['value']) * LBS_PER_KG) for d in
+            data_value_array = [(parser.parse(d['iso8601DateString']).date(), float(d['value'])) for d in
                                 self.__data['kg']]
             self.__populate_and_interpolate_values('kg', data_value_array, print_progress=print_progress)
 

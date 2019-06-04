@@ -45,6 +45,8 @@ def _graph_view(request, template):
                 for a in ARRAY_NAMES:
                     g.append((a, popular_graph[a][i]))
                 graphs.append(g)
+            for g in graphs:
+                print(g)
             display_type = popular_graph['graph_display_type']
             share_axis = popular_graph['share_axis']
 
@@ -221,14 +223,15 @@ def add_scatter_to(scatter_graph, fig, grid_spec=None, colour_map='rainbow', bac
 
         min_x = np.nanmin(x)
         max_x = np.nanmax(x)
-        x_width = (max_x - min_x) / 20
+        x_width = max((max_x - min_x) / 20, 0.02)
         min_y = np.nanmin(y)
         max_y = np.nanmax(y)
-        y_width = (max_y - min_y) / 20
+        y_width = max((max_y - min_y) / 20, 0.02)
         # to avoid plotting loads of zeroes
         increment = 0
         if scatter_graph.x.is_day_not_rolling():
             increment = 0.01
+
         xbins = np.arange(min_x + increment, max_x + x_width, x_width)
         ybins = np.arange(min_y + increment, max_y + y_width, y_width)
 
