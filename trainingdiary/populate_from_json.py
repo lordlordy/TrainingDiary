@@ -679,10 +679,10 @@ if __name__ == '__main__':
 
     if all or tsb:
         print('Calculating TSB ...')
-        dwm.calculate_all_tsb(from_date='2019-05-01', print_progress=print_progress)
+        dwm.calculate_all_tsb(from_date=None, print_progress=print_progress)
 
     if all or strain:
         print('Calculating Strain ...')
-        dwm.calculate_all_strain(from_date='2019-05-15', print_progress=print_progress)
+        dwm.calculate_all_strain(from_date=None, print_progress=print_progress)
         # dwm.calculate_all_strain(print_progress=print_progress)
 
