@@ -118,7 +118,6 @@ CTL_IMPACT = 1 - np.exp(-1 / CTL_IMPACT_DAYS)
 ATL_DECAY = np.exp(-1 / ATL_DECAY_DAYS)
 ATL_IMPACT = 1 - np.exp(-1 / ATL_IMPACT_DAYS)
 
-
 def mph_mapper(workout_dict):
     result = 0.0
     if 'km' in workout_dict and 'seconds' in workout_dict:
@@ -156,10 +155,44 @@ class DataWarehouseManager:
 
     # DB_NAME = 'training_data_warehouse.sqlite3'
 
-    def __init__(self, data):
-        self.__db_name = settings.DATABASES['data_warehouse_db']['NAME']
+    def __init__(self, data, db_name=None):
+        if db_name is None:
+            self.__db_name = settings.DATABASES['data_warehouse_db']['NAME']
+        else:
+            self.__db_name = db_name
         self.__data = data
 
+        conn = sqlite3.connect(self.__db_name)
+        c = conn.cursor()
+
+        try:
+            c.execute('''CREATE TABLE Tables
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                period VARCHAR(32),
+                activity VARCHAR(32),
+                activity_type VARCHAR(32),
+                equipment VARCHAR(32),
+                table_name VARCHAR(100) UNIQUE)
+            ''')
+
+        except Exception as e:
+            print(e)
+            pass
+        
+    def delete_from_date(self, date, print_progress=False):
+        print(f'Deleting from {date}')
+        st = datetime.datetime.now()
+        conn = sqlite3.connect(self.__db_name)
+        
+        for table_name in self.__table_list(conn):
+            sql = f'DELETE FROM {table_name} WHERE date>="{date}"'
+            conn.cursor().execute(sql)
+
+        conn.commit()
+        conn.close()
+        print(f'{datetime.datetime.now() - st}')
+
+        
     def populate_all(self, print_progress=False):
         dw = DataWarehouse.instance()
         from_date = None
@@ -607,88 +640,85 @@ class DataWarehouseManager:
         return ','.join(aggregate_array), ','.join(insert_array)
 
 
-ALL = 'all'
-DAY = 'day'
-KG = 'kg'
-LBS = 'lbs'
-FAT = 'fat'
-HR = 'hr'
-SDNN = 'sdnn'
-RMSSD = 'rmssd'
-TSB = 'tsb'
-STRAIN = 'strain'
-PRINT_PROGRESS = 'pp'
-
-import sys
-
-if __name__ == '__main__':
-
-    all = day = fat = kg = lbs = hr = sdnn = rmssd = tsb = strain = False
-    print_progress = False
-    if PRINT_PROGRESS in sys.argv:
-        print_progress = True
-
-    print(sys.argv)
-
-    if ALL in sys.argv or len(sys.argv) == 0:
-        all = True
-    if DAY in sys.argv:
-        day = True
-    if FAT in sys.argv:
-        fat = True
-    if KG in sys.argv:
-        kg = True
-    if LBS in sys.argv:
-        lbs = True
-    if HR in sys.argv:
-        hr = True
-    if SDNN in sys.argv:
-        sdnn = True
-    if RMSSD in sys.argv:
-        rmssd = True
-    if TSB in sys.argv:
-        tsb = True
-    if STRAIN in sys.argv:
-        strain = True
-
-    f = open('TrainingDiary.json')
-    data = json.load(f)
-    dwm = DataWarehouseManager(data=data)
-
-    if all or day:
-        print('Basic day info...')
-        dwm.populate_days(print_progress)
-
-    if all or kg:
-        print('KG...')
-        dwm.populate_kg(print_progress)
-
-    if all or lbs:
-        print('LBS...')
-        dwm.populate_lbs(print_progress)
-
-    if all or fat:
-        print('Fat%...')
-        dwm.populate_fat_percent(print_progress)
-
-    if all or hr:
-        print('HR...')
-        dwm.populate_hr(print_progress)
-
-    if all or sdnn:
-        print('SDNN...')
-        dwm.populate_sdnn(print_progress)
-
-    if all or rmssd:
-        print('RMSSD...')
-        dwm.populate_rmssd(print_progress)
-
-    if all or tsb:
-        print('Calculating TSB ...')
-        dwm.calculate_all_tsb(from_date='2019-05-01', print_progress=print_progress)
-
-    if all or strain:
-        print('Calculating Strain ...')
-        dwm.calculate_all_strain(from_date='2019-05-15', print_progress=print_progress)
-        # dwm.calculate_all_strain(print_progress=print_progress)
+# ALL = 'all'
+# DAY = 'day'
+# KG = 'kg'
+# LBS = 'lbs'
+# FAT = 'fat'
+# HR = 'hr'
+# SDNN = 'sdnn'
+# RMSSD = 'rmssd'
+# TSB = 'tsb'
+# STRAIN = 'strain'
+# PRINT_PROGRESS = 'pp'
+# 
+# import sys
+# 
+# if __name__ == '__main__':
+# 
+#     all = day = fat = kg = lbs = hr = sdnn = rmssd = tsb = strain = False
+#     print_progress = False
+#     if PRINT_PROGRESS in sys.argv:
+#         print_progress = True
+# 
+#     if ALL in sys.argv or len(sys.argv) == 0:
+#         all = True
+#     if DAY in sys.argv:
+#         day = True
+#     if FAT in sys.argv:
+#         fat = True
+#     if KG in sys.argv:
+#         kg = True
+#     if LBS in sys.argv:
+#         lbs = True
+#     if HR in sys.argv:
+#         hr = True
+#     if SDNN in sys.argv:
+#         sdnn = True
+#     if RMSSD in sys.argv:
+#         rmssd = True
+#     if TSB in sys.argv:
+#         tsb = True
+#     if STRAIN in sys.argv:
+#         strain = True
+# 
+#     f = open('TrainingDiary.json')
+#     data = json.load(f)
+#     dwm = DataWarehouseManager(data=data)
+# 
+#     if all or day:
+#         print('Basic day info...')
+#         dwm.populate_days(print_progress)
+# 
+#     if all or kg:
+#         print('KG...')
+#         dwm.populate_kg(print_progress)
+# 
+#     if all or lbs:
+#         print('LBS...')
+#         dwm.populate_lbs(print_progress)
+# 
+#     if all or fat:
+#         print('Fat%...')
+#         dwm.populate_fat_percent(print_progress)
+# 
+#     if all or hr:
+#         print('HR...')
+#         dwm.populate_hr(print_progress)
+# 
+#     if all or sdnn:
+#         print('SDNN...')
+#         dwm.populate_sdnn(print_progress)
+# 
+#     if all or rmssd:
+#         print('RMSSD...')
+#         dwm.populate_rmssd(print_progress)
+# 
+#     if all or tsb:
+#         print('Calculating TSB ...')
+#         dwm.calculate_all_tsb(from_date=None, print_progress=print_progress)
+# 
+#     if all or strain:
+#         print('Calculating Strain ...')
+#         dwm.calculate_all_strain(from_date=None, print_progress=print_progress)
 

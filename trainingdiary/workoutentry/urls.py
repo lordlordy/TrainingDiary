@@ -19,5 +19,6 @@ urlpatterns = [
     path('graphs/', views.graph_view, name='graphs'),
     path('graphs/popular', views.popular_graph_view, name='popular_graphs'),
     path('training_diary/summary/', views.summary_view, name='training_diary_summary'),
+    path('physiologicals/', login_required(views.physiologicals_view), name='physiologicals'),
 
 ]

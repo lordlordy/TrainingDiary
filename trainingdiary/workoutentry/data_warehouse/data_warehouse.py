@@ -352,21 +352,6 @@ class DataWarehouse:
 
         return name
 
-    # def most_recent_kg_recorded(self):
-    #     return self.__most_recent_recorded('kg')
-    #
-    # def most_recent_fat_percentage_recorded(self):
-    #     return self.__most_recent_recorded('fat_percentage')
-    #
-    # def most_recent_resting_hr_recorded(self):
-    #     return self.__most_recent_recorded('resting_hr')
-    #
-    # def most_recent_sdnn_recorded(self):
-    #     return self.__most_recent_recorded('sdnn')
-    #
-    # def most_recent_rmssd_recorded(self):
-    #     return self.__most_recent_recorded('rmssd')
-
     def most_recent_recorded(self, item_name, before_date=None):
         if before_date is None:
             sql_str = f'SELECT date, {item_name} from day_All_All_All WHERE {item_name}_recorded=1 ORDER BY date DESC LIMIT 1'

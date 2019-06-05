@@ -24,6 +24,7 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css"/>
 
       <!-- our custom stylesheet -->
+      <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 
       {% block extra_head %}
       {% endblock %}
@@ -54,23 +55,23 @@
           <a class="dropdown-item" href="{% url 'all_results' %}">Result Search</a>
         </div>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="nutritionDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Nutrition</a>
-        <div class="dropdown-menu" aria-labelledby="nutritionDropDown">
-          <a class="dropdown-item" href="/nutrition/dietary-dogma/">Dietary Dogma</a>
-          <a class="dropdown-item" href="/nutrition/books/">Books</a>
-          <a class="dropdown-item" href="/nutrition/useful-links/">Useful Links</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="postPetroleumDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Post Petroleum</a>
-        <div class="dropdown-menu" aria-labelledby="postPetroleumDropDown">
-          <a class="dropdown-item" href="#">blag</a>
-          <a class="dropdown-item" href="#">blah</a>
-          <a class="dropdown-item" href="#">balb</a>
-        </div>
+      <!--<li class="nav-item dropdown">-->
+        <!--<a class="nav-link dropdown-toggle" href="#" id="nutritionDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+          <!--Nutrition</a>-->
+        <!--<div class="dropdown-menu" aria-labelledby="nutritionDropDown">-->
+          <!--<a class="dropdown-item" href="/nutrition/dietary-dogma/">Dietary Dogma</a>-->
+          <!--<a class="dropdown-item" href="/nutrition/books/">Books</a>-->
+          <!--<a class="dropdown-item" href="/nutrition/useful-links/">Useful Links</a>-->
+        <!--</div>-->
+      <!--</li>-->
+      <!--<li class="nav-item dropdown">-->
+        <!--<a class="nav-link dropdown-toggle" href="#" id="postPetroleumDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+          <!--Post Petroleum</a>-->
+        <!--<div class="dropdown-menu" aria-labelledby="postPetroleumDropDown">-->
+          <!--<a class="dropdown-item" href="#">blag</a>-->
+          <!--<a class="dropdown-item" href="#">blah</a>-->
+          <!--<a class="dropdown-item" href="#">balb</a>-->
+        <!--</div>-->
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="eddingtonDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -100,7 +101,7 @@
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{% url 'day_list' %}">Days</a>
           <a class="dropdown-item" href="{% url 'workout_list' %}">Workouts</a>
-          <a class="dropdown-item" href="#">Physiological</a>
+          <a class="dropdown-item" href="{% url 'physiologicals' %}">Physiological</a>
           <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'diary_upload' %}">DB Management</a>
         </div>

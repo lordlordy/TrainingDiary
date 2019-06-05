@@ -17,7 +17,18 @@
         </div>
         <div class="col-md-3">
             <h5 class="border-bottom mb=4">Data Warehouse</h5>
-            <a href="{% url 'date_warehouse_update' %}" class="btn btn-outline-primary btn-sm" role="button">Update Data Warehoue</a>
+            <form method="post" action="{% url 'date_warehouse_update' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-5">
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Update"/>
+                    </div>
+                    <div class="col-md-7">
+                        <input class="datepicker form-control" name="from_date" placeholder=" YYYY-MM-DD" type="text">
+                    </div>
+                </div>
+            </form>
+            <small class="text-muted">This updates the dataware house. If no date is given it only updates any new data. If a date is provided then all data in the warehouse on or after that date is first removed then the warehouse is updated from the training diary data.</small>
         </div>
         <div class="col-md-5">
             <h5 class="border-bottom mb=4">Data Export</h5>

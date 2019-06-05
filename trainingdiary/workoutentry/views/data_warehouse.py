@@ -7,6 +7,13 @@ from django.contrib import messages
 
 def data_warehouse_update(request):
 
+    print('bring it on big boy')
+    print(request.POST)
+
+    if 'from_date' in request.POST:
+        if len(request.POST['from_date']) > 0:
+            DataWarehouseManager(data=None, db_name=None).delete_from_date(request.POST['from_date'])
+
     if DataWarehouse.instance().base_table_built:
         last_date = DataWarehouse.instance().max_date()
         days = Day.objects.filter(date__gt=last_date)
