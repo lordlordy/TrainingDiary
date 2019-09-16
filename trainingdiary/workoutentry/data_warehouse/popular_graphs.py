@@ -215,7 +215,7 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(7)],
             'graph_type_array': ['Histogram'for _ in range(7)],
             'axis_array': ['Primary' for _ in range(7)],
-            'size_array': ['10' for _ in range(7)]
+            'size_array': ['15' for _ in range(7)]
     }
 
 
@@ -242,7 +242,7 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(7)],
             'graph_type_array': ['Histogram'for _ in range(7)],
             'axis_array': ['Primary' for _ in range(7)],
-            'size_array': ['20' for _ in range(7)]
+            'size_array': ['25' for _ in range(7)]
     }
 
     popular_graphs['Runs By Day Buckets'] = {
@@ -294,7 +294,7 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(12)],
             'graph_type_array': ['Histogram'for _ in range(12)],
             'axis_array': ['Primary' for _ in range(12)],
-            'size_array': ['20' for _ in range(12)]
+            'size_array': ['15' for _ in range(12)]
     }
 
 
