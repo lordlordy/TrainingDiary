@@ -38,7 +38,7 @@
         {% for r in race_results %}
         <tr>
             <td>
-                <a href="{% url 'workout_form' w.date w.workout_number %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
+                <a href="" class="btn btn-outline-primary btn-block" role="button">Edit</a>
             </td>
             <td>{{ r.date }}</td>
             <td>{{ r.race_number }}</td>
@@ -60,7 +60,9 @@
             <td>{{ r.run_km }}</td>
             <td>{{ r.total_km }}</td>
             <td>{{ r.last_save }}</td>
-            <td></td>
+            <td>
+                <a href="" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+            </td>
 
         </tr>
         {% endfor %}
