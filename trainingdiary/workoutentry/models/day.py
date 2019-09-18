@@ -1,86 +1,52 @@
-from django.db import models
-import datetime
-from .physiological import KG, RestingHeartRate, FatPercentage, SDNN, RMSSD
+import dateutil.parser
+import functools
+import operator
 
+class Day:
 
-class Day(models.Model):
-    date = models.DateField(unique=True)
-    sleep = models.DurationField(default=datetime.timedelta(hours=8))
-    sleep_quality = models.CharField(max_length=15)
-    fatigue = models.DecimalField(default=5.0, decimal_places=1, max_digits=4)
-    motivation = models.DecimalField(default=5.0, decimal_places=1, max_digits=4)
-    type = models.CharField(max_length=15)
-    comments = models.TextField(blank=True, null=True)
+    def __init__(self, *args):
+        self.date = dateutil.parser.parse(args[0]).date()
+        self.day_type = args[1]
+        self.comments = args[2]
+
+        from workoutentry.training_data import TrainingDataManager
+        self.readings = TrainingDataManager().readings_for_date(self.date)
+        rDict = dict()
+
+        for r in self.readings:
+            rDict[r.reading_type] = r.value
+
+        if 'sleep' in rDict:
+            self.sleep = rDict['sleep']
+
+        if 'sleepQualityScore' in rDict:
+            self.sleepQualityScore = rDict['sleepQualityScore']
+
+        if 'fatigue' in rDict:
+            self.fatigue = rDict['fatigue']
+
+        if 'motivation' in rDict:
+            self.motivation = rDict['motivation']
+
+        if 'restingHR' in rDict:
+            self.restingHR = int(rDict['restingHR'])
+
+        if 'SDNN' in rDict:
+            self.SDNN = rDict['SDNN']
+
+        if 'rMSSD' in rDict:
+            self.rMSSD = rDict['rMSSD']
+
+        self.workouts = TrainingDataManager().workouts_on_date(self.date)
+        self.workout_count = len(self.workouts)
+        if self.workout_count > 0:
+            self.tss = functools.reduce(operator.add, [w.tss for w in self.workouts])
+            self.training_duration = functools.reduce(operator.add, [w.seconds for w in self.workouts])
+
 
     def __str__(self):
-        return self.date.strftime('%Y-%m-%d')
+        return self.date + ' ~ ' + self.day_type + ' ~ ' + self.comments
 
-    @property
-    def workouts(self):
-        from . import Workout
-        return Workout.objects.filter(day=self)
-
-    @property
-    def number_of_workouts(self):
-        return len(self.workouts)
-
-    @property
-    def training_duration(self):
-        duration = datetime.timedelta()
-        for w in self.workouts:
-            duration += w.duration
-        return duration
-
-    @property
-    def tss(self):
-        tss = 0
-        for w in self.workouts:
-            tss += w.tss
-        return int(tss)
-
-    @property
-    def kg(self):
-        if KG.objects.filter(date=self.date).exists():
-            return KG.objects.get(date=self.date).value
-        else:
-            return None
-
-    @property
-    def hr(self):
-        if RestingHeartRate.objects.filter(date=self.date).exists():
-            return RestingHeartRate.objects.get(date=self.date).value
-        else:
-            return None
-
-    @property
-    def fat_percentage(self):
-        if FatPercentage.objects.filter(date=self.date).exists():
-            return FatPercentage.objects.get(date=self.date).value
-        else:
-            return None
-
-    @property
-    def sdnn(self):
-        if SDNN.objects.filter(date=self.date).exists():
-            return SDNN.objects.get(date=self.date).value
-        else:
-            return None
-
-    @property
-    def rmssd(self):
-        if RMSSD.objects.filter(date=self.date).exists():
-            return RMSSD.objects.get(date=self.date).value
-        else:
-            return None
 
     def data_dictionary(self):
-
-        w = [w.data_dictionary() for w in self.workouts]
-        return {"type": self.type,
-                "fatigue": float(self.fatigue),
-                "iso8601DateString": self.date.isoformat(),
-                "sleepQuality": self.sleep_quality,
-                "comments": self.comments,
-                "motivation": float(self.motivation),
-                "sleep": self.sleep.seconds / (60 * 60),
-                "workouts": w}
+        return {'date': self.date, 'day_type': self.day_type, 'comments': self.comments}

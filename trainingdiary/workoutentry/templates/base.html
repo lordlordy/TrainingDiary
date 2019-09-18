@@ -49,10 +49,10 @@
         <a class="nav-link dropdown-toggle" id="raceResultsDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Race Results</a>
         <div class="dropdown-menu" aria-labelledby="raceResultsDropDown">
-          <a class="dropdown-item" href="{% url 'race_results' %}">All Races</a>
-          <a class="dropdown-item" href="{% url 'ironman_results' %}">Ironman</a>
-          <a class="dropdown-item" href="{% url 'swimrun_results' %}">Swim Run</a>
-          <a class="dropdown-item" href="{% url 'all_results' %}">Result Search</a>
+          <a class="dropdown-item" href="">All Races (race_results)</a>
+          <a class="dropdown-item" href="">Ironman (ironman_results)</a>
+          <a class="dropdown-item" href="">Swim Run (swimrun_results)</a>
+          <a class="dropdown-item" href="">Result Search (all_results)</a>
         </div>
       </li>
       <!--<li class="nav-item dropdown">-->
@@ -101,7 +101,7 @@
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{% url 'day_list' %}">Days</a>
           <a class="dropdown-item" href="{% url 'workout_list' %}">Workouts</a>
-          <a class="dropdown-item" href="{% url 'physiologicals' %}">Physiological</a>
+          <a class="dropdown-item" href="{% url 'race_result_list' %}">Race Results</a>
           <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'diary_upload' %}">DB Management</a>
         </div>

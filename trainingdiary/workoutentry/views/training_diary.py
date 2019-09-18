@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.db.models import Sum
-from workoutentry.models import Workout
+from workoutentry.training_data import TrainingDataManager
 import datetime
+import functools
+import operator
 
 TOTAL_TIME = 'Total Time'
 TOTAL_KM = 'Total KM'
@@ -18,59 +19,81 @@ SUMMARY_HEADINGS = [TOTAL_TIME, TOTAL_KM, TOTAL_ASCENT, SWIM_TIME, SWIM_KM, BIKE
 def summary_view(request):
     data = []
 
-    swim = Workout.objects.filter(activity='Swim').aggregate(km=Sum('km'), time=Sum('duration'))
-    bike = Workout.objects.filter(activity='Bike').aggregate(km=Sum('km'), time=Sum('duration'))
-    run = Workout.objects.filter(activity='Run').aggregate(km=Sum('km'), time=Sum('duration'))
-    total = Workout.objects.filter().aggregate(km=Sum('km'), time=Sum('duration'), ascent=Sum('ascent_metres'))
+    tdm = TrainingDataManager()
+    workouts = tdm.workouts()
+
+    swim_km= functools.reduce(operator.add, [w.km for w in workouts if w.activity == 'Swim'])
+    swim_seconds = functools.reduce(operator.add, [w.seconds for w in workouts if w.activity == 'Swim'])
+    bike_km = functools.reduce(operator.add, [w.km for w in workouts if w.activity == 'Bike'])
+    bike_seconds = functools.reduce(operator.add, [w.seconds for w in workouts if w.activity == 'Bike'])
+    run_km = functools.reduce(operator.add, [w.km for w in workouts if w.activity == 'Run'])
+    run_seconds = functools.reduce(operator.add, [w.seconds for w in workouts if w.activity == 'Run'])
+    total_km = functools.reduce(operator.add, [w.km for w in workouts])
+    total_seconds = functools.reduce(operator.add, [w.seconds for w in workouts])
+    total_ascent = functools.reduce(operator.add, [w.ascent_metres for w in workouts])
 
     lifetime = ['Lifetime',
-                total['time'],total['km'], total['ascent'],
-                swim['time'], swim['km'],
-                bike['time'], bike['km'],
-                run['time'], run['km']
+                total_seconds, int(total_km), total_ascent,
+                swim_seconds, int(swim_km),
+                bike_seconds, int(bike_km),
+                run_seconds, int(run_km)
                 ]
 
     data.append(lifetime)
 
     end = datetime.datetime.now().date()
     start = datetime.date(end.year, 1, 1)
-    data.append(['YTD'] + values_for_range_list(start, end))
+    data.append(['YTD'] + values_for_range_list(start, end, workouts))
 
     end = datetime.date(end.year-1, end.month, end.day)
     start = datetime.date(end.year, 1, 1)
-    data.append(['YTD Last Year'] + values_for_range_list(start, end))
+    data.append(['YTD Last Year'] + values_for_range_list(start, end, workouts))
 
     end = datetime.datetime.now().date()
     start = datetime.date(end.year-1, end.month, end.day-1)
-    data.append(['R Year'] + values_for_range_list(start, end))
+    data.append(['R Year'] + values_for_range_list(start, end, workouts))
 
     end = datetime.date(end.year-1, end.month, end.day)
     start = datetime.date(end.year-1, end.month, end.day-1)
-    data.append(['R Year Last Year'] + values_for_range_list(start, end))
+    data.append(['R Year Last Year'] + values_for_range_list(start, end, workouts))
 
     end = datetime.datetime.now().date()
     start = datetime.date(end.year, end.month, 1)
-    data.append(['MTD'] + values_for_range_list(start, end))
+    data.append(['MTD'] + values_for_range_list(start, end, workouts))
 
     end = datetime.date(end.year-1, end.month, end.day)
     start = datetime.date(end.year, end.month, 1)
-    data.append(['MTD Last Year'] + values_for_range_list(start, end))
+    data.append(['MTD Last Year'] + values_for_range_list(start, end, workouts))
 
     return render(request, 'workoutentry/summary.html', {'headings': SUMMARY_HEADINGS, 'data': data})
 
 
-def values_for_range_list(start, end):
-    swim = Workout.objects.filter(day__date__gte=start, day__date__lte=end, activity='Swim').aggregate(km=Sum('km'), time=Sum('duration'))
-    bike = Workout.objects.filter(day__date__gte=start, day__date__lte=end, activity='Bike').aggregate(km=Sum('km'),
-                                                                                                       time=Sum('duration'))
-    run = Workout.objects.filter(day__date__gte=start, day__date__lte=end, activity='Run').aggregate(km=Sum('km'), time=Sum('duration'))
-    total = Workout.objects.filter(day__date__gte=start, day__date__lte=end).aggregate(km=Sum('km'), time=Sum('duration'),
-                                                                                                       ascent=Sum('ascent_metres'))
+def values_for_range_list(start, end, workouts):
+    swim = [w for w in workouts if w.activity == 'Swim' and w.date >= start and w.date <= end]
+    bike = [w for w in workouts if w.activity == 'Bike' and w.date >= start and w.date <= end]
+    run = [w for w in workouts if w.activity == 'Run' and w.date >= start and w.date <= end]
+    total = [w for w in workouts if w.date >= start and w.date <= end]
 
-    ytd = [total['time'], total['km'], total['ascent'],
-           swim['time'], swim['km'],
-           bike['time'], bike['km'],
-           run['time'], run['km']
-           ]
+    swim_km = swim_seconds = 0
+    bike_km = bike_seconds = 0
+    run_km = run_seconds = 0
+    total_km = total_seconds = total_ascent = 0
 
-    return ytd
+    if len(swim) > 0:
+        swim_km= functools.reduce(operator.add, [w.km for w in swim])
+        swim_seconds = functools.reduce(operator.add, [w.seconds for w in swim])
+
+    if len(bike) > 0:
+        bike_km = functools.reduce(operator.add, [w.km for w in bike])
+        bike_seconds = functools.reduce(operator.add, [w.seconds for w in bike])
+
+    if len(run) > 0:
+        run_km = functools.reduce(operator.add, [w.km for w in run])
+        run_seconds = functools.reduce(operator.add, [w.seconds for w in run])
+
+    if len(total) > 0:
+        total_km = functools.reduce(operator.add, [w.km for w in total])
+        total_seconds = functools.reduce(operator.add, [w.seconds for w in total])
+        total_ascent = functools.reduce(operator.add, [w.ascent_metres for w in total])
+
+    return [total_seconds, int(total_km), total_ascent, swim_seconds, int(swim_km), bike_seconds, int(bike_km), run_seconds, int(run_km)]

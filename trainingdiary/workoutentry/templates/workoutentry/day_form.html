@@ -26,83 +26,65 @@
             <td>{{ day.training_duration }}</td>
             <td>{{ day.type }}</td>
             <td>{{ day.sleep }}</td>
-            <td>{{ day.sleep_quality }}</td>
+            <td>{{ day.sleepQualityScore }}</td>
             <td>{{ day.fatigue }}</td>
             <td>{{ day.motivation }}</td>
             <td>{{ day.kg }}</td>
             <td>{{ day.fat_percentage }}</td>
-            <td>{{ day.hr }}</td>
-            <td>{{ day.sdnn }}</td>
-            <td>{{ day.rmssd }}</td>
+            <td>{{ day.restingHR }}</td>
+            <td>{{ day.SDNN }}</td>
+            <td>{{ day.rMSSD }}</td>
         </tr>
     </table>
 </div>
 <div class="row justify-content-center">
     <div class="col-md-3">
-        <h2 class="border-bottom mb-4">Day</h2>
+        <h1 class="border-bottom mb-4">Day</h1>
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
                 {{ form|crispy }}
             </fieldset>
-            <button class="btn btn-outline-primary btn-sm" type="submit">Update</button>
+            <button class="btn btn-outline-primary btn-block" type="submit">Update</button>
         </form>
+        <h2 class="border-bottom mb-4">Readings</h2>
+        <button class="btn btn-outline-primary btn-block" type="submit">New</button>
+                            <table class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                            <tr>
+                                <th></th>
+                                <th>type</th>
+                                <th>value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                    {% for r in day.readings %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'reading_form' r.date r.reading_type %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
+                        </td>
+                        <td>{{ r.reading_type }}</td>
+                        <td>{{ r.value }}</td>
+                        <td>
+                            <a href="" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
     </div>
     <div class="col-md-9">
         <div class="row">
             <div class="col-12">
-                <h2 class="border-bottom mb-4">Physiologicals</h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input name='value' type="number" min="50" max="100" step="0.1" value="{% if day.kg %}{{ day.kg }}{% endif %}">
-                    <input class="btn btn-outline-primary btn-sm" name="kg" type="submit" value="Update KG"/>
-                </form>
-            </div>
-            <div class="col-sm">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input name='value' type="number" min="0" max="30" step="0.1" value="{% if day.kg %}{{ day.fat_percentage }}{% endif %}">
-                    <input class="btn btn-outline-primary btn-sm" name="fat" type="submit" value="Update Fat %">
-                </form>
-            </div>
-            <div class="col-sm">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input name='value' type="number" min="20" max="200" step="1" value="{% if day.kg %}{{ day.hr }}{% endif %}">
-                    <input class="btn btn-outline-primary btn-sm" name="hr" type="submit" value="Update HR">
-                </form>
-            </div>
-            <div class="col-sm">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input name='value' type="number" min="0" max="300" step="0.1" value="{% if day.kg %}{{ day.sdnn }}{% endif %}">
-                    <input class="btn btn-outline-primary btn-sm" name="sdnn" type="submit" value="Update SDNN">
-                </form>
-            </div>
-            <div class="col-sm">
-                <form method="POST">
-                    {% csrf_token %}
-                    <input name='value' type="number" min="0" max="300" step="0.1" value="{% if day.kg %}{{ day.rmssd }}{% endif %}">
-                    <input class="btn btn-outline-primary btn-sm" name="rmssd" type="submit" value="Update rMSSD">
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
                 <h2 class="border-bottom mb-4">Workouts</h2>
-                {% if day.id %}
-                <form action="{% url 'workout_new' day_pk=day.id %}">
+                <form">
                     <input class="btn btn-outline-primary btn-sm" type="submit" value="Add Workout"/>
                 </form>
                     <table class="table table-hover table-bordered table-striped table-sm ">
                         <thead class="thead-light">
                             <tr>
                                 <th></th>
-                                <th>day</th>
+                                <th>#</th>
                                 <th>activity</th>
                                 <th>type</th>
                                 <th>duration</th>
@@ -123,11 +105,11 @@
                         </thead>
 
                     {% for w in day.workouts %}
-                    <tr onclick="{% url 'workout_form' w.id %}">
+                    <tr>
                         <td>
-                            <a href="{% url 'workout_form' w.id %}" class="btn btn-outline-primary btn-sm" role="button">View</a>
+                            <a href="{% url 'workout_form' w.date w.workout_number %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
                         </td>
-                        <td>{{ w.day }}</td>
+                        <td>{{ w.workout_number }}</td>
                         <td>{{ w.activity }}</td>
                         <td>{{ w.activity_type }}</td>
                         <td>{{ w.duration }}</td>
@@ -144,12 +126,11 @@
                         <td>{{ w.heart_rate }}</td>
                         <td>{{ w.is_brick }}</td>
                         <td>
-                            <a href="{% url 'workout_delete' w.id%}" class="btn btn-outline-danger btn-sm" role="button">DELETE</a>
+                            <a href="" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </table>
-                {% endif %}
             </div>
         </div>
     </div>

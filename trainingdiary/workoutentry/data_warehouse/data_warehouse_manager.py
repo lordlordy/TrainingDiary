@@ -1,6 +1,4 @@
-import json
 import datetime
-from datetime import date
 from dateutil import parser
 import sqlite3
 import numpy as np

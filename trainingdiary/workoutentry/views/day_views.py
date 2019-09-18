@@ -1,115 +1,37 @@
-from django.views.generic import ListView, UpdateView, CreateView
-from workoutentry.models import (Day, KG, FatPercentage, RestingHeartRate, SDNN, RMSSD)
-from workoutentry.filters import DayFilter
+from django.views.generic import UpdateView, CreateView
+from workoutentry.models import Day
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django import forms
-from django.forms.widgets import Select
 import datetime
+from workoutentry.training_data import TrainingDataManager
+from workoutentry.forms import DayFilterForm, DayEditForm
 
 
 def days_list_view(request):
-    context = dict()
+    month_ago = datetime.date.today() - datetime.timedelta(days=30)
+    context = {'days': TrainingDataManager().days_between(from_date=month_ago, to_date=datetime.date.today()),
+               'form': DayFilterForm()}
+
     if request.method == 'POST':
-        df = DayFilter(request.POST, Day.objects.all())
-        context['filter'] = df
-        context['days'] = df.qs
-    if request.method == 'GET':
-        context['days'] = filtered_set()
-        context['filter'] = DayFilter()
+        if 'to' in request.POST and 'from' in request.POST:
+            context['days'] = TrainingDataManager().days_between(from_date=request.POST['from'], to_date=request.POST['to'])
+            context['form'] = DayFilterForm(initial={'from': request.POST['from'], 'to': request.POST['to']})
+
     return render(request, 'workoutentry/day_list.html', context)
 
 
-def filtered_set():
-    month_ago = datetime.date.today() - datetime.timedelta(days=30)
-    return Day.objects.filter(date__gt=month_ago)
-
-
-class DayListView(ListView):
-    model = Day
-    context_object_name = 'days'
+class DayUpdateView(UpdateView):
 
     def get(self, request, *args, **kwargs):
-        _ = super().get(request, args, kwargs)
+        day = TrainingDataManager().days_between(kwargs['date'], kwargs['date'])
+        return render(request, 'workoutentry/day_form.html', {'day': day[0], 'form': DayEditForm(initial=day[0].data_dictionary())})
 
-        context = {'days': self.get_queryset(),
-                   'filter': DayFilter()}
-
-        return render(request, 'workoutentry/day_list.html', context)
-
-    def get_queryset(self):
-        month_ago = datetime.date.today() - datetime.timedelta(days=30)
-        return Day.objects.filter(date__gt=month_ago)
-
-
-class DayUpdateView(UpdateView):
-    model = Day
-    success_url = '/days/'
-    fields = ['date',
-              'sleep',
-              'sleep_quality',
-              'fatigue',
-              'motivation',
-              'type',
-              'comments']
 
     def post(self, request, *args, **kwargs):
-        day = Day.objects.get(id=kwargs['pk'])
-        print(request.POST)
-        physio = None
-        if 'kg' in request.POST:
-            if KG.objects.filter(date=day.date):
-                physio = KG.objects.get(date=day.date)
-                physio.value = request.POST['value']
-            else:
-                physio = KG(date=day.date, value=request.POST['value'])
-        elif 'fat' in request.POST:
-            if FatPercentage.objects.filter(date=day.date):
-                physio = FatPercentage.objects.get(date=day.date)
-                physio.value = request.POST['value']
-            else:
-                physio = FatPercentage(date=day.date, value=request.POST['value'])
-        elif 'hr' in request.POST:
-            if RestingHeartRate.objects.filter(date=day.date):
-                physio = RestingHeartRate.objects.get(date=day.date)
-                physio.value = request.POST['value']
-            else:
-                physio = RestingHeartRate(date=day.date, value=request.POST['value'])
-        elif 'sdnn' in request.POST:
-            if SDNN.objects.filter(date=day.date):
-                physio = SDNN.objects.get(date=day.date)
-                physio.value = request.POST['value']
-            else:
-                physio = SDNN(date=day.date, value=request.POST['value'])
-        elif 'rmssd' in request.POST:
-            if RMSSD.objects.filter(date=day.date):
-                physio = RMSSD.objects.get(date=day.date)
-                physio.value = request.POST['value']
-            else:
-                physio = RMSSD(date=day.date, value=request.POST['value'])
-        else:
-            return super().post(request, args, kwargs)
-
-        if physio is not None:
-            physio.save()
-
-        return HttpResponseRedirect(f'/trainingdiary/days/{day.id}')
+        TrainingDataManager().update_day(kwargs['date'], request.POST['day_type'], request.POST['comments'])
+        return HttpResponseRedirect(f'/trainingdiary/days/{kwargs["date"]}')
 
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        from django.forms.widgets import TextInput
-        form.fields['date'].widget = TextInput(attrs={'class': 'datepicker', 'placeholder': 'YYYY-MM-DD'})
-        unique_types = Day.objects.values('type').distinct()
-        unique_sleep_quality = Day.objects.values('sleep_quality').distinct()
-        form.fields['type'] = forms.CharField(required=True,
-                                              widget=Select(choices=[(u['type'], u['type']) for u in unique_types],
-                                                            attrs={'class': 'form-control', 'id': 'type'}))
-
-        form.fields['sleep_quality'] = forms.CharField(required=True,
-                                              widget=Select(choices=[(u['sleep_quality'], u['sleep_quality']) for u in unique_sleep_quality],
-                                                            attrs={'class': 'form-control', 'id': 'sleep_quality'}))
-        return form
 
 class DayCreateView(CreateView):
     model = Day

@@ -1,50 +1,62 @@
-from django.db import models
-from .day import Day
-import datetime
+# from django.db import models
+# from .day import Day
+# import datetime#
+import dateutil.parser
+from datetime import timedelta
 
 
-class Workout(models.Model):
-    activity = models.CharField(max_length=15, default='Run')
-    activity_type = models.CharField(max_length=15, default='Road')
-    equipment = models.CharField(max_length=30, null=True, blank=True)
-    day = models.ForeignKey(Day, on_delete=models.CASCADE)
-    duration = models.DurationField(default=datetime.timedelta(hours=1))
-    rpe = models.DecimalField(max_digits=3, decimal_places=1, default=5.0)
-    tss = models.DecimalField(max_digits=5, decimal_places=1, default=50.0)
-    tss_method = models.CharField(max_length=15, default='RPE')
-    km = models.DecimalField(max_digits=5, decimal_places=1, default=0.0)
-    kj = models.IntegerField(default=0.0, null=True, blank=True)
-    ascent_metres = models.IntegerField(null=True, blank=True, default=0)
-    reps = models.IntegerField(null=True, blank=True, default=0)
-    is_race = models.BooleanField(default=False)
-    cadence = models.IntegerField(blank=True, null=True, default=0)
-    watts = models.IntegerField(blank=True, null=True, default=0)
-    watts_estimated = models.BooleanField(default=True)
-    heart_rate = models.IntegerField(blank=True, null=True, default=0)
-    is_brick = models.BooleanField(default=False)
-    keywords = models.TextField(blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
+class Workout:
+
+    def __init__(self, *args):
+
+        self.primary_key = args[0]
+        self.date = dateutil.parser.parse(args[1]).date()
+        self.workout_number = args[2]
+        self.activity = args[3]
+        self.activity_type = args[4]
+        self.equipment = args[5]
+        self.seconds = timedelta(seconds=args[6])
+        self.rpe = args[7]
+        self.tss = args[8]
+        self.tss_method = args[9]
+        self.km = args[10]
+        self.kj = args[11]
+        self.ascent_metres = args[12]
+        self.reps = args[13]
+        self.is_race = args[14]
+        self.cadence = args[15]
+        self.watts = args[16]
+        self.watts_estimated = args[17]
+        self.heart_rate = args[18]
+        self.is_brick = args[19]
+        self.keywords = args[20]
+        self.comments = args[21]
+        self.last_save = args[22]
 
     def __str__(self):
-        return str(self.day.date) + ':' + self.activity
+        return f'{self.date} ~ {self.workout_number}: {self.activity}:{self.activity_type}:{self.equipment} : {self.seconds}s'
 
     def data_dictionary(self):
-        return {"hr": self.heart_rate,
-                "seconds": self.duration.seconds,
-                "ascentMetres": self.ascent_metres,
-                "activityString": self.activity,
-                "activityTypeString": self.activity_type,
-                "cadence": self.cadence,
-                "watts": self.watts,
-                "brick": self.watts_estimated,
-                "isRace": self.is_race,
-                "kj": self.kj,
-                "comments": self.comments,
-                "km": float(self.km),
-                "keywords": self.keywords,
-                "tss": float(self.tss),
-                "equipmentName": self.equipment,
-                "rpe": float(self.rpe),
-                "tssMethod": self.tss_method,
-                "reps": self.reps,
-                "wattsEstimated": self.watts_estimated}
+        return {'primary_key': self.primary_key,
+                'date': self.date,
+                'workout_number': self.workout_number,
+                'activity': self.activity,
+                'activity_type': self.activity_type,
+                'equipment': self.equipment,
+                'seconds': self.seconds,
+                'rpe': self.rpe,
+                'tss': self.tss,
+                'tss_method': self.tss_method,
+                'km': self.km,
+                'kj': self.kj,
+                'ascent_metres': self.ascent_metres,
+                'reps': self.reps,
+                'is_race': self.is_race,
+                'cadence': self.cadence,
+                'watts': self.watts,
+                'watts_estimated': self.watts_estimated,
+                'heart_rate': self.heart_rate,
+                'is_brick': self.is_brick,
+                'keywords': self.keywords,
+                'comments': self.comments,
+                'last_save': self.last_save}

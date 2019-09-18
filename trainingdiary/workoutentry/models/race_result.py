@@ -1,62 +1,30 @@
-from django.db import models
-from mainsite.utils import ordinal
-import datetime
 
 
-class RaceResult(models.Model):
-    date = models.DateField()
 
-    type = models.CharField(max_length=24)
-    brand = models.CharField(max_length=24)
-    distance = models.CharField(max_length=24)
-    name = models.CharField(max_length=100)
-    category = models.CharField(max_length=24, blank=True, null=True)
+class RaceResult:
 
-    overall_position = models.IntegerField(blank=True, null=True)
-    number_of_participants = models.IntegerField(blank=True, null=True)
-    category_position = models.IntegerField(blank=True, null=True)
-    number_in_category = models.IntegerField(blank=True, null=True)
+    def __init__(self, *args):
+        self.primary_key = args[0]
+        self.date = args[1]
+        self.race_number = args[2]
+        self.type = args[3]
+        self.brand = args[4]
+        self.distance = args[5]
+        self.name = args[6]
+        self.category = args[7]
+        self.overall_position = args[8]
+        self.category_position = args[9]
+        self.swim_seconds = args[10]
+        self.t1_seconds = args[11]
+        self.bike_seconds = args[12]
+        self.t2_seconds = args[13]
+        self.run_seconds = args[14]
+        self.swim_km = args[15]
+        self.bike_km = args[16]
+        self.run_km = args[17]
+        self.comments = args[18]
+        self.race_report = args[19]
+        self.last_sav = args[20]
+        self.total_seconds = self.swim_seconds + self.t1_seconds + self.bike_seconds + self.t2_seconds + self.run_seconds
+        self.total_km = self.swim_km + self.bike_km + self.run_km
 
-    swim = models.DurationField(blank=True, null=True)
-    t1 = models.DurationField(blank=True, null=True)
-    bike = models.DurationField(blank=True, null=True)
-    t2 = models.DurationField(blank=True, null=True)
-    run = models.DurationField(blank=True, null=True)
-
-    swim_km = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
-    bike_km = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
-    run_km = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
-
-    comments = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f'{self.date} {self.brand} {self.name}'
-
-    @property
-    def total_time(self):
-        total_time = datetime.timedelta(seconds=0)
-        if self.swim is not None:
-            total_time += self.swim
-        if self.t1 is not None:
-            total_time += self.t1
-        if self.bike is not None:
-            total_time += self.bike
-        if self.t2 is not None:
-            total_time += self.t2
-        if self.run is not None:
-            total_time += self.run
-        return total_time
-
-    @property
-    def category_position_str(self):
-        if self.category_position is not None and self.category is not None:
-            return ordinal(self.category_position) + ' ' + self.category
-        else:
-            return ''
-
-    @property
-    def overall_position_str(self):
-        if self.overall_position is not None:
-            return ordinal(self.overall_position) + ' overall'
-        else:
-            return ''

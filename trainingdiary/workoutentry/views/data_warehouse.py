@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from workoutentry.data_warehouse import DataWarehouse, DataWarehouseManager
-from workoutentry.models import Day, KG, FatPercentage, RestingHeartRate, SDNN, RMSSD
+# from workoutentry.models import Day, KG, FatPercentage, RestingHeartRate, SDNN, RMSSD
+from workoutentry.models import Day
 
 from django.contrib import messages
 

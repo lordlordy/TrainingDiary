@@ -25,7 +25,7 @@ SECRET_KEY = '9ypzbw1k-0*l^@9cw7f7sj_tg^u^zcio&gw15z^7h03j)$5k31'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com', 'lordlordy.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com']
 
 
 # Application definition
@@ -105,9 +105,14 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
 
-    'training_diary_db': {
+    # 'training_diary_db': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
+    # },
+
+    'training_data_db': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'training_diary.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
     },
 
     'data_warehouse_db': {
@@ -116,8 +121,7 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = ['trainingdiary.db_routers.WorkoutEntryRouter']
-
+# DATABASE_ROUTERS = ['trainingdiary.db_routers.WorkoutEntryRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
