@@ -11,6 +11,7 @@ class Day:
 
         from workoutentry.training_data import TrainingDataManager
         self.readings = TrainingDataManager().readings_for_date(self.date)
+        self.reading_count = len(self.readings)
         rDict = dict()
 
         for r in self.readings:
@@ -45,7 +46,13 @@ class Day:
 
 
     def __str__(self):
-        return self.date + ' ~ ' + self.day_type + ' ~ ' + self.comments
+        return str(self.date )+ ' ~ ' + self.day_type + ' ~ ' + self.comments
+
+    def workout_types(self):
+        result = set()
+        for w in self.workouts:
+            result = result.union(w.workout_types)
+        return result
 
 
     def data_dictionary(self):

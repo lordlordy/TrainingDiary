@@ -94,7 +94,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'trainingdiary.wsgi.application'
-
+print("in the settings file")
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -105,10 +105,10 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
 
-    # 'training_diary_db': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
-    # },
+    'training_diary_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
+    },
 
     'training_data_db': {
         'ENGINE': 'django.db.backends.sqlite3',

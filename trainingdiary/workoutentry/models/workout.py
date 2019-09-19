@@ -1,6 +1,3 @@
-# from django.db import models
-# from .day import Day
-# import datetime#
 import dateutil.parser
 from datetime import timedelta
 
@@ -32,6 +29,19 @@ class Workout:
         self.keywords = args[20]
         self.comments = args[21]
         self.last_save = args[22]
+
+        from . import WorkoutType
+
+        self.workout_types = {WorkoutType(),
+                  WorkoutType(activity_type=self.activity_type),
+                  WorkoutType(activity=self.activity),
+                  WorkoutType(activity=self.activity, activity_type=self.activity_type)}
+        if self.equipment != "":
+            e = self.equipment.replace(" ","")
+            self.workout_types.add(WorkoutType(equipment=e))
+            self.workout_types.add(WorkoutType(activity_type=self.activity_type, equipment=e))
+            self.workout_types.add(WorkoutType(activity=self.activity, equipment=e))
+            self.workout_types.add(WorkoutType(activity=self.activity, activity_type=self.activity_type, equipment=e))
 
     def __str__(self):
         return f'{self.date} ~ {self.workout_number}: {self.activity}:{self.activity_type}:{self.equipment} : {self.seconds}s'
