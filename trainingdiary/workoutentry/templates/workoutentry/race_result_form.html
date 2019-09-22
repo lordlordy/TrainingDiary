@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+ <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="border-bottom mb-4">Race Result</h2>
+            <table class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>date</th>
+                    <th>#</th>
+                    <th>type</th>
+                    <th>brand</th>
+                    <th>distance</th>
+                    <th>name</th>
+                    <th>category</th>
+                    <th>Position</th>
+                    <th>Cat Position</th>
+                    <th>Swim</th>
+                    <th>T1</th>
+                    <th>Bike</th>
+                    <th>T2</th>
+                    <th>Run</th>
+                    <th>Total</th>
+                    <th>Swim KM</th>
+                    <th>Bike KM</th>
+                    <th>Run KM</th>
+                    <th>Total KM</th>
+                    <th>last save</th>
+               </tr>
+                </thead>
+                <tr>
+            <td>{{ race_result.date }}</td>
+            <td>{{ race_result.race_number }}</td>
+            <td>{{ race_result.type }}</td>
+            <td>{{ race_result.brand }}</td>
+            <td>{{ race_result.distance }}</td>
+            <td>{{ race_result.name }}</td>
+            <td>{{ race_result.category }}</td>
+            <td>{{ race_result.overall_position }}</td>
+            <td>{{ race_result.category_position }}</td>
+            <td>{{ race_result.swim_seconds }}</td>
+            <td>{{ race_result.t1_seconds }}</td>
+            <td>{{ race_result.bike_seconds }}</td>
+            <td>{{ race_result.t2_seconds }}</td>
+            <td>{{ race_result.run_seconds }}</td>
+            <td>{{ race_result.total_seconds }}</td>
+            <td>{{ race_result.swim_km }}</td>
+            <td>{{ race_result.bike_km }}</td>
+            <td>{{ race_result.run_km }}</td>
+            <td>{{ race_result.total_km }}</td>
+            <td>{{ race_result.last_save }}</td>
+              </tr>
+            </table>
+        </div>
+    </div>
+     <legend class="border-bottom mb-4">Race Result Edit</legend>
+     <form method="post">
+         {% csrf_token %}
+         <div class="row">
+             <div class="col-md-12">
+                <div class="form-row">
+                    <div class="form-group col-1 mb-0">
+                        {{ form.type | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.brand | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.distance | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.category | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.name | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.overall_position | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.category_position | as_crispy_field }}
+                    </div>
+                    <div class="col-md-5">
+                        <button class="btn btn-outline-primary btn-block" type="submit">Update</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-1 mb-0">
+                        {{ form.swim_seconds | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.t1_seconds | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.bike_seconds | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.t2_seconds | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.run_seconds | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.swim_km | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.bike_km | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.run_km | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-4 mb-0">
+                        {{ form.comments | as_crispy_field }}
+                    </div>
+                </div>
+             </div>
+         </div>
+         <div class="row">
+             <div class="col-md-12">
+                 <div class="form-row">
+                    <div class="form-group col-12 mb-0">
+                        {{ form.race_report | as_crispy_field }}
+                    </div>
+                </div>
+             </div>
+         </div>
+     </form>
+ </div>
+
+
+{% endblock %}
+
+   {% block extra_scripts %}
+<script type='text/javascript'>
+
+
+$(document).ready(function(){
+$('#race_type').select2();
+})
+
+$(document).ready(function(){
+$('#race_brand').select2();
+});
+
+$(document).ready(function(){
+$('#race_distance').select2();
+});
+
+$(document).ready(function(){
+$('#race_category').select2();
+});
+
+</script>
+
+
+    {% endblock %}

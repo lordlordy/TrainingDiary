@@ -38,7 +38,7 @@
         {% for r in race_results %}
         <tr>
             <td>
-                <a href="" class="btn btn-outline-primary btn-block" role="button">Edit</a>
+                <a href="{% url 'race_result_form' r.date r.race_number %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
             </td>
             <td>{{ r.date }}</td>
             <td>{{ r.race_number }}</td>
@@ -54,14 +54,14 @@
             <td>{{ r.bike_seconds }}</td>
             <td>{{ r.t2_seconds }}</td>
             <td>{{ r.run_seconds }}</td>
-            <td>{{ r.total_Seconds }}</td>
+            <td>{{ r.total_seconds }}</td>
             <td>{{ r.swim_km }}</td>
             <td>{{ r.bike_km }}</td>
             <td>{{ r.run_km }}</td>
             <td>{{ r.total_km }}</td>
             <td>{{ r.last_save }}</td>
             <td>
-                <a href="" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+                <a href="{% url 'race_result_delete' r.date r.race_number %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
             </td>
 
         </tr>

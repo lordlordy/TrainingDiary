@@ -48,7 +48,9 @@
             <button class="btn btn-outline-primary btn-block" type="submit">Update</button>
         </form>
         <h2 class="border-bottom mb-4">Readings</h2>
-        <button class="btn btn-outline-primary btn-block" type="submit">New</button>
+        <form action="{% url 'reading_new' day.date %}">
+                <input class="btn btn-outline-primary btn-block" type="submit" value="Add Reading"/>
+            </form>
                             <table class="table table-hover table-bordered table-striped table-sm ">
                         <thead class="thead-light">
                             <tr>
@@ -67,7 +69,7 @@
                         <td>{{ r.reading_type }}</td>
                         <td>{{ r.value }}</td>
                         <td>
-                            <a href="" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+                            <a href="{% url 'reading_delete' r.date r.reading_type %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -77,7 +79,7 @@
         <div class="row">
             <div class="col-12">
                 <h2 class="border-bottom mb-4">Workouts</h2>
-                <form">
+                <form action="{% url 'workout_new' day.date %}">
                     <input class="btn btn-outline-primary btn-sm" type="submit" value="Add Workout"/>
                 </form>
                     <table class="table table-hover table-bordered table-striped table-sm ">
@@ -126,7 +128,7 @@
                         <td>{{ w.heart_rate }}</td>
                         <td>{{ w.is_brick }}</td>
                         <td>
-                            <a href="" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+                            <a href="{% url 'workout_delete' w.date w.workout_number %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
                         </td>
                     </tr>
                     {% endfor %}

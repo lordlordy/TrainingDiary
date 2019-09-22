@@ -49,10 +49,10 @@
         <a class="nav-link dropdown-toggle" id="raceResultsDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Race Results</a>
         <div class="dropdown-menu" aria-labelledby="raceResultsDropDown">
-          <a class="dropdown-item" href="">All Races (race_results)</a>
-          <a class="dropdown-item" href="">Ironman (ironman_results)</a>
-          <a class="dropdown-item" href="">Swim Run (swimrun_results)</a>
-          <a class="dropdown-item" href="">Result Search (all_results)</a>
+          <a class="dropdown-item" href="{% url 'race_results' %}">All Races</a>
+          <a class="dropdown-item" href="{% url 'ironman_results' %}">Ironman</a>
+          <a class="dropdown-item" href="{% url 'swimrun_results' %}">Swim Run</a>
+          <a class="dropdown-item" href="{% url 'all_results' %}">Result Search</a>
         </div>
       </li>
       <!--<li class="nav-item dropdown">-->

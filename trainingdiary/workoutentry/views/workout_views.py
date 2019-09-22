@@ -1,8 +1,5 @@
-from django.views.generic import UpdateView, CreateView, DeleteView
-from django.forms.widgets import Select
-from django import forms
+from django.views.generic import UpdateView
 from django.http import HttpResponseRedirect
-from workoutentry.models import (Workout, Day, Reading)
 from workoutentry.training_data import TrainingDataManager
 from workoutentry.forms import WorkoutEditForm
 import datetime
@@ -20,85 +17,62 @@ class WorkoutUpdateView(UpdateView):
 
     def get(self, request, *args, **kwargs):
         workouts = TrainingDataManager().workout_for_date_and_number(kwargs["date"], kwargs["workout_number"])
+        dd = workouts[0].data_dictionary()
+        dd['watts_estimated_yes_no'] = 'Yes' if dd['watts_estimated'] > 0 else 'No'
+        dd['is_race_yes_no'] = 'Yes' if dd['is_race'] > 0 else 'No'
+        dd['is_brick_yes_no'] = 'Yes' if dd['is_brick'] > 0 else 'No'
         if len(workouts) > 0:
             return render(request, 'workoutentry/workout_form.html', {'workout': workouts[0],
-                                                                      'form': WorkoutEditForm(initial=workouts[0].data_dictionary())})
-
+                                                                      'form': WorkoutEditForm(initial=dd)})
 
     def post(self, request, *args, **kwargs):
         seconds = pd.to_timedelta(request.POST['seconds']).seconds
+        watts_estimated = 1 if request.POST['watts_estimated_yes_no'] == 'Yes' else 0
+        is_race = 1 if request.POST['is_race_yes_no'] == 'Yes' else 0
+        is_brick = 1 if request.POST['is_brick_yes_no'] == 'Yes' else 0
         TrainingDataManager().update_workout(kwargs['date'], kwargs['workout_number'], request.POST['activity'],
                                              request.POST['activity_type'], request.POST['equipment'],
                                              seconds, request.POST['rpe'], request.POST['tss'],
                                              request.POST['tss_method'], request.POST['km'], request.POST['kj'],
-                                             request.POST['ascent_metres'], request.POST['reps'],
-                                             request.POST['is_race'], request.POST['cadence'], request.POST['watts'],
-                                             request.POST['watts_estimated'], request.POST['heart_rate'],
-                                             request.POST['is_brick'], request.POST['keywords'],
+                                             request.POST['ascent_metres'], request.POST['reps'], is_race,
+                                             request.POST['cadence'], request.POST['watts'], watts_estimated,
+                                             request.POST['heart_rate'], is_brick, request.POST['keywords'],
                                              request.POST['comments'])
-        return HttpResponseRedirect(f'/trainingdiary/workouts/{kwargs["date"]}/{kwargs["workout_number"]}')
+
+        return HttpResponseRedirect(f'/trainingdiary/days/update/{kwargs["date"]}')
 
 
+def new_workout_view(request, **kwargs):
+    if request.method == 'GET':
+        workout = TrainingDataManager().day_for_date(kwargs['date']).default_workout()
+        dd = workout.data_dictionary()
+        dd['watts_estimated_yes_no'] = 'Yes' if dd['watts_estimated'] > 0 else 'No'
+        dd['is_race_yes_no'] = 'Yes' if dd['is_race'] > 0 else 'No'
+        dd['is_brick_yes_no'] = 'Yes' if dd['is_brick'] > 0 else 'No'
+        form = WorkoutEditForm(initial=dd)
+        return render(request, 'workoutentry/workout_form.html', {'workout': workout,
+                                                                      'form': form})
 
-class WorkoutCreateView(CreateView):
-    model = Workout
-    success_url = '/workouts/'
-    fields = ['activity',
-              'activity_type',
-              'equipment',
-              'duration',
-              'rpe',
-              'tss',
-              'tss_method',
-              'km',
-              'kj',
-              'ascent_metres',
-              'reps',
-              'is_race',
-              'cadence',
-              'watts',
-              'watts_estimated',
-              'heart_rate',
-              'is_brick',
-              'keywords',
-              'comments']
-    template_name = 'workoutentry/workout_form.html'
+    if request.method == 'POST':
+        seconds = pd.to_timedelta(request.POST['seconds']).seconds
+        watts_estimated = 1 if request.POST['watts_estimated_yes_no'] == 'Yes' else 0
+        is_race = 1 if request.POST['is_race_yes_no'] == 'Yes' else 0
+        is_brick = 1 if request.POST['is_brick_yes_no'] == 'Yes' else 0
+        TrainingDataManager().save_workout(kwargs['date'], request.POST['activity'], request.POST['activity_type'],
+                                           request.POST['equipment'], seconds, request.POST['rpe'], request.POST['tss'],
+                                           request.POST['tss_method'], request.POST['km'], request.POST['kj'],
+                                           request.POST['ascent_metres'], request.POST['reps'], is_race,
+                                           request.POST['cadence'], request.POST['watts'], watts_estimated,
+                                           request.POST['heart_rate'], is_brick,request.POST['keywords'],
+                                           request.POST['comments'])
 
-    def get_success_url(self):
-        day_pk = self.object.day.id
-        return f'/trainingdiary/days/{day_pk}'
-
-    def form_valid(self, form):
-        day = Day.objects.get(pk=self.kwargs['day_pk'])
-        form.instance.day = day
-        return super().form_valid(form)
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        unique_activities = Workout.objects.values('activity').distinct()
-        unique_activities_types = Workout.objects.values('activity_type').distinct()
-        unique_tss_methods = Workout.objects.values('tss_method').distinct()
-        unique_equipment = Workout.objects.values('equipment').distinct()
-        form.fields['activity'] = forms.CharField(required=False,
-                                              widget=Select(choices=[(a['activity'], a['activity']) for a in unique_activities],
-                                                            attrs={'class': 'form-control', 'id': 'activity'}))
-        form.fields['activity_type'] = forms.CharField(required=False,
-                                              widget=Select(choices=[(a['activity_type'], a['activity_type']) for a in unique_activities_types],
-                                                            attrs={'class': 'form-control', 'id': 'activity_type'}))
-        form.fields['tss_method'] = forms.CharField(required=False,
-                                              widget=Select(choices=[(a['tss_method'], a['tss_method']) for a in unique_tss_methods],
-                                                            attrs={'class': 'form-control', 'id': 'tss_method'}))
-        form.fields['equipment'] = forms.CharField(required=False,
-                                                    widget=Select(choices=[(a['equipment'], a['equipment']) for a in
-                                                                           unique_equipment],
-                                                                  attrs={'class': 'form-control', 'id': 'equipment'}))
-        return form
+        return HttpResponseRedirect(f'/trainingdiary/days/update/{kwargs["date"]}')
 
 
-class WorkoutDeleteView(DeleteView):
-    model = Workout
-    template_name = 'workoutentry/confirm_delete.html'
-
-    def get_success_url(self):
-        day_pk = self.object.day.id
-        return f'/trainingdiary/days/{day_pk}'
+def delete_workout_view(request, **kwargs):
+    if request.method == "GET":
+        return render(request, 'workoutentry/confirm_delete.html',
+                      {'object': f"workout {kwargs['workout_number']} on {kwargs['date']}"})
+    if request.method == "POST":
+        TrainingDataManager().delete_workout(kwargs['date'], kwargs['workout_number'])
+        return HttpResponseRedirect(f'/trainingdiary/days/update/{kwargs["date"]}')

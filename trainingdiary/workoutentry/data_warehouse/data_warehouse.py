@@ -152,20 +152,6 @@ class DataWarehouse:
                           rolling_periods=rolling_periods, rolling_aggregation=rolling_aggregation, day_of_week=day_of_week,
                           month=month, day_type=day_type)
 
-        print(f'Period: {period}')
-        print(f'aggregation: {aggregation}')
-        print(f'activity {activity}')
-        print(f'activity_type: {activity_type}')
-        print(f'equipment: {equipment}')
-        print(f'measure: {measure}')
-        print(f'to_date: {to_date}')
-        print(f'rolling: {rolling}')
-        print(f'rolling_periods: {rolling_periods}')
-        print(f'rolling_aggregation: {rolling_aggregation}')
-        print(f'day_of_week: {day_of_week}')
-        print(f'month: {month}')
-        print(f'day_type: {day_type}')
-
         e = equipment.replace(" ",'')
         if period != 'Day':
             if period == 'Month':

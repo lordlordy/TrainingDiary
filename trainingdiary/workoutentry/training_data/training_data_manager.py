@@ -31,9 +31,18 @@ class TrainingDataManager:
         db_path = os.path.join(trainingdiary.BASE_DIR, self.__db_name)
         self.__conn = sqlite3.connect(db_path)
 
+    def latest_date(self):
+        sql = 'SELECT date FROM Day ORDER BY date DESC LIMIT 1'
+        date = self.__conn.execute(sql).fetchall()[0]
+        return date
+
     def days(self):
-        days = self.__conn.execute('SELECT date, type, comments FROM Day').fetchall()
+        days = self.__conn.execute('SELECT date, type, comments FROM Day ORDER BY date ASC').fetchall()
         return [Day(*d) for d in days]
+
+    def day_for_date(self, date):
+        day = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date="{str(date)}"').fetchall()[0]
+        return Day(*day)
 
     def days_between(self, from_date, to_date):
         days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"')
@@ -44,6 +53,16 @@ class TrainingDataManager:
             UPDATE Day
             SET type="{day_type}", comments="{comments}"
             WHERE date="{date}"
+        """
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def save_day(self, date, type, comments):
+        sql = f"""
+            INSERT INTO Day
+            (date, type, comments)
+            VALUES
+            ("{date}", "{type}", "{comments}")
         """
         self.__conn.execute(sql)
         self.__conn.commit()
@@ -77,6 +96,13 @@ class TrainingDataManager:
         workouts = self.__conn.execute(sql)
         return [Workout(*w) for w in workouts]
 
+    def delete_workout(self, date, number):
+        sql = f'''
+            DELETE FROM Workout
+            WHERE date="{str(date)}" AND workout_number={number}
+        '''
+        self.__conn.execute(sql)
+
     def update_workout(self, date, workout_number, activity, activity_type, equipment, seconds, rpe, tss,
              tss_method, km, kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate,
              is_brick, keywords, comments):
@@ -93,6 +119,35 @@ class TrainingDataManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
+    def save_workout(self, date, activity, activity_type, equipment, seconds, rpe, tss,
+             tss_method, km, kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate,
+             is_brick, keywords, comments):
+
+        workout_number = len(self.workouts_on_date(date)) + 1
+
+        sql = f"""
+            INSERT INTO Workout
+            (primary_key, date, workout_number, activity, activity_type, equipment, seconds, rpe, tss, tss_method, km, 
+            kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate, is_brick, keywords, comments, 
+            last_save)
+            VALUES
+            ("{date}-{workout_number}", "{date}", {workout_number}, "{activity}", "{activity_type}", "{equipment}", 
+            {seconds}, {rpe}, {tss}, "{tss_method}", {km}, {kj}, {ascent_metres}, {reps}, {is_race}, {cadence}, {watts}, 
+            {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.datetime.now()}")
+        """
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def delete_workout(self, date, workout_number):
+        sql = f'''
+            DELETE FROM Workout
+            WHERE date="{str(date)}" AND workout_number={workout_number}
+        '''
+        print(sql)
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+
     def readings(self):
         readings = self.__conn.execute('SELECT date, type, value FROM Reading').fetchall()
         return [Reading(*r) for r in readings]
@@ -101,9 +156,28 @@ class TrainingDataManager:
         readings = self.__conn.execute(f'SELECT date, type, value FROM Reading WHERE date="{str(date)}"').fetchall()
         return [Reading(*r) for r in readings]
 
+    def unused_readings_for_date(self, date):
+        all_readings = self.readings()
+        readings_taken = [r.reading_type for r in self.readings_for_date(date)]
+        result = []
+        for r in all_readings:
+            if r.reading_type not in readings_taken:
+                result.append(r)
+        return result
+
+
     def reading_for_date_and_type(self, date, reading_type):
         readings = self.__conn.execute(f'SELECT date, type, value FROM Reading WHERE date="{str(date)}" AND type="{reading_type}"').fetchall()
         return [Reading(*r) for r in readings]
+
+    def delete_reading(self, date, reading_type):
+        sql = f'''
+            DELETE FROM Reading
+            WHERE date="{str(date)}" AND type="{reading_type}"
+        '''
+        print(sql)
+        self.__conn.execute(sql)
+        self.__conn.commit()
 
     def update_reading(self, date, reading_type, value):
         sql = f"""
@@ -114,8 +188,42 @@ class TrainingDataManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
+    def save_reading(self, date, reading_type, value):
+        sql = f"""
+            INSERT INTO Reading
+            (primary_key, date, type, value)
+            VALUES
+            ('{date}-{reading_type}','{date}', '{reading_type}', {value})
+        """
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
     def race_results(self):
         r_results = self.__conn.execute(race_result_select_sql).fetchall()
+        return [RaceResult(*r) for r in r_results]
+
+    def future_races(self):
+        sql = f'''
+                    {race_result_select_sql}
+                    WHERE date>="{str(datetime.date.today())}"
+                '''
+        r_results = self.__conn.execute(sql)
+        return [RaceResult(*r) for r in r_results]
+
+    def race_results_of_distance(self, distance):
+        sql = f'''
+                    {race_result_select_sql}
+                    WHERE distance="{str(distance)}"
+                '''
+        r_results = self.__conn.execute(sql)
+        return [RaceResult(*r) for r in r_results]
+
+    def race_results_of_type(self, type):
+        sql = f'''
+                    {race_result_select_sql}
+                    WHERE type="{str(type)}"
+                '''
+        r_results = self.__conn.execute(sql)
         return [RaceResult(*r) for r in r_results]
 
     def race_result_for_date_and_number(self, date, number):
@@ -126,18 +234,26 @@ class TrainingDataManager:
         r_results = self.__conn.execute(sql)
         return [RaceResult(*r) for r in r_results]
 
-    def update_race_result(self, date, race_number, type, brand, distance, name, category, overall_position,
+    def delete_race_result(self, date, number):
+        sql = f'''
+            DELETE FROM RaceResult
+            WHERE date="{str(date)}" AND race_number={number}
+        '''
+        self.__conn.execute(sql)
+
+    def update_race_result(self, date, race_number, race_type, brand, distance, name, category, overall_position,
                            category_position, swim_seconds, t1_seconds, bike_seconds, t2_seconds, run_seconds, swim_km,
                            bike_km, run_km, comments, race_report):
         sql = f"""
-            UPDATE Race Result
-            SET  type="{type}", brand="{brand}", distance="{distance}", name="{name}", category="{category}", 
+            UPDATE RaceResult
+            SET  type="{race_type}", brand="{brand}", distance="{distance}", name="{name}", category="{category}", 
             overall_position={overall_position}, category_position={category_position}, swim_seconds={swim_seconds}, 
             t1_seconds={t1_seconds}, bike_seconds={bike_seconds}, t2_seconds={t2_seconds}, run_seconds={run_seconds}, 
             swim_km={swim_km}, bike_km={bike_km}, run_km={run_km}, comments="{comments}", 
             race_report="{race_report}", last_save="{datetime.datetime.now()}"
             WHERE date="{date}" AND race_number={race_number}
         """
+        print(sql)
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -164,6 +280,15 @@ class TrainingDataManager:
     def reading_types(self):
         types = self.__conn.execute('SELECT DISTINCT type FROM Reading').fetchall()
         return [t[0] for t in types]
+
+    def reading_types_unused_for_date(self, date):
+        types_used = self.__conn.execute(f'SELECT DISTINCT type FROM Reading WHERE date="{date}"').fetchall()
+        types_used = [t[0] for t in types_used]
+        result = []
+        for r in self.reading_types():
+            if r not in types_used:
+                result.append(r)
+        return result
 
     def race_types(self):
         types = self.__conn.execute('SELECT DISTINCT type FROM RaceResult').fetchall()

@@ -4,7 +4,10 @@ from datetime import timedelta
 
 class Workout:
 
+    default_args = []
+
     def __init__(self, *args):
+        from . import Constants
 
         self.primary_key = args[0]
         self.date = dateutil.parser.parse(args[1]).date()
@@ -14,11 +17,14 @@ class Workout:
         self.equipment = args[5]
         self.seconds = timedelta(seconds=args[6])
         self.rpe = args[7]
+        self.rpe_tss = (100/49) * self.rpe * self.rpe * (self.seconds.total_seconds() / 3600)
         self.tss = args[8]
         self.tss_method = args[9]
         self.km = args[10]
+        self.miles = self.km * Constants.MILES_PER_KM
         self.kj = args[11]
         self.ascent_metres = args[12]
+        self.ascent_feet = self.ascent_metres * Constants.FEET_PER_METRE
         self.reps = args[13]
         self.is_race = args[14]
         self.cadence = args[15]
@@ -32,16 +38,17 @@ class Workout:
 
         from . import WorkoutType
 
-        self.workout_types = {WorkoutType(),
-                  WorkoutType(activity_type=self.activity_type),
-                  WorkoutType(activity=self.activity),
-                  WorkoutType(activity=self.activity, activity_type=self.activity_type)}
+        self.workout_types = {WorkoutType.workout_type_for(),
+                  WorkoutType.workout_type_for(activity_type=self.activity_type),
+                  WorkoutType.workout_type_for(activity=self.activity),
+                  WorkoutType.workout_type_for(activity=self.activity, activity_type=self.activity_type)}
         if self.equipment != "":
             e = self.equipment.replace(" ","")
-            self.workout_types.add(WorkoutType(equipment=e))
-            self.workout_types.add(WorkoutType(activity_type=self.activity_type, equipment=e))
-            self.workout_types.add(WorkoutType(activity=self.activity, equipment=e))
-            self.workout_types.add(WorkoutType(activity=self.activity, activity_type=self.activity_type, equipment=e))
+            self.workout_types.add(WorkoutType.workout_type_for(equipment=e))
+            self.workout_types.add(WorkoutType.workout_type_for(activity_type=self.activity_type, equipment=e))
+            self.workout_types.add(WorkoutType.workout_type_for(activity=self.activity, equipment=e))
+            self.workout_types.add(WorkoutType.workout_type_for(activity=self.activity,
+                                                                activity_type=self.activity_type, equipment=e))
 
     def __str__(self):
         return f'{self.date} ~ {self.workout_number}: {self.activity}:{self.activity_type}:{self.equipment} : {self.seconds}s'
