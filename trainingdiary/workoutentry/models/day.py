@@ -55,7 +55,7 @@ class Day:
             self.kg = rDict['kg']
 
         if 'fatPercentage' in rDict:
-                self.fatPercentage = rDict['fatPercentage']
+                self.fat_percentage = rDict['fatPercentage']
 
         self.workouts = TrainingDataManager().workouts_on_date(self.date)
         self.workout_count = len(self.workouts)

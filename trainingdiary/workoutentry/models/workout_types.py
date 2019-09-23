@@ -11,6 +11,17 @@ class WorkoutType:
         return cls.__cache[name]
 
     @classmethod
+    def workout_type_for_col_name(cls, col_name):
+        splits = col_name.split('_')
+        c = len(splits)
+        if c > 2:
+            e = None if splits[c-1] == 'All' else splits[c-1]
+            a_t = None if splits[c-2] == 'All' else splits[c-2]
+            a = None if splits[c-3] == 'All' else splits[c-3]
+            return cls.workout_type_for(activity=a, activity_type=a_t, equipment=e)
+        return None
+
+    @classmethod
     def name_for(cls, activity=None, activity_type=None, equipment=None):
         a = "All" if activity is None else activity
         at = "All" if activity_type is None else activity_type

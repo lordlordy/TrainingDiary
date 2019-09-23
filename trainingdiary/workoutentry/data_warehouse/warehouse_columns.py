@@ -146,9 +146,9 @@ class WarehouseColumn:
                            WarehouseColumn.sdnn_recorded, WarehouseColumn.rmssd_recorded}:
             return "BOOLEAN DEFAULT 0 NOT NULL"
 
-    def recordedColumnName(self):
-        if self.name in WarehouseColumn.interpolatedColumns():
-            return "\(self.rawValue)_recorded"
+    def recorded_column_name(self):
+        if self.name in WarehouseColumn.interpolated_columns():
+            return f"{self.name}_recorded"
         else:
             return None
 

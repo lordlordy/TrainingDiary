@@ -46,6 +46,10 @@ class TrainingDataManager:
             day = days[0]
             return Day(*day)
 
+    def days_since(self, from_date):
+        days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date>="{str(from_date)}"')
+        return [Day(*d) for d in days]
+
     def days_between(self, from_date, to_date):
         days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"')
         return [Day(*d) for d in days]

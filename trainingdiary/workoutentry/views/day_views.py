@@ -10,7 +10,7 @@ from workoutentry.models import Day
 
 def days_list_view(request):
     month_ago = datetime.date.today() - datetime.timedelta(days=30)
-    context = {'days': TrainingDataManager().days_between(from_date=month_ago, to_date=datetime.date.today()),
+    context = {'days': TrainingDataManager().days_since(from_date=month_ago),
                'form': DayFilterForm()}
 
     if request.method == 'POST':
