@@ -33,7 +33,7 @@ class TrainingDataManager:
 
     def latest_date(self):
         sql = 'SELECT date FROM Day ORDER BY date DESC LIMIT 1'
-        date = self.__conn.execute(sql).fetchall()[0]
+        date = self.__conn.execute(sql).fetchall()[0][0]
         return date
 
     def days(self):
@@ -41,8 +41,10 @@ class TrainingDataManager:
         return [Day(*d) for d in days]
 
     def day_for_date(self, date):
-        day = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date="{str(date)}"').fetchall()[0]
-        return Day(*day)
+        days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date="{str(date)}"').fetchall()
+        if len(days) > 0:
+            day = days[0]
+            return Day(*day)
 
     def days_between(self, from_date, to_date):
         days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"')
@@ -64,6 +66,33 @@ class TrainingDataManager:
             VALUES
             ("{date}", "{type}", "{comments}")
         """
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def delete_day(self, date):
+        # must delete readings and workouts for this date
+        sql = f'''
+            DELETE FROM Workout
+            WHERE date="{str(date)}"
+            '''
+        self.__conn.execute(sql)
+
+        sql = f'''
+            DELETE FROM RaceResult
+            WHERE date="{str(date)}"
+            '''
+        self.__conn.execute(sql)
+
+        sql = f'''
+            DELETE FROM Reading
+            WHERE date="{str(date)}"
+            '''
+        self.__conn.execute(sql)
+
+        sql = f'''
+            DELETE FROM Day
+            WHERE date="{str(date)}"
+            '''
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -102,6 +131,7 @@ class TrainingDataManager:
             WHERE date="{str(date)}" AND workout_number={number}
         '''
         self.__conn.execute(sql)
+        self.__conn.commit()
 
     def update_workout(self, date, workout_number, activity, activity_type, equipment, seconds, rpe, tss,
              tss_method, km, kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate,
@@ -135,6 +165,7 @@ class TrainingDataManager:
             {seconds}, {rpe}, {tss}, "{tss_method}", {km}, {kj}, {ascent_metres}, {reps}, {is_race}, {cadence}, {watts}, 
             {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.datetime.now()}")
         """
+        print(sql)
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -231,6 +262,17 @@ class TrainingDataManager:
             {race_result_select_sql}
             WHERE date="{str(date)}" AND race_number={number}
         '''
+        r_results = self.__conn.execute(sql).fetchall()
+        if len(r_results) > 0:
+            r = r_results[0]
+            return RaceResult(*r)
+
+    def race_results_between(self, from_date, to_date):
+        sql = f'''
+            {race_result_select_sql}
+            WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"
+        '''
+        print(sql)
         r_results = self.__conn.execute(sql)
         return [RaceResult(*r) for r in r_results]
 
@@ -240,6 +282,7 @@ class TrainingDataManager:
             WHERE date="{str(date)}" AND race_number={number}
         '''
         self.__conn.execute(sql)
+        self.__conn.commit()
 
     def update_race_result(self, date, race_number, race_type, brand, distance, name, category, overall_position,
                            category_position, swim_seconds, t1_seconds, bike_seconds, t2_seconds, run_seconds, swim_km,
@@ -252,6 +295,34 @@ class TrainingDataManager:
             swim_km={swim_km}, bike_km={bike_km}, run_km={run_km}, comments="{comments}", 
             race_report="{race_report}", last_save="{datetime.datetime.now()}"
             WHERE date="{date}" AND race_number={race_number}
+        """
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def save_race_result(self, date, race_number, race_type, brand, distance, name, category, overall_position,
+                          category_position, swim_seconds, t1_seconds, bike_seconds, t2_seconds, run_seconds, swim_km,
+                          bike_km, run_km, comments, race_report):
+
+        if race_number is None:
+            # figure out race number
+            max_number = self.__conn.execute(f'SELECT max(race_number) FROM RaceResult WHERE date="{date}"').fetchall()[0][0]
+            if max_number is None:
+                r_number = 1
+            else:
+                r_number = max_number + 1
+        else:
+            r_number = race_number
+
+        sql = f"""
+            INSERT INTO RaceResult
+            (primary_key, date, race_number, type, brand, distance, name, category, overall_position, category_position, 
+            swim_seconds, t1_seconds, bike_seconds, t2_seconds, run_seconds, swim_km, bike_km, run_km, comments, 
+            race_report, last_save)
+            VALUES
+            ("{str(date)}-{r_number}", "{str(date)}", {r_number}, "{race_type}", "{brand}", "{distance}", "{name}", 
+            "{category}", {overall_position}, {category_position}, {swim_seconds}, {t1_seconds}, {bike_seconds}, 
+            {t2_seconds}, {run_seconds}, {swim_km}, {bike_km}, {run_km}, "{comments}", "{race_report}", 
+            "{datetime.datetime.now()}")
         """
         print(sql)
         self.__conn.execute(sql)

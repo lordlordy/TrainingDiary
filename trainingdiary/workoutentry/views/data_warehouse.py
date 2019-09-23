@@ -12,7 +12,7 @@ def data_warehouse_update(request):
     print(request.POST)
 
     if 'from_date' in request.POST:
-        if len(request.POST['from_date']) > 0:
+        if len(request.POST['update_warehouse_date']) > 0:
             DataWarehouseManager(data=None, db_name=None).delete_from_date(request.POST['from_date'])
 
     if DataWarehouse.instance().base_table_built:

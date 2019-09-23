@@ -22,9 +22,6 @@ class DayEditForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # self.fields['date'] = forms.DateField(widget=TextInput(attrs={'class': 'datepicker',
-        #                                                               'placeholder': 'yyyy-mm-dd',
-        #                                                               'readonly': 'readonly'}))
         self.fields['date'] = forms.CharField(widget=TextInput(attrs={'readonly': 'readonly'}))
         unique_types = TrainingDataManager().day_types()
         self.fields['day_type'] = forms.CharField(required=True,

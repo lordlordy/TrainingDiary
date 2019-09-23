@@ -15,6 +15,7 @@ class Workout:
         self.activity = args[3]
         self.activity_type = args[4]
         self.equipment = args[5]
+        self.__seconds = args[6]
         self.seconds = timedelta(seconds=args[6])
         self.rpe = args[7]
         self.rpe_tss = (100/49) * self.rpe * self.rpe * (self.seconds.total_seconds() / 3600)
@@ -77,3 +78,25 @@ class Workout:
                 'keywords': self.keywords,
                 'comments': self.comments,
                 'last_save': self.last_save}
+
+    def json_dictionary(self):
+        return {"activity": self.activity,
+                "isRace": self.is_race,
+                "ascentMetres": self.ascent_metres,
+                "rpe": self.rpe,
+                "wattsEstimated": self.watts_estimated,
+                "kj": self.kj,
+                "heartRate": self.heart_rate,
+                "km": self.km,
+                "workoutNumber": self.workout_number,
+                "keywords": self.keywords,
+                "reps": self.reps,
+                "isBrick": self.is_brick,
+                "activityType": self.activity_type,
+                "comments": self.comments,
+                "watts": self.watts,
+                "tssMethod": self.tss_method,
+                "equipment": self.equipment,
+                "tss": self.tss,
+                "seconds": self.__seconds,
+                "cadence": self.cadence}

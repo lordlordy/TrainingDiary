@@ -16,10 +16,15 @@ class RaceResult:
         self.category = args[7]
         self.overall_position = args[8]
         self.category_position = args[9]
+        self.__swimSeconds = args[10]
         self.swim_seconds = timedelta(seconds=args[10])
+        self.__t1Seconds = args[11]
         self.t1_seconds = timedelta(seconds=args[11])
+        self.__bikeSeconds = args[12]
         self.bike_seconds = timedelta(seconds=args[12])
+        self.__t2Secconds = args[13]
         self.t2_seconds = timedelta(seconds=args[13])
+        self.__runSeconds = args[14]
         self.run_seconds = timedelta(seconds=args[14])
         self.swim_km = args[15]
         self.bike_km = args[16]
@@ -32,8 +37,7 @@ class RaceResult:
 
     def data_dictionary(self):
         return {'primary_key': self.primary_key,
-                'date_str': self.date_str,
-                'date': self.date,
+                'date': self.date_str,
                 'year': self.year,
                 'race_number': self.race_number,
                 'type': self.type,
@@ -56,3 +60,24 @@ class RaceResult:
                 'last_save': self.last_save,
                 'total_seconds': self.total_seconds,
                 'total_km': self.total_km}
+
+    def json_dictionary(self):
+        return {"t1Seconds": self.__t1Seconds,
+                "categoryPosition": self.category_position,
+                "bikeSeconds": self.__bikeSeconds,
+                "swimSeconds": self.__swimSeconds,
+                "comments": self.comments,
+                "swimKM": self.swim_km,
+                "distance": self.distance,
+                "t2Seconds": self.__t2Secconds,
+                "name": self.name,
+                "type": self.type,
+                "runKM": self.run_km,
+                "overallPosition": self.overall_position,
+                "bikeKM": self.bike_km,
+                "raceReport": self.race_report,
+                "iso8601DateString": self.date_str,
+                "brand": self.brand,
+                "raceNumber": self.race_number,
+                "runSeconds": self.__runSeconds,
+                "category": self.category}

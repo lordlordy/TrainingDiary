@@ -13,3 +13,6 @@ class Reading:
 
     def data_dictionary(self):
         return {'date': self.date_str, 'reading_type': self.reading_type, 'value': self.value}
+
+    def json_dictionary(self):
+        return {'type': self.reading_type, 'value': self.value}

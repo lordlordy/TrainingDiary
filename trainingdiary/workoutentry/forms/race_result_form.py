@@ -1,5 +1,5 @@
 from django import forms
-from django.forms.widgets import Select
+from django.forms.widgets import Select, TextInput
 from workoutentry.training_data import TrainingDataManager
 
 
@@ -9,6 +9,10 @@ class RaceResultEditForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         tdm = TrainingDataManager()
+
+        self.fields['date'] = forms.DateField(required=False,
+                                              widget=TextInput(attrs={'class': 'datepicker','placeholder': 'yyyy-mm-dd'}))
+
 
         self.fields['type'] = forms.CharField(required=True,
                                               widget=Select(choices=[(a, a) for a in tdm.race_types()],
@@ -24,8 +28,8 @@ class RaceResultEditForm(forms.Form):
                                                                   attrs={'class': 'form-control', 'id': 'race_category'}))
 
         self.fields['name'] = forms.CharField(required=True)
-        self.fields['overall_position'] = forms.IntegerField(required=False)
-        self.fields['category_position'] = forms.IntegerField(required=False)
+        self.fields['overall_position'] = forms.IntegerField(required=False, label="Position")
+        self.fields['category_position'] = forms.IntegerField(required=False, label='Cat Position')
         self.fields['swim_seconds'] = forms.CharField(required=False)
         self.fields['t1_seconds'] = forms.CharField(required=False)
         self.fields['bike_seconds'] = forms.CharField(required=False)

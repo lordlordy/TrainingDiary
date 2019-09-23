@@ -6,5 +6,5 @@ from .graph_view import graph_view, popular_graph_view
 from .training_diary import summary_view
 from .data_warehouse import data_warehouse_update
 from .reading_views import ReadingUpdateView, new_reading_view, delete_reading_view
-from .race_result_views import race_results_list_view, RaceResultUpdateView, RaceResultDeleteView
+from .race_result_views import race_results_list_view, RaceResultUpdateView, RaceResultDeleteView, new_race_result_view
 

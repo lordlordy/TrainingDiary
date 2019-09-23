@@ -101,7 +101,14 @@ class Day:
 
 
     def data_dictionary(self):
-        return {'date': self.date, 'day_type': self.day_type, 'comments': self.comments}
+        return {'date': self.date_str, 'day_type': self.day_type, 'comments': self.comments}
+
+    def json_dictionary(self):
+        return {'iso8601DateString': self.date_str,
+                'type': self.day_type,
+                'comments': self.comments,
+                'Readings': [r.json_dictionary() for r in self.readings],
+                'Workouts': [w.json_dictionary() for w in self.workouts]}
 
     def warehouse_dictionary(self, workout_type):
         workouts = self.workouts_of_type(workout_type)

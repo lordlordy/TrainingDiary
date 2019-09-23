@@ -4,12 +4,15 @@
 {% block content %}
 <h2 class="border-bottom mb-4">Race Results</h2>
 <div class="container-fluid">
-
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'race_result_new' %}" class="btn btn-outline-primary btn-block" role="button">New Race Result</a>
+        </div>
     </div>
     <div class="row">
-    <div class="col-md-12">
-        <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
-            <thead class="thead-light">
+        <div class="col-md-12">
+            <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
                 <tr>
                     <th></th>
                     <th>date</th>
@@ -34,42 +37,41 @@
                     <th>last save</th>
                     <th></th>
                 </tr>
-            </thead>
-        {% for r in race_results %}
-        <tr>
-            <td>
-                <a href="{% url 'race_result_form' r.date r.race_number %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
-            </td>
-            <td>{{ r.date }}</td>
-            <td>{{ r.race_number }}</td>
-            <td>{{ r.type }}</td>
-            <td>{{ r.brand }}</td>
-            <td>{{ r.distance }}</td>
-            <td>{{ r.name }}</td>
-            <td>{{ r.category }}</td>
-            <td>{{ r.overall_position }}</td>
-            <td>{{ r.category_position }}</td>
-            <td>{{ r.swim_seconds }}</td>
-            <td>{{ r.t1_seconds }}</td>
-            <td>{{ r.bike_seconds }}</td>
-            <td>{{ r.t2_seconds }}</td>
-            <td>{{ r.run_seconds }}</td>
-            <td>{{ r.total_seconds }}</td>
-            <td>{{ r.swim_km }}</td>
-            <td>{{ r.bike_km }}</td>
-            <td>{{ r.run_km }}</td>
-            <td>{{ r.total_km }}</td>
-            <td>{{ r.last_save }}</td>
-            <td>
-                <a href="{% url 'race_result_delete' r.date r.race_number %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
-            </td>
-
-        </tr>
-        {% endfor %}
-    </table>
+                </thead>
+                {% for r in race_results %}
+                <tr>
+                    <td>
+                        <a href="{% url 'race_result_form' r.date r.race_number %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
+                    </td>
+                    <td>{{ r.date_str }}</td>
+                    <td>{{ r.race_number }}</td>
+                    <td>{{ r.type }}</td>
+                    <td>{{ r.brand }}</td>
+                    <td>{{ r.distance }}</td>
+                    <td>{{ r.name }}</td>
+                    <td>{{ r.category }}</td>
+                    <td>{{ r.overall_position }}</td>
+                    <td>{{ r.category_position }}</td>
+                    <td>{{ r.swim_seconds }}</td>
+                    <td>{{ r.t1_seconds }}</td>
+                    <td>{{ r.bike_seconds }}</td>
+                    <td>{{ r.t2_seconds }}</td>
+                    <td>{{ r.run_seconds }}</td>
+                    <td>{{ r.total_seconds }}</td>
+                    <td>{{ r.swim_km }}</td>
+                    <td>{{ r.bike_km }}</td>
+                    <td>{{ r.run_km }}</td>
+                    <td>{{ r.total_km }}</td>
+                    <td>{{ r.last_save }}</td>
+                    <td>
+                        <a href="{% url 'race_result_delete' r.date r.race_number %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 </div>
-    </div>
 
 
 {% endblock %}
