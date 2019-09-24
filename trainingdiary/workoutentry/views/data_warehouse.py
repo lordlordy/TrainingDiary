@@ -14,7 +14,7 @@ def data_warehouse_update(request):
 
     warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
     start = datetime.datetime.now()
-    DataWarehouseGenerator(warehouse_name).generate_from_date(request.POST['update_warehouse_date'], print_progress=True)
+    DataWarehouseGenerator(warehouse_name).generate_from_date(request.POST['update_warehouse_date'], print_progress=False)
     messages.info(request, f'Warehouse updated in {datetime.datetime.now() - start}')
 
     return render(request, 'workoutentry/diary_upload.html', {'form': DBManagementForm(),

@@ -62,15 +62,13 @@ class DataWarehouseGenerator:
 
     def generate(self, print_progress=False, from_date=None):
         start = datetime.datetime.now()
-        if print_progress:
-            print("getting all days...")
+        print("getting all days...")
         if from_date is None:
             days = TrainingDataManager().days()
         else:
             days = TrainingDataManager().days_since(from_date)
-        if print_progress:
-            print(f"Done in {datetime.datetime.now()-start}")
-            print(f"Populating for days")
+        print(f"Done in {datetime.datetime.now()-start}")
+        print(f"Populating for days")
         tables = self.__tables_dict()
         for d in days:
             # create new tables as required
@@ -90,6 +88,7 @@ class DataWarehouseGenerator:
             if print_progress:
                 print(f'{datetime.datetime.now() - start} {d.date}', end='\r')
 
+        print("TSB, Monotony, Strain and interpolation")
         for t in tables:
             if print_progress:
                 print(f'{t}: TSB, monotony, strain')
@@ -98,8 +97,10 @@ class DataWarehouseGenerator:
                 print(f'{t}: interpolating values')
             self.__interpolate_zeroes(t, from_date=from_date)
 
+        print('HRV')
         #NB this must be after interpolation is done
         self.__calculate_hrv_limits(tables, from_date=from_date)
+        print('ALL DONE')
 
     def __delete_entries_from(self, date):
         for t in self.__tables():
