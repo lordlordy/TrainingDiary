@@ -1,10 +1,13 @@
 from django.urls import path
-from workoutentry.views import (eddington_view, days_list_view, DayUpdateView, workouts_list_view,
-                                WorkoutUpdateView, ReadingUpdateView, diary_upload,
-                                data_warehouse_update, popular_eddington_view, graph_view, popular_graph_view,
+from workoutentry.views import (eddington_view, popular_eddington_view,
+                                graph_view, popular_graph_view,
                                 summary_view, race_results_list_view, RaceResultUpdateView, RaceResultDeleteView,
-                                new_reading_view,  delete_reading_view, new_workout_view, delete_workout_view,
-                                new_day_view, new_race_result_view)
+                                days_list_view, DayUpdateView, new_day_view, new_race_result_view,
+                                workouts_list_view, WorkoutUpdateView, new_workout_view, delete_workout_view,
+                                ReadingUpdateView, new_reading_view, delete_reading_view,
+                                import_export, data_import, data_export,
+                                data_warehouse_update, warehouse_management, calculate_hrv, update_days, calculate_tsb,
+                                interpolate_values)
 from django.contrib.auth.decorators import login_required
 
 
@@ -24,8 +27,15 @@ urlpatterns = [
     path('readings/new/<str:date>/', login_required(new_reading_view), name='reading_new'),
     path('readings/update/<str:date>/<str:type>/', login_required(ReadingUpdateView.as_view()), name='reading_form'),
     path('readings/delete_reading_view/<str:date>/<str:type>', login_required(delete_reading_view), name='reading_delete'),
-    path('dairy/upload/', login_required(diary_upload), name='diary_upload'),
-    path('warehouse/update/', login_required(data_warehouse_update), name='date_warehouse_update'),
+    path('diary/import_export/', login_required(import_export), name='diary_import_export'),
+    path('diary/import_export/import/', login_required(data_import), name='diary_import'),
+    path('diary/import_export/export/', login_required(data_export), name='diary_export'),
+    path('data_warehouse/management/', login_required(warehouse_management), name='date_warehouse_management'),
+    path('data_warehouse/update/', login_required(data_warehouse_update), name='date_warehouse_update'),
+    path('data_warehouse/generate/days/', login_required(update_days), name='update_days'),
+    path('data_warehouse/generate/tsb/', login_required(calculate_tsb), name='calculate_tsb'),
+    path('data_warehouse/generate/interpolate/', login_required(interpolate_values), name='interpolate_values'),
+    path('data_warehouse/generate/hrv/', login_required(calculate_hrv), name='calculate_hrv'),
     path('eddington/', eddington_view, name='eddington_numbers'),
     path('eddington/simple', popular_eddington_view, name='eddington_numbers_simple'),
     path('graphs/', graph_view, name='graphs'),

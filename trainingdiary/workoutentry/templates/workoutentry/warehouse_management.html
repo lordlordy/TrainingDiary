@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div clas="container-fluid">
+    <h2 class="border-bottom mb-4">Data Warehouse Management</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <h4 class="border-bottom mb-3">Warehouse Update</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <small class="text-muted">This updates the data warehouse. If no date is given it only updates any new data. If a date is provided then all data in the warehouse on or after that date is first removed then the warehouse is updated from the training diary data.</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <small class="text-muted">Data to: {{ latest_data_date }}</small>
+                </div>
+                <div class="col-md-7">
+                    <div class="row"><div class="col-md-12"><small class="text-muted">Warehouse to: {{ latest_warehouse_date }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">TSB to: {{ tsb_to_date }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">HRV Thresholds to: {{ hrv_threshold_to_date }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">kg interpolated to: {{ kg_interpolated_to }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">fat% interpolated to: {{ fat_interpolated_to }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">resting hr interpolated to: {{ hr_interpolated_to }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">sdnn interpolated to: {{ sdnn_interpolated_to }}</small></div></div>
+                    <div class="row"><div class="col-md-12"><small class="text-muted">rmssd interpolated to: {{ rmssd_interpolated_to }}</small></div></div>
+                </div>
+            </div>
+            <form method="post" action="{% url 'date_warehouse_update' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ generate_form.update_warehouse_date | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Update"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <h4 class="border-bottom mb-3">Warehouse Generation</h4>
+            <div class="row">
+                <div class="col-md-3">
+                    <h5 class="border-bottom mb-1">Update Day Data</h5>
+                    <small class="text-muted">Replace training data, for the period given (inclusive of the from and to date), in each of the warehouse tables with the underlying data taken from the TrainingData.sqlite3 database</small>
+                    <form method="post" action="{% url 'update_days' %}">
+                        {% csrf_token %}
+                        {{ day_form.from_date | as_crispy_field }}
+                        {{ day_form.to_date | as_crispy_field }}
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Update"/>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="border-bottom mb-1">Calculate TSB, Monotony and Strain</h5>
+                    <small class="text-muted">Recalculate TSB, Monotony and Strain in each warehouse table for the period given</small>
+                    <form method="post" action="{% url 'calculate_tsb' %}">
+                        {% csrf_token %}
+                        {{ tsb_form.from_date | as_crispy_field }}
+                        {{ tsb_form.to_date | as_crispy_field }}
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Calculate"/>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="border-bottom mb-1">Interpolate Missing Value</h5>
+                    <small class="text-muted">Interpolate any zero values in each warehouse table for the period given.</small>
+                    <form method="post" action="{% url 'interpolate_values' %}">
+                        {% csrf_token %}
+                        {{ interpolate_form.from_date | as_crispy_field }}
+                        {{ interpolate_form.to_date | as_crispy_field }}
+                        {{ interpolate_form.col_choice | as_crispy_field }}
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Interpolate"/>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="border-bottom mb-1">Calculate HRV Thresholds</h5>
+                    <small class="text-muted">Recalculate the HRV thresholds in each warehouse table for the period given</small>
+                    <form method="post" action="{% url 'calculate_hrv' %}">
+                        {% csrf_token %}
+                        {{ hrv_form.from_date | as_crispy_field }}
+                        {{ hrv_form.to_date | as_crispy_field }}
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Calculate"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+<script type='text/javascript'>
+
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+$(document).ready(function(){
+$('#col_choice').select2();
+});
+
+</script>
+
+{% endblock %}

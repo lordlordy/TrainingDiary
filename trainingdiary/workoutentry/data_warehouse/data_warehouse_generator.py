@@ -47,29 +47,43 @@ class DataWarehouseGenerator:
         self.HRV_EASY_SDs = DataWarehouseGenerator.normal_cdf_inverse(self.HRV_EASY_PERCENTILE)
         self.HRV_HARD_SDs = DataWarehouseGenerator.normal_cdf_inverse(self.HRV_HARD_PERCENTILE)
 
-    def generate_from_date(self, date, print_progress=False):
-        if date is None or date == '':
+    def generate_from_date(self, from_date, print_progress=False):
+        start_date_str = from_date
+        if from_date is None or from_date == '':
             from . import DataWarehouse
-            last_date_str = DataWarehouse.instance().max_date()
-            if last_date_str is None:
-                from_date = None
+            start_date_str = DataWarehouse.instance().max_date()
+            if start_date_str is None:
+                # no data warehouse entries so start from first date we have in TrainingData
+                start_date_str = TrainingDataManager().earliest_date()
             else:
-                from_date = dateutil.parser.parse(last_date_str).date() + datetime.timedelta(days=1)
-        else:
-            from_date = date
-            self.__delete_entries_from(date)
-        self.generate(print_progress=print_progress, from_date=from_date)
+                # start the day after the last date in the warehouse
+                start_date_str = str(dateutil.parser.parse(start_date_str).date() + datetime.timedelta(days=1))
 
-    def generate(self, print_progress=False, from_date=None):
+        self.generate(from_date=start_date_str, to_date=TrainingDataManager().latest_date(),
+                      print_progress=print_progress)
+
+    def generate(self, from_date, to_date, print_progress=False):
+
+        self.update_days(from_date=from_date, to_date=to_date, print_progress=print_progress)
+
+        self.generate_tsb_monotony_strain(from_date=from_date, to_date=to_date,
+                                          print_progress=print_progress)
+        from . import WarehouseColumn
+        for col in WarehouseColumn.interpolated_columns():
+            self.interpolate_zeroes(from_date=from_date, to_date=to_date, for_column=col, print_progress=print_progress)
+
+        #NB this must be after interpolation is done
+        self.generate_hrv_limits(from_date=from_date, to_date=to_date)
+        print('ALL DONE')
+
+    def update_days(self, from_date, to_date, print_progress=False):
         start = datetime.datetime.now()
-        print(f"getting all days from {from_date}...")
-        first_date_str = TrainingDataManager().earliest_date()
-        last_date_str = TrainingDataManager().latest_date()
-        print(f'{first_date_str} -> {last_date_str}')
-        start_str = first_date_str if from_date is None else str(from_date)
 
-        current_date = dateutil.parser.parse(start_str).date()
-        last_date = dateutil.parser.parse(last_date_str).date()
+        start_date, end_date = self.__correct_bounds(from_date=from_date, to_date=to_date)
+        self.__delete_entries_in_range(start_date, end_date)
+
+        current_date = dateutil.parser.parse(start_date).date()
+        last_date = dateutil.parser.parse(end_date).date()
 
         print(f"Populating for days")
         tables = self.__tables_dict()
@@ -95,48 +109,39 @@ class DataWarehouseGenerator:
                 print(f'{count} - {datetime.datetime.now() - start} {d.date}', end='\r')
             current_date = current_date + datetime.timedelta(days=1)
 
-        # if from_date is None:
-        #     days = TrainingDataManager().days()
-        # else:
-        #     days = TrainingDataManager().days_since(from_date)
-        # print(f"Done in {datetime.datetime.now()-start}")
-        # print(f"Populating for days")
-        # tables = self.__tables_dict()
-        # for d in days:
-        #     # create new tables as required
-        #     for t in d.workout_types():
-        #         table_name = f"day_{str(t)}"
-        #         if table_name not in tables:
-        #             try:
-        #                 self.__create_table(table_name, t, d.date)
-        #                 tables[table_name] = t
-        #             except Exception as e:
-        #                 if print_progress:
-        #                     print(f'Table probably exists so continuing. {e}')
-        #                 pass
-        #     # add row for this day to all existing tables
-        #     for key, value in tables.items():
-        #         self.__insert_row(key, value, d)
-        #     if print_progress:
-        #         print(f'{datetime.datetime.now() - start} {d.date}', end='\r')
+    def generate_hrv_limits(self, from_date, to_date, print_progress=None):
+        start_date, end_date = self.__correct_bounds(from_date=from_date, to_date=to_date)
+        self.__calculate_hrv_limits(self.__tables_dict(), from_date=start_date, to_date=end_date,
+                                    print_progress=print_progress)
 
-        print("TSB, Monotony, Strain and interpolation")
-        for t in tables:
+    def generate_tsb_monotony_strain(self, from_date, to_date, print_progress=False):
+        print("TSB, Monotony, Strain")
+        start_date, end_date = self.__correct_bounds(from_date=from_date, to_date=to_date)
+        for t in self.__tables_dict():
             if print_progress:
                 print(f'{t}: TSB, monotony, strain')
-            self.__populate_tsb_monotony_strain(t, from_date=from_date)
-            if print_progress:
-                print(f'{t}: interpolating values')
-            self.__interpolate_zeroes(t, from_date=from_date)
+            self.__populate_tsb_monotony_strain(t, from_date=start_date, to_date=end_date)
 
-        print('HRV')
-        #NB this must be after interpolation is done
-        self.__calculate_hrv_limits(tables, from_date=from_date)
-        print('ALL DONE')
+    def interpolate_zeroes(self, from_date, to_date, for_column, print_progress=False):
+        start_date, end_date = self.__correct_bounds(from_date=from_date, to_date=to_date)
+        self.__interpolate_zeroes(from_date=start_date, to_date=end_date, for_column=for_column,
+                                  print_progress=print_progress)
+
+    def __correct_bounds(self, from_date, to_date):
+        earliest_date = TrainingDataManager().earliest_date()
+        latest_date = TrainingDataManager().latest_date()
+        start_date = from_date if from_date >= earliest_date else earliest_date
+        end_date = to_date if to_date <= latest_date else latest_date
+        return (start_date, end_date)
 
     def __delete_entries_from(self, date):
         for t in self.__tables():
             self.__conn.execute(f"DELETE FROM {t} WHERE date>='{date}'")
+        self.__conn.commit()
+
+    def __delete_entries_in_range(self, from_date, to_date):
+        for t in self.__tables():
+            self.__conn.execute(f"DELETE FROM {t} WHERE date>='{from_date}' AND date<='{to_date}'")
         self.__conn.commit()
 
     def __tables_dict(self):
@@ -147,6 +152,13 @@ class DataWarehouseGenerator:
 
     def __tables(self):
         return [i[0] for i in self.__conn.execute(f'SELECT table_name FROM Tables').fetchall()]
+
+    def __tables_first_date_dictionary(self):
+        tables = self.__conn.execute('SELECT table_name, first_date FROM Tables').fetchall()
+        d = dict()
+        for t in tables:
+            d[t[0]] = t[1]
+        return d
 
     def __create_table(self, table_name, workout_type, first_date):
         c = self.__conn.cursor()
@@ -182,19 +194,20 @@ class DataWarehouseGenerator:
         self.__conn.cursor().execute(sql)
         self.__conn.commit()
 
-    def __populate_tsb_monotony_strain(self, table, from_date=None):
+    def __populate_tsb_monotony_strain(self, table, from_date, to_date):
         c = self.__conn.cursor()
         ctl = rpe_ctl = atl = rpe_atl = 0.0
-        if from_date is None:
-            data = c.execute(f"SELECT date, tss, rpe_tss from {table} ORDER BY date ASC").fetchall()
-        else:
-            date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=1)
-            starting_values = c.execute(f'SELECT ctl, rpe_ctl, atl, rpe_atl FROM {table} where date="{str(date)}"').fetchall()[0]
-            ctl = starting_values[0]
-            rpe_ctl = starting_values[1]
-            atl = starting_values[2]
-            rpe_atl = starting_values[3]
-            data = c.execute(f"SELECT date, tss, rpe_tss from {table} WHERE date>='{from_date}' ORDER BY date ASC").fetchall()
+        date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=1)
+        starting_values = c.execute(f'SELECT ctl, rpe_ctl, atl, rpe_atl FROM {table} where date="{str(date)}"').fetchall()
+        if len(starting_values) > 0:
+            ctl = starting_values[0][0]
+            rpe_ctl = starting_values[0][1]
+            atl = starting_values[0][2]
+            rpe_atl = starting_values[0][3]
+        data = c.execute(f'''
+            SELECT date, tss, rpe_tss from {table} 
+            WHERE date>='{from_date}' AND date<='{to_date}' ORDER BY date ASC
+            ''').fetchall()
 
         # Training Stress Balance
         for d in data:
@@ -212,12 +225,11 @@ class DataWarehouseGenerator:
         self.__conn.commit()
 
         # Monotony and Strain - if from_date set we need to go STRAIN_DAYS prior to calculate
-        if from_date is None:
-            # get all the data
-            df = pd.read_sql(f"SELECT date, tss, rpe_tss from {table} ORDER BY date ASC", self.__conn)
-        else:
-            date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=self.STRAIN_DAYS)
-            df = pd.read_sql(f"SELECT date, tss, rpe_tss from {table} WHERE date>='{str(date)}' ORDER BY date ASC", self.__conn)
+        date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=self.STRAIN_DAYS)
+        df = pd.read_sql(f"""
+            SELECT date, tss, rpe_tss from {table} 
+            WHERE date>='{str(date)}' AND date<='{to_date}' ORDER BY date ASC
+            """, self.__conn)
         min_periods = 1
         df['tss_stdev'] = df['tss'].rolling(self.STRAIN_DAYS, min_periods=min_periods).std().clip(lower=0.01)
         df['rpe_tss_stdev'] = df['rpe_tss'].rolling(self.STRAIN_DAYS, min_periods=min_periods).std().clip(lower=0.01)
@@ -227,11 +239,8 @@ class DataWarehouseGenerator:
         df['rpe_strain'] = df['rpe_tss'].rolling(self.STRAIN_DAYS, min_periods=min_periods).sum() * df['rpe_monotony']
         df.fillna(0, inplace=True)
 
-        if from_date is not None:
-            # need to filter the df to the dates we want
-            filtered_df = df.loc[df['date'] >= str(from_date)]
-        else:
-            filtered_df = df
+        # need to filter the df to the dates we want
+        filtered_df = df.loc[df['date'] >= str(from_date)]
 
         for index, row in filtered_df.iterrows():
             sql_str = f'''
@@ -243,36 +252,70 @@ class DataWarehouseGenerator:
             c.execute(sql_str)
         self.__conn.commit()
 
-    def __interpolate_zeroes(self, table, from_date=None):
+    def __interpolate_zeroes(self, from_date, to_date, for_column, print_progress):
         from . import WarehouseColumn
-        for col in WarehouseColumn.interpolated_columns():
-            if from_date is None:
-                df = pd.read_sql_query(f'SELECT date, {col} FROM {table}', self.__conn)
-            else:
-                # need to find date of last recording per from_date and interpolae from there
-                sql = f'SELECT max(date) FROM {table} WHERE date<"{from_date}" AND {WarehouseColumn(col).recorded_column_name()}=1'
-                date = self.__conn.execute(sql).fetchall()[0][0]
-                df = pd.read_sql_query(f'SELECT date, {col} FROM {table} WHERE date>="{date}"', self.__conn)
+        # for col in WarehouseColumn.interpolated_columns():
+        if print_progress:
+            print(f'Interpolating {for_column}')
+        # need to find date of last recording pre from_date and interpolate from there
+        sql = f"""
+            SELECT max(date) FROM day_All_All_All 
+            WHERE date<"{from_date}" AND {WarehouseColumn(for_column).recorded_column_name()}=1
+            """
+        date = self.__conn.execute(sql).fetchall()[0][0]
+        if date is None:
+            # no recording prior to the from_date. Lets find first recording post and start from there
+            sql = f"""
+                SELECT min(date) FROM day_All_All_All
+                WHERE date>='{from_date}' AND {WarehouseColumn(for_column).recorded_column_name()}=1
+                """
+            date = self.__conn.execute(sql).fetchall()[0][0]
+            if date is None:
+                # no recordings so nothing to interpolate
+                return
 
-            df = df.replace(0, np.NaN)
-            # 'both' means it interpolate initial zeroes as well as final ones
+        recorded = WarehouseColumn(for_column).recorded_column_name()
+        df = pd.read_sql_query(f'SELECT date, {for_column}, {recorded} FROM day_All_All_All WHERE date>="{date}" AND date<="{to_date}"',
+                               self.__conn)
+
+        recorded_values = df[recorded]
+        df = df.replace(0, np.NaN)
+        df[recorded] = recorded_values
+        # 'both' means it interpolate initial zeroes as well as final ones
+        try:
             df.interpolate(inplace=True, limit_direction='both')
-            for index, row in df.iterrows():
-                sql = f'''
-                    UPDATE {table} SET
-                    {col}={row[col]}
-                    WHERE date='{row['date']}'
-                '''
-                self.__conn.cursor().execute(sql)
-        self.__conn.commit()
+            # have interpolated values. Lets stick them in each table
+            for table_name, first_date in self.__tables_first_date_dictionary().items():
+                if print_progress:
+                    print(f'\t {table_name} - {first_date}')
+                filtered_df = df.loc[df['date'] >= first_date]
+                for index, row in filtered_df.iterrows():
+                    if row[recorded] == 0:
+                        sql = f'''
+                            UPDATE {table_name} SET
+                            {for_column}={row[for_column]}
+                            WHERE date='{row['date']}'
+                        '''
+                        self.__conn.cursor().execute(sql)
 
-    def __calculate_hrv_limits(self, tables, from_date=None):
+            self.__conn.commit()
+
+        except TypeError as e:
+            print(for_column)
+            print(df)
+            print(e)
+
+
+    def __calculate_hrv_limits(self, tables, from_date, to_date, print_progress):
+        if print_progress:
+            print("HRV Thresholds")
+            print(f"\tday_All_All_All")
         min_periods = 1
-        if from_date is None:
-            sql = f"SELECT date, sdnn, rmssd from day_All_All_All ORDER BY date ASC"
-        else:
-            date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=self.HRV_DAYS)
-            sql = f"SELECT date, sdnn, rmssd from day_All_All_All WHERE date>='{date}' ORDER BY date ASC"
+        date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=self.HRV_DAYS)
+        sql = f"""
+            SELECT date, sdnn, rmssd from day_All_All_All 
+            WHERE date>='{date}' AND date<='{to_date}' ORDER BY date ASC
+            """
 
         df = pd.read_sql(sql, self.__conn)
         df['sdnn_stdev'] = df['sdnn'].rolling(self.HRV_DAYS, min_periods=min_periods).std().clip(lower=0.01)
@@ -287,12 +330,8 @@ class DataWarehouseGenerator:
         df['rmssd_easy'] = df['rmssd_mean'] + df['rmssd_stdev'] * self.HRV_EASY_SDs
         df['rmssd_hard'] = df['rmssd_mean'] + df['rmssd_stdev'] * self.HRV_HARD_SDs
 
-        if from_date is not None:
-            # need to filter the df to the dates we want
-            filtered_df_all = df.loc[df['date'] >= str(from_date)]
-        else:
-            filtered_df_all = df
-
+        # need to filter the df to the dates we want
+        filtered_df_all = df.loc[df['date'] >= str(from_date)]
 
         for index, row in filtered_df_all.iterrows():
             sql = f'''
@@ -310,6 +349,8 @@ class DataWarehouseGenerator:
         for key, value in tables.items():
             if key == "day_All_All_All":
                 continue
+            if print_progress:
+                print(f"\t{key}")
             min_max = self.__conn.cursor().execute(f'SELECT min(date), max(date) FROM {key}').fetchall()
             filtered_df = filtered_df_all.loc[(df['date'] >= min_max[0][0]) & (df['date'] <= min_max[0][1])]
             for index, row in filtered_df.iterrows():

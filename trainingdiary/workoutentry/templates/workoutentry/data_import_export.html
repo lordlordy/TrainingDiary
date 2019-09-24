@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div clas="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            <h2 class="border-bottom mb-4">Data Import</h2>
+            <form method="post" action="{% url 'diary_import' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-block" type="file" name="document">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ import_form.import_choice | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-block" type="submit" value="Upload">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <h2 class="border-bottom mb-4">Data Export</h2>
+            <form method="post" action="{% url 'diary_export' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ export_form.export_from_date | as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ export_form.export_to_date | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-block" name="export" type="submit" value="Export"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+<script type='text/javascript'>
+
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+
+$(document).ready(function(){
+$('#import_choice').select2();
+});
+
+</script>
+
+{% endblock %}

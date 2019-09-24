@@ -5,12 +5,15 @@ import dateutil.parser
 import json
 from django.contrib import messages
 from workoutentry.training_data import TrainingDataManager
-from workoutentry.forms import DBManagementForm
-from workoutentry.data_warehouse import DataWarehouse
-
+from workoutentry.forms import DataImportForm, DataExportForm
 
 @login_required
-def diary_upload(request):
+def import_export(request):
+    return render(request, 'workoutentry/data_import_export.html', {'import_form': DataImportForm(),
+                                                                    'export_form': DataExportForm()})
+
+@login_required
+def data_import(request):
     if request.method == 'POST':
         if 'document' in request.FILES:
             uploaded_file = request.FILES['document']
@@ -18,25 +21,30 @@ def diary_upload(request):
                          request.POST['import_choice'] == 'Merge',
                          request.POST['import_choice'] == 'Overwrite')
 
-        elif 'export' in request.POST:
-            from_date = to_date = None
-            try:
-                from_date = dateutil.parser.parse(request.POST['export_from_date']).date()
-            except:
-                messages.error(request, f'Please select a from date')
-            try:
-                to_date = dateutil.parser.parse(request.POST['export_to_date']).date()
-            except:
-                messages.error(request, f'Please select a to date')
-            if from_date is not None and to_date is not None:
-                json_str = diary_json_between_dates(from_date, to_date)
-                response = HttpResponse(json_str, content_type='application/json')
-                response['Content-Disposition'] = 'attachment; filename=export.json'
-                return response
+    return render(request, 'workoutentry/data_import_export.html', {'import_form': DataImportForm(),
+                                                                    'export_form': DataExportForm()})
 
-    return render(request, 'workoutentry/diary_upload.html', {'form': DBManagementForm(),
-                                                              'latest_data_date': TrainingDataManager().latest_date(),
-                                                              'latest_warehouse_date': DataWarehouse.instance().max_date()})
+
+@login_required
+def data_export(request):
+    if request.method == 'POST':
+        from_date = to_date = None
+        try:
+            from_date = dateutil.parser.parse(request.POST['export_from_date']).date()
+        except:
+            messages.error(request, f'Please select a from date')
+        try:
+            to_date = dateutil.parser.parse(request.POST['export_to_date']).date()
+        except:
+            messages.error(request, f'Please select a to date')
+        if from_date is not None and to_date is not None:
+            json_str = diary_json_between_dates(from_date, to_date)
+            response = HttpResponse(json_str, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename=export.json'
+            return response
+
+    return render(request, 'workoutentry/data_import_export.html', {'import_form': DataImportForm(),
+                                                                    'export_form': DataExportForm()})
 
 
 def upload_diary(request, uploaded_file, merge, overwrite):

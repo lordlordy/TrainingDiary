@@ -1,22 +1,111 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
-from workoutentry.data_warehouse import DataWarehouseGenerator, DataWarehouse
+from workoutentry.data_warehouse import DataWarehouseGenerator, DataWarehouse, WarehouseColumn
 from workoutentry.training_data import TrainingDataManager
-from workoutentry.forms import DBManagementForm
+from workoutentry.forms import (DataWarehouseUpdateForm, UpdateDayDataForm, UpdateHRVForm, UpdateTSBForm,
+                                UpdateInterpolationForm)
 
 from django.contrib import messages
 import datetime
+import sqlite3
+
+PRINT_PROGRESS = True
+
+@login_required
+def warehouse_management(request):
+
+    tsb = kg = fat = hr = sdnn = rmssd = hrv = latest = None
+    try:
+        tsb = DataWarehouse.instance().tsb_to_date()
+        kg = DataWarehouse.instance().interpolated_to(WarehouseColumn.kg)
+        fat = DataWarehouse.instance().interpolated_to(WarehouseColumn.fat_percentage)
+        hr = DataWarehouse.instance().interpolated_to(WarehouseColumn.resting_hr)
+        sdnn = DataWarehouse.instance().interpolated_to(WarehouseColumn.sdnn)
+        rmssd = DataWarehouse.instance().interpolated_to(WarehouseColumn.rmssd)
+        hrv = DataWarehouse.instance().hrv_threshold_to_date()
+        latest = DataWarehouse.instance().max_date()
+    except sqlite3.OperationalError as e:
+        print(e)
+
+    return render(request, 'workoutentry/warehouse_management.html',
+                  {'generate_form': DataWarehouseUpdateForm(),
+                   'day_form': UpdateDayDataForm(),
+                   'tsb_form': UpdateTSBForm(),
+                   'interpolate_form': UpdateInterpolationForm(),
+                   'hrv_form': UpdateHRVForm(),
+                   'latest_data_date': TrainingDataManager().latest_date(),
+                   'tsb_to_date': tsb,
+                   'kg_interpolated_to': kg,
+                   'fat_interpolated_to': fat,
+                   'hr_interpolated_to': hr,
+                   'sdnn_interpolated_to': sdnn,
+                   'rmssd_interpolated_to': rmssd,
+                   'hrv_threshold_to_date': hrv,
+                   'latest_warehouse_date': latest})
 
 
 def data_warehouse_update(request):
-
-
     warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
     start = datetime.datetime.now()
-    DataWarehouseGenerator(warehouse_name).generate_from_date(request.POST['update_warehouse_date'], print_progress=False)
+    DataWarehouseGenerator(warehouse_name).generate_from_date(request.POST['update_warehouse_date'],
+                                                              print_progress=PRINT_PROGRESS)
     messages.info(request, f'Warehouse updated in {datetime.datetime.now() - start}')
 
-    return render(request, 'workoutentry/diary_upload.html', {'form': DBManagementForm(),
-                                                              'latest_data_date': TrainingDataManager().latest_date(),
-                                                              'latest_warehouse_date': DataWarehouse.instance().max_date()})
+    return warehouse_management(request)
+
+
+def update_days(request):
+    warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
+    start = datetime.datetime.now()
+    DataWarehouseGenerator(warehouse_name).update_days(request.POST['from_date'],
+                                                       request.POST['to_date'],
+                                                       print_progress=PRINT_PROGRESS)
+    messages.info(request, f"""
+        Warehouse days ({request.POST['from_date']} to {request.POST['to_date']}) 
+        updated in {datetime.datetime.now() - start}""")
+
+    return warehouse_management(request)
+
+
+def calculate_tsb(request):
+    warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
+    start = datetime.datetime.now()
+    DataWarehouseGenerator(warehouse_name).generate_tsb_monotony_strain(request.POST['from_date'],
+                                                                        request.POST['to_date'],
+                                                                        print_progress=PRINT_PROGRESS)
+    messages.info(request, f"""
+        Warehouse TSB, Monotony and Strain 
+        ({request.POST['from_date']} to {request.POST['to_date']}) 
+        calculated in {datetime.datetime.now() - start}""")
+
+    return warehouse_management(request)
+
+
+def interpolate_values(request):
+    warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
+    start = datetime.datetime.now()
+    DataWarehouseGenerator(warehouse_name).interpolate_zeroes(request.POST['from_date'],
+                                                              request.POST['to_date'],
+                                                              request.POST['col_choice'],
+                                                              print_progress=PRINT_PROGRESS)
+    messages.info(request, f"""
+        Warehouse interpolation for {request.POST['col_choice']} 
+        ({request.POST['from_date']} to {request.POST['to_date']}) 
+        done in {datetime.datetime.now() - start}""")
+
+    return warehouse_management(request)
+
+
+def calculate_hrv(request):
+    warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
+    start = datetime.datetime.now()
+    DataWarehouseGenerator(warehouse_name).generate_hrv_limits(request.POST['from_date'],
+                                                               request.POST['to_date'],
+                                                               print_progress=PRINT_PROGRESS)
+    messages.info(request, f"""
+        Warehouse HRV thresholds ({request.POST['from_date']} to {request.POST['to_date']}) 
+        calculated in {datetime.datetime.now() - start}""")
+
+    return warehouse_management(request)

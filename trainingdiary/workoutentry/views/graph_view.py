@@ -327,6 +327,9 @@ def save_image(graphs, file_name, colour_map='rainbow', background='whitesmoke',
     for graph in graphs:
         time_series, name = graph.time_series()
         time_series = time_series.loc[from_date:to_date]
+        if len(time_series) == 0:
+            # means no data in range provided
+            continue
         ax = ax_primary
         if graph.is_secondary():
             ax = ax_secondary
@@ -350,7 +353,10 @@ def save_image(graphs, file_name, colour_map='rainbow', background='whitesmoke',
             ax.plot(time_series, color=c_map(color_idx[i]), label=name, linewidth=graph.size(),
                     markersize=graph.size(), linestyle=graph.line_style(), marker=graph.marker())
             if graph.is_fill():
-                ax.fill_between(time_series.index.values, 0, time_series.values, color=c_map(color_idx[i]), alpha=0.5)
+                try:
+                    ax.fill_between(time_series.index.values, 0, time_series.values, color=c_map(color_idx[i]), alpha=0.5)
+                except TypeError as e:
+                    print(e)
 
         i += 1
 

@@ -8,6 +8,7 @@ import os
 import trainingdiary
 from .popular_graphs import create_popular_graphs
 
+
 class DataWarehouse:
 
     PERIOD = 'period'
@@ -111,13 +112,49 @@ class DataWarehouse:
 
     def max_date(self):
         if self.base_table_built:
-            date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
-            return [d[0] for d in date][0]
+            date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All').fetchall()
+            return date[0][0]
 
     def min_date(self):
         if self.base_table_built:
-            date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
-            return [d[0] for d in date][0]
+            date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All').fetchall()
+            return date[0][0]
+
+    def tsb_to_date(self):
+        if self.base_table_built:
+            d = self.__conn.execute('SELECT max(date) FROM day_All_All_All WHERE ctl>0').fetchall()
+            return d[0][0]
+
+    def hrv_threshold_to_date(self):
+        first_recording = self.__conn.execute('SELECT min(date) FROM day_All_All_All WHERE sdnn_recorded>0').fetchall()
+        if len(first_recording) > 0:
+            f_date = first_recording[0][0]
+            d = self.__conn.execute(f'SELECT max(date) FROM day_All_All_All WHERE sdnn_hard>0 AND date>="{f_date}"').fetchall()
+            if len(d)>0:
+                return d[0][0]
+
+    def interpolated_to(self, column):
+        from . import WarehouseColumn
+        recorded_col = WarehouseColumn(column).recorded_column_name()
+        if recorded_col is None:
+            return
+        earliest = self.earliest_recording(column)
+        if earliest is None:
+            return
+        sql = f"SELECT min(date) FROM day_All_All_All WHERE date>'{earliest}' AND {column}=0"
+        d = self.__conn.execute(sql).fetchall()
+        if len(d) > 0:
+            return self.max_date() if d[0][0] is None else d[0][0]
+
+
+    def earliest_recording(self, column):
+        from . import WarehouseColumn
+        recorded_col = WarehouseColumn(column).recorded_column_name()
+        if recorded_col is None:
+            return
+        d = self.__conn.execute(f"SELECT min(date) FROM day_All_All_All WHERE {recorded_col}=1").fetchall()
+        if len(d) > 0:
+            return d[0][0]
 
     def activities(self):
         activities = self.__conn.execute(f'SELECT DISTINCT activity FROM Tables')
@@ -163,7 +200,7 @@ class DataWarehouse:
         if day_type != 'All':
             where_clauses.append(f' day_type="{day_type}"')
 
-        table_name = f'Day_{activity}_{activity_type}_{e}'
+        table_name = f'day_{activity}_{activity_type}_{e}'
         if len(where_clauses) > 0:
             w_clause = ' AND '.join(where_clauses)
             sql_str = f'''
@@ -179,7 +216,7 @@ class DataWarehouse:
                 ORDER BY date
             '''
         try:
-            df = pd.read_sql_query(sql_str,self.__conn)
+            df = pd.read_sql_query(sql_str, self.__conn)
             df['date'] = pd.to_datetime(df['date'])
             df.set_index(['date'], inplace=True)
             s = pd.Series(df[measure], name=measure)
@@ -236,6 +273,7 @@ class DataWarehouse:
                     s = s.rolling(rolling_periods, min_periods=1).min()
                 elif rolling_aggregation == DataWarehouse.STD_DEV:
                     s = s.rolling(rolling_periods, min_periods=1).std()
+
             return s, name
 
         except Exception as e:

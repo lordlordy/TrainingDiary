@@ -1,13 +1,13 @@
 import datetime
+import dateutil
 
 
 def create_popular_graphs(data_warehouse):
 
-    today = datetime.datetime.now().date()
-    year_start = datetime.datetime(year=today.year, month=1, day=1).date()
-    year_end = datetime.datetime(year=today.year, month=12, day=31).date()
     max_date = data_warehouse.max_date()
     min_date = data_warehouse.min_date()
+    start_date = str(dateutil.parser.parse(max_date).date() - datetime.timedelta(days=365))
+    end_date = max_date
 
     tsb = {
             'number_of_plots': 4,
@@ -15,8 +15,8 @@ def create_popular_graphs(data_warehouse):
             'background': 'aliceblue',
             'graph_display_type': 'Single',
             'share_axis': 'None',
-            'from': str(today - datetime.timedelta(days=365)),
-            'to': str(today),
+            'from': start_date,
+            'to': end_date,
             'period_array': ['Day', 'Day', 'Day', 'Day'],
             'aggregation_array': ['Sum', 'Sum', 'Sum', 'Sum'],
             'activity_array': ['All', 'All', 'All', 'All'],
@@ -62,8 +62,8 @@ def create_popular_graphs(data_warehouse):
             'background': 'black',
             'graph_display_type': 'Single',
             'share_axis': 'None',
-            'from': str(year_start),
-            'to': str(year_end),
+            'from': start_date,
+            'to': end_date,
             'period_array': ['Y-Dec', 'Y-Dec', 'Y-Dec'],
             'aggregation_array': ['Sum', 'Sum', 'Sum'],
             'activity_array': ['Swim', 'Bike', 'Run'],
@@ -144,8 +144,8 @@ def create_popular_graphs(data_warehouse):
             'background': 'black',
             'graph_display_type': 'Split',
             'share_axis': 'None',
-            'from': str(today - datetime.timedelta(days=365)),
-            'to': str(today),
+            'from': start_date,
+            'to': end_date,
             'period_array': ['Day' for i in range(9)],
             'aggregation_array': ['Sum' for i in range(9)],
             'activity_array': ['All' for i in range(9)],
@@ -436,8 +436,8 @@ def create_popular_graphs(data_warehouse):
             'background': 'darkgrey',
             'graph_display_type': 'Split',
             'share_axis': 'None',
-            'from': str(today - datetime.timedelta(days=365)),
-            'to': str(today),
+            'from': start_date,
+            'to': end_date,
             'period_array': ['Day' for i in range(16)],
             'aggregation_array': ['Sum' for i in range(16)],
             'activity_array': ['All' for i in range(16)],
