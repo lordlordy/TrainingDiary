@@ -62,15 +62,21 @@ class DataWarehouseGenerator:
 
     def generate(self, print_progress=False, from_date=None):
         start = datetime.datetime.now()
-        print("getting all days...")
-        if from_date is None:
-            days = TrainingDataManager().days()
-        else:
-            days = TrainingDataManager().days_since(from_date)
-        print(f"Done in {datetime.datetime.now()-start}")
+        print(f"getting all days from {from_date}...")
+        first_date_str = TrainingDataManager().earliest_date()
+        last_date_str = TrainingDataManager().latest_date()
+        print(f'{first_date_str} -> {last_date_str}')
+        start_str = first_date_str if from_date is None else str(from_date)
+
+        current_date = dateutil.parser.parse(start_str).date()
+        last_date = dateutil.parser.parse(last_date_str).date()
+
         print(f"Populating for days")
         tables = self.__tables_dict()
-        for d in days:
+        count = 0
+        while current_date <= last_date:
+            count += 1
+            d = TrainingDataManager().day_for_date(current_date)
             # create new tables as required
             for t in d.workout_types():
                 table_name = f"day_{str(t)}"
@@ -85,8 +91,34 @@ class DataWarehouseGenerator:
             # add row for this day to all existing tables
             for key, value in tables.items():
                 self.__insert_row(key, value, d)
-            if print_progress:
-                print(f'{datetime.datetime.now() - start} {d.date}', end='\r')
+            if print_progress or count % 100 == 0:
+                print(f'{count} - {datetime.datetime.now() - start} {d.date}', end='\r')
+            current_date = current_date + datetime.timedelta(days=1)
+
+        # if from_date is None:
+        #     days = TrainingDataManager().days()
+        # else:
+        #     days = TrainingDataManager().days_since(from_date)
+        # print(f"Done in {datetime.datetime.now()-start}")
+        # print(f"Populating for days")
+        # tables = self.__tables_dict()
+        # for d in days:
+        #     # create new tables as required
+        #     for t in d.workout_types():
+        #         table_name = f"day_{str(t)}"
+        #         if table_name not in tables:
+        #             try:
+        #                 self.__create_table(table_name, t, d.date)
+        #                 tables[table_name] = t
+        #             except Exception as e:
+        #                 if print_progress:
+        #                     print(f'Table probably exists so continuing. {e}')
+        #                 pass
+        #     # add row for this day to all existing tables
+        #     for key, value in tables.items():
+        #         self.__insert_row(key, value, d)
+        #     if print_progress:
+        #         print(f'{datetime.datetime.now() - start} {d.date}', end='\r')
 
         print("TSB, Monotony, Strain and interpolation")
         for t in tables:

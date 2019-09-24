@@ -36,17 +36,14 @@ class TrainingDataManager:
         date = self.__conn.execute(sql).fetchall()[0][0]
         return date
 
+    def earliest_date(self):
+        sql = 'SELECT date FROM Day ORDER BY date ASC LIMIT 1'
+        date = self.__conn.execute(sql).fetchall()[0][0]
+        return date
+
     def days(self):
         days = self.__conn.execute('SELECT date, type, comments FROM Day ORDER BY date ASC').fetchall()
-        result = []
-        count = 0
-        for d in days:
-            result.append(Day(*d))
-            count += 1
-            if count % 100 == 0:
-                print(count)
-        return result
-        # return [Day(*d) for d in days]
+        return [Day(*d) for d in days]
 
     def day_for_date(self, date):
         days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date="{str(date)}"').fetchall()
