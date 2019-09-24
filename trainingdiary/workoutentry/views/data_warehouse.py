@@ -11,7 +11,7 @@ from django.contrib import messages
 import datetime
 import sqlite3
 
-PRINT_PROGRESS = True
+PRINT_PROGRESS = False
 
 @login_required
 def warehouse_management(request):
