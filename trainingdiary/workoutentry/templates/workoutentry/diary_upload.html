@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
 <div clas="container-fluid">
     <div class="row">
@@ -7,28 +8,55 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <h5 class="border-bottom mb=4">Data Import</h5>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input class="btn btn-outline-primary btn-sm" type="file" name="document">
-                <input class="btn btn-outline-primary btn-sm" type="submit" value="Upload">
-            </form>
-        </div>
-        <div class="col-md-3">
-            <h5 class="border-bottom mb=4">Data Warehouse</h5>
-            <form method="post" action="{% url 'date_warehouse_update' %}">
-                {% csrf_token %}
                 <div class="row">
-                    <div class="col-md-5">
-                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Update"/>
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-block" type="file" name="document">
                     </div>
-                    <div class="col-md-7">
-                        <input class="datepicker form-control" name="from_date" placeholder=" YYYY-MM-DD" type="text">
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-block" type="submit" value="Upload">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        {{ form.import_choice | as_crispy_field }}
                     </div>
                 </div>
             </form>
-            <small class="text-muted">This updates the dataware house. If no date is given it only updates any new data. If a date is provided then all data in the warehouse on or after that date is first removed then the warehouse is updated from the training diary data.</small>
+        </div>
+        <div class="col-md-4">
+            <h5 class="border-bottom mb=4">Data Warehouse</h5>
+            <div class="row">
+                <div class="col-md-12">
+                    <small class="text-muted">This updates the data warehouse. If no date is given it only updates any new data. If a date is provided then all data in the warehouse on or after that date is first removed then the warehouse is updated from the training diary data.</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">Data to: {{ latest_data_date }}</small>
+                </div>
+                <div class="col-md-6">
+                    <small class="text-muted">Warehouse to: {{ latest_warehouse_date }}</small>
+                </div>
+            </div>
+            <form method="post" action="{% url 'date_warehouse_update' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ form.update_warehouse_date | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Update"/>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="col-md-5">
             <h5 class="border-bottom mb=4">Data Export</h5>
@@ -36,10 +64,10 @@
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-5">
-                        <input class="datepicker form-control" name="from_date" placeholder="From: YYYY-MM-DD" type="text">
+                        {{ form.export_from_date | as_crispy_field }}
                     </div>
                     <div class="col-md-5">
-                        <input class="datepicker form-control" name="to_date" placeholder="To: YYYY-MM-DD" type="text">
+                        {{ form.export_to_date | as_crispy_field }}
                     </div>
                     <div class="col-md-2">
                         <input class="btn btn-outline-primary btn-sm" name="export" type="submit" value="Export"/>
@@ -61,6 +89,10 @@ $('.datepicker').datepicker({
     format: "yyyy-mm-dd",
 });
 
+
+$(document).ready(function(){
+$('#import_choice').select2();
+});
 
 </script>
 

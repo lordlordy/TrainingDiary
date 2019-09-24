@@ -3,77 +3,39 @@
 
 
 {% block content %}
-<h2 class="border-bottom mb-4">Days</h2>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="row">
-            <div class="col-md-6">
-                <h3 class="border-bottom mb-4">Filter</h3>
-            </div>
-            <div class="col-md-6">
-                <input type="button" id="filter_btn" class="btn btn-outline-primary btn-block" onclick="toggleFilter()" value="Hide">
-            </div>
-            </div>
-        </div>
-        <div id="report_chooser" class="col-md-12">
-            <form method="post" action="{% url 'day_list' %}">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Date</label>
-                            <div class="col-4">{{ filter.form.start_date_gte | as_crispy_field }}</div>
-                            <label class="col-2 col-form-label">To</label>
-                            <div class="col-4">{{ filter.form.start_date_lte | as_crispy_field }}</div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Day Type</label>
-                            <div class="col-10">{{ filter.form.type | as_crispy_field }}</div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Sleep</label>
-                            <div class="col-4">{{ filter.form.sleep_gte | as_crispy_field }}</div>
-                            <label class="col-2 col-form-label">To</label>
-                            <div class="col-4">{{ filter.form.sleep_lte | as_crispy_field }}</div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Sleep Quality</label>
-                            <div class="col-10">{{ filter.form.sleep_quality | as_crispy_field }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Fatigue</label>
-                            <div class="col-4">{{ filter.form.fatigue_gte | as_crispy_field }}</div>
-                            <label class="col-2 col-form-label">To</label>
-                            <div class="col-4">{{ filter.form.fatigue_lte | as_crispy_field }}</div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Motivation</label>
-                            <div class="col-4">{{ filter.form.motivation_gte | as_crispy_field }}</div>
-                            <label class="col-2 col-form-label">To</label>
-                            <div class="col-4">{{ filter.form.motivation_lte | as_crispy_field }}</div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-2 col-form-label">Comments</label>
-                            <div class="col-10">{{ filter.form.comments | as_crispy_field }}</div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-12">
-                                <button type="submit" name='model_search' class="btn btn-outline-primary btn-block">search</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+   <div class="row">
+       <div class="col-md-4">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">Days</h2>
+               </div>
+           </div>
+           <div class="row">
+               <div class="col-md-12">
+
+                   <a href="{% url 'day_new' %}" class="btn btn-outline-primary btn-block" role="button">New Day</a>
+
+               </div>
+           </div>
+       </div>
+       <div class="col-md-4">
+       </div>
+       <div class="col-md-4">
+           <form method="post">
+               {% csrf_token %}
+               <div class="form-row">
+               <div class="col-md-6">{{ form.from | as_crispy_field }}</div>
+               <div class="col-md-6">{{ form.to | as_crispy_field }}</div>
+               <button type="submit" name='model_search' class="btn btn-outline-primary btn-block">search</button>
+               </div>
+           </form>
+       </div>
     </div>
+
     <div class="row">
         <div class="col-md-12">
-            <form action="{% url 'day_new' %}">
-                <input class="btn btn-outline-primary btn-sm" type="submit" value="Add Day"/>
-            </form>
+
             <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
                 <thead class="thead-light">
                 <tr>
@@ -83,6 +45,11 @@
                     <th>quality</th>
                     <th>fatigue</th>
                     <th>motivation</th>
+                    <th>kg</th>
+                    <th>Fat%</th>
+                    <th>HR</th>
+                    <th>SDNN</th>
+                    <th>rMSSD</th>
                     <th>type</th>
                     <th>#</th>
                     <th>Time</th>
@@ -92,17 +59,22 @@
                 </thead>
                 {% if days %}
                 {% for d in days %}
-                <tr onclick="{% url 'day_form' d.id %}">
+                <tr>
                     <td>
-                        <a href="{% url 'day_form' d.id %}" class="btn btn-outline-primary btn-sm" role="button">View</a>
+                        <a href="{% url 'day_form' d.date %}" class="btn btn-outline-primary btn-sm" role="button">Edit</a>
                     </td>
                     <td>{{ d.date | date:'Y-m-d' }}</td>
                     <td>{{ d.sleep }}</td>
-                    <td>{{ d.sleep_quality }}</td>
+                    <td>{{ d.sleepQualityScore }}</td>
                     <td>{{ d.fatigue }}</td>
                     <td>{{ d.motivation }}</td>
-                    <td>{{ d.type }}</td>
-                    <td>{{ d.number_of_workouts }}</td>
+                    <td>{{ d.kg }}</td>
+                    <td>{{ d.fat_percentage }}</td>
+                    <td>{{ d.restingHR }}</td>
+                    <td>{{ d.SDNN }}</td>
+                    <td>{{ d.rMSSD}}</td>
+                    <td>{{ d.day_type }}</td>
+                    <td>{{ d.workout_count }}</td>
                     <td>{{ d.training_duration }}</td>
                     <td>{{ d.tss }}</td>
                     <td>{{ d.comments }}</td>

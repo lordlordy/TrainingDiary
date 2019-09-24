@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-import json
-from workoutentry.models import Workout, Day, RestingHeartRate, SDNN, RMSSD, KG, FatPercentage
 import dateutil.parser
-import datetime
 import json
 from django.contrib import messages
+from workoutentry.training_data import TrainingDataManager
+from workoutentry.forms import DBManagementForm
+from workoutentry.data_warehouse import DataWarehouse
 
 
 @login_required
@@ -14,166 +14,137 @@ def diary_upload(request):
     if request.method == 'POST':
         if 'document' in request.FILES:
             uploaded_file = request.FILES['document']
-            upload_diary(request, uploaded_file)
+            upload_diary(request, uploaded_file,
+                         request.POST['import_choice'] == 'Merge',
+                         request.POST['import_choice'] == 'Overwrite')
+
         elif 'export' in request.POST:
             from_date = to_date = None
             try:
-                from_date = dateutil.parser.parse(request.POST['from_date'])
-            except ValueError as e:
-                print(e)
+                from_date = dateutil.parser.parse(request.POST['export_from_date']).date()
+            except:
+                messages.error(request, f'Please select a from date')
             try:
-                to_date = dateutil.parser.parse(request.POST['to_date'])
-            except ValueError as e:
-                print(e)
-            json_str = diary_json_between_dates(from_date, to_date)
-            response = HttpResponse(json_str, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename=export.json'
-            return response
+                to_date = dateutil.parser.parse(request.POST['export_to_date']).date()
+            except:
+                messages.error(request, f'Please select a to date')
+            if from_date is not None and to_date is not None:
+                json_str = diary_json_between_dates(from_date, to_date)
+                response = HttpResponse(json_str, content_type='application/json')
+                response['Content-Disposition'] = 'attachment; filename=export.json'
+                return response
 
-    return render(request, 'workoutentry/diary_upload.html')
+    return render(request, 'workoutentry/diary_upload.html', {'form': DBManagementForm(),
+                                                              'latest_data_date': TrainingDataManager().latest_date(),
+                                                              'latest_warehouse_date': DataWarehouse.instance().max_date()})
 
 
-
-def upload_diary(request, uploaded_file):
-    day_count = workout_count = kg_count = fat_count = hr_count = sdnn_count = rmssd_count = 0
+def upload_diary(request, uploaded_file, merge, overwrite):
+    day_count = workout_count = reading_count = race_count = 0
+    days_not_imported = []
     data = json.load(uploaded_file)
-    for d in data['days']:
-        date = dateutil.parser.parse(d['iso8601DateString'])
-        if Day.objects.filter(date=date).exists():
-            continue
-        day = Day(date=date,
-                  sleep=datetime.timedelta(hours=d['sleep']),
-                  sleep_quality=d['sleepQuality'],
-                  fatigue=d['fatigue'],
-                  motivation=d['motivation'],
-                  type=d['type'],
-                  comments=d['comments'])
+    tdm = TrainingDataManager()
+    for d in data['Days']:
+        date = dateutil.parser.parse(d['iso8601DateString']).date()
+        day_exists = tdm.day_for_date(date) is not None
+        if day_exists:
+            if merge:
+                pass
+            elif overwrite:
+                tdm.delete_day(date)
+                messages.info(request, f'Day, workouts, readings and race results replaced for {date}')
+            else:
+                days_not_imported.append(str(date))
+                continue
 
-        day.save()
-        day_count += 1
+        # only save this if it doesn't exist OR we are overwriting
+        if day_exists and overwrite:
+            tdm.save_day(date, d['type'], d['comments'])
+            day_count += 1
 
-        if 'workouts' in d:
-            for w in d['workouts']:
-                equipment = w['equipmentName']
-                if equipment == 'Not Set':
-                    equipment = None
-                workout = Workout(activity=w['activityString'],
-                                  activity_type=w['activityTypeString'],
-                                  equipment=equipment,
-                                  day=day,
-                                  duration=datetime.timedelta(seconds=w['seconds']),
-                                  rpe=w['rpe'],
-                                  tss=w['tss'],
-                                  tss_method=w['tssMethod'],
-                                  km=w['km'],
-                                  kj=w['kj'],
-                                  ascent_metres=w['ascentMetres'],
-                                  reps=w['reps'],
-                                  is_race=w['isRace'],
-                                  cadence=w['cadence'],
-                                  watts=w['watts'],
-                                  watts_estimated=w['wattsEstimated'],
-                                  heart_rate=w['hr'],
-                                  is_brick=w['brick'],
-                                  keywords=w['keywords'],
-                                  comments=w['comments'])
-                workout.save()
+        # from here only need to worry about merge. If it's overwite then the day has been removed if it exists so
+        # can just save these. If it's not overwite or merge then it'll only get this far if no date exists.
+        # thus if merge is true we then skip if workout exists
+
+        if 'Workouts' in d:
+            for w in d['Workouts']:
+                if skip_workout(merge, date, w['workoutNumber']):
+                    messages.info(request, f'''
+                    Skipped workout {date}~#{w['workoutNumber']} {w["activity"]}:{w["activityType"]}:{w["equipment"]}:{w['seconds']}s
+                    ''')
+                    continue
+                equipment = ""
+                if 'equipmentName' in w:
+                    equipment = w['equipmentName']
+                    if equipment == 'Not Set':
+                        equipment = ""
+
+                tdm.save_workout(date, w['activity'],w['activityType'], equipment, w['seconds'], w['rpe'], w['tss'],
+                                 w['tssMethod'], w['km'], w['kj'], w['ascentMetres'], w['reps'], w['isRace'],
+                                 w['cadence'], w['watts'], w['wattsEstimated'], w['heartRate'], w['isBrick'],
+                                 w['keywords'], w['comments'])
                 workout_count += 1
 
-    for d in data['restingHR']:
-        date = dateutil.parser.parse(d['iso8601DateString'])
-        if RestingHeartRate.objects.filter(date=date).exists():
-            pass
-        else:
-            resting_hr = RestingHeartRate(date=date, value=round(d['value'], 1))
-            resting_hr.save()
-            hr_count += 1
+        if 'Readings' in d:
+            for r in d['Readings']:
+                if skip_reading(merge, date, r['type']):
+                    continue
+                tdm.save_reading(date, r['type'], r['value'])
+                reading_count += 1
 
-    for d in data['restingSDNN']:
-        date = dateutil.parser.parse(d['iso8601DateString'])
-        if SDNN.objects.filter(date=date).exists():
-            pass
-        else:
-            sdnn = SDNN(date=date, value=round(d['value'], 1))
-            sdnn.save()
-            sdnn_count += 1
+    if 'RaceResults' in data:
+        for rr in data['RaceResults']:
+            date = dateutil.parser.parse(rr['iso8601DateString']).date()
+            existing_result = tdm.race_result_for_date_and_number(date, rr['raceNumber'])
+            if existing_result is not None:
+                # have an existing result
+                if overwrite:
+                    tdm.delete_race_result(date, rr['raceNumber'])
+                    messages.info(request, f'This race result has been replaced: {existing_result}')
+                else:
+                    # don't upload this
+                    messages.info(request, f"Race report not imported: {rr['iso8601DateString']} - {rr['name']}")
+                    continue
 
-    for d in data['restingRMSSD']:
-        date = dateutil.parser.parse(d['iso8601DateString'])
-        if RMSSD.objects.filter(date=date).exists():
-            pass
-        else:
-            rmssd = RMSSD(date=date, value=round(d['value'], 1))
-            rmssd.save()
-            rmssd_count += 1
-
-    for d in data['kg']:
-        date = dateutil.parser.parse(d['iso8601DateString'])
-        if KG.objects.filter(date=date).exists():
-            pass
-        else:
-            kg = KG(date=date, value=round(d['value'], 1))
-            kg.save()
-            kg_count += 1
-
-    for d in data['fatPercentage']:
-        date = dateutil.parser.parse(d['iso8601DateString'])
-        if FatPercentage.objects.filter(date=date).exists():
-            pass
-        else:
-            fat_percentage = FatPercentage(date=date, value=round(d['value'], 1))
-            fat_percentage.save()
-            fat_count += 1
+            tdm.save_race_result(date, rr['raceNumber'], rr['type'], rr['brand'], rr['distance'], rr['name'],
+                                 rr['category'], rr['overallPosition'], rr['categoryPosition'], rr['swimSeconds'],
+                                 rr['t1Seconds'], rr['bikeSeconds'], rr['t2Seconds'], rr['runSeconds'], rr['swimKM'],
+                                 rr['bikeKM'], rr['runKM'], rr['comments'], rr['raceReport'])
+            race_count += 1
 
     messages.success(request, f'Data Uploaded')
     messages.info(request, f'Day Count: {day_count}')
     messages.info(request, f'Workout Count: {workout_count}')
-    messages.info(request, f'KG Count: {kg_count}')
-    messages.info(request, f'Fat Percentage Count: {fat_count}')
-    messages.info(request, f'Resting Heart Rate Count: {hr_count}')
-    messages.info(request, f'Resting SDNN Count: {sdnn_count}')
-    messages.info(request, f'Resting rMSSD Count: {rmssd_count}')
+    messages.info(request, f'Reading Count: {reading_count}')
+    messages.info(request, f'Race Result Count: {race_count}')
+    if len(days_not_imported) > 0:
+        messages.info(request, f'Dates not imported: {days_not_imported}')
 
 
-def diary_json_between_dates(from_date=None, to_date=None):
-    if from_date is None and to_date is None:
-        days = Day.objects.all()
-        kg = KG.objects.all()
-        fat_percent = FatPercentage.objects.all()
-        resting_hr = RestingHeartRate.objects.all()
-        sdnn = SDNN.objects.all()
-        rmssd = RMSSD.objects.all()
-    elif from_date is None:
-        days = Day.objects.filter(date__lte=to_date)
-        kg = KG.objects.filter(date__lte=to_date)
-        fat_percent = FatPercentage.objects.filter(date__lte=to_date)
-        resting_hr = RestingHeartRate.objects.filter(date__lte=to_date)
-        sdnn = SDNN.objects.filter(date__lte=to_date)
-        rmssd = RMSSD.objects.filter(date__lte=to_date)
-    elif to_date is None:
-        days = Day.objects.filter(date__gte=from_date)
-        kg = KG.objects.filter(date__gte=from_date)
-        fat_percent = FatPercentage.objects.filter(date__gte=from_date)
-        resting_hr = RestingHeartRate.objects.filter(date__gte=from_date)
-        sdnn = SDNN.objects.filter(date__gte=from_date)
-        rmssd = RMSSD.objects.filter(date__gte=from_date)
-    else:
-        days = Day.objects.filter(date__gte=from_date, date__lte=to_date)
-        kg = KG.objects.filter(date__gte=from_date, date__lte=to_date)
-        fat_percent = FatPercentage.objects.filter(date__gte=from_date, date__lte=to_date)
-        resting_hr = RestingHeartRate.objects.filter(date__gte=from_date, date__lte=to_date)
-        sdnn = SDNN.objects.filter(date__gte=from_date, date__lte=to_date)
-        rmssd = RMSSD.objects.filter(date__gte=from_date, date__lte=to_date)
+def diary_json_between_dates(from_date, to_date):
+    tdm = TrainingDataManager()
+    days = tdm.days_between(from_date, to_date)
+    race_results = tdm.race_results_between(from_date, to_date)
 
     training_diary_dd = {"athleteName": "Steven Lord",
                          "Generated By" : "Django Training Diary",
-                         "Included": "Days",
-                         "days": [d.data_dictionary() for d in days],
-                         "kg": [d.data_dictionary() for d in kg],
-                         "fatPercent": [d.data_dictionary() for d in fat_percent],
-                         "restingHR": [d.data_dictionary() for d in resting_hr],
-                         "sdnn": [d.data_dictionary() for d in sdnn],
-                         'rmssd': [d.data_dictionary() for d in rmssd]}
+                         "JSONVersion": "WorkoutEditor_v1",
+                         "Days": [d.json_dictionary() for d in days],
+                         "RaceResults": [r.json_dictionary() for r in race_results]
+                         }
 
     return json.dumps(training_diary_dd, indent=4)
 
+
+def skip_workout(merge, date, workout_number):
+    if not merge:
+        return False
+    existing_workout = TrainingDataManager().workout_for_date_and_number(date, workout_number)
+    return len(existing_workout) > 0
+
+
+def skip_reading(merge, date, reading_type):
+    if not merge:
+        return False
+    existing_reading = TrainingDataManager().reading_for_date_and_type(date, reading_type)
+    return len(existing_reading) > 0

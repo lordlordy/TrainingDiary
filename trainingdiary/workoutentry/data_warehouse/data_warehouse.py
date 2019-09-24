@@ -113,15 +113,11 @@ class DataWarehouse:
         if self.base_table_built:
             date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
             return [d[0] for d in date][0]
-        else:
-            return datetime.datetime.now().date()
 
     def min_date(self):
         if self.base_table_built:
             date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
             return [d[0] for d in date][0]
-        else:
-            return datetime.datetime.now().date()
 
     def activities(self):
         activities = self.__conn.execute(f'SELECT DISTINCT activity FROM Tables')
@@ -151,20 +147,6 @@ class DataWarehouse:
                           equipment=equipment, measure=measure, to_date=to_date, rolling=rolling,
                           rolling_periods=rolling_periods, rolling_aggregation=rolling_aggregation, day_of_week=day_of_week,
                           month=month, day_type=day_type)
-
-        print(f'Period: {period}')
-        print(f'aggregation: {aggregation}')
-        print(f'activity {activity}')
-        print(f'activity_type: {activity_type}')
-        print(f'equipment: {equipment}')
-        print(f'measure: {measure}')
-        print(f'to_date: {to_date}')
-        print(f'rolling: {rolling}')
-        print(f'rolling_periods: {rolling_periods}')
-        print(f'rolling_aggregation: {rolling_aggregation}')
-        print(f'day_of_week: {day_of_week}')
-        print(f'month: {month}')
-        print(f'day_type: {day_type}')
 
         e = equipment.replace(" ",'')
         if period != 'Day':
@@ -275,9 +257,9 @@ class DataWarehouse:
         current_year = time_series.index[0].year
 
         time_series.sort_index(inplace=True)
-        print(time_series)
-        print(type(time_series))
-        print(time_series.index)
+        # print(time_series)
+        # print(type(time_series))
+        # print(time_series.index)
 
         for i, v in time_series.iteritems():
             if i.year != current_year:

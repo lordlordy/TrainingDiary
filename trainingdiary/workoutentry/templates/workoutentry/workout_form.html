@@ -8,6 +8,7 @@
             <table class="table table-hover table-bordered table-striped table-sm ">
                 <thead class="thead-light">
                 <tr>
+                    <th>#</th>
                     <th>Date</th>
                     <th>Activity</th>
                     <th>Type</th>
@@ -20,11 +21,12 @@
                </tr>
                 </thead>
                 <tr>
-                    <td>{{ workout.day.date }}</td>
+                    <td>{{ workout.workout_number }}</td>
+                    <td>{{ workout.date }}</td>
                     <td>{{ workout.activity }}</td>
                     <td>{{ workout.activity_type }}</td>
                     <td>{{ workout.equipment }}</td>
-                    <td>{{ workout.duration }}</td>
+                    <td>{{ workout.seconds }}</td>
                     <td>{{ workout.km }}</td>
                     <td>{{ workout.tss }}</td>
                     <td>{{ workout.tss_method }}</td>
@@ -33,110 +35,86 @@
             </table>
         </div>
     </div>
-     <div class="row">
-         <div class="col-md-12">
-            <form method="post">
-                {% csrf_token %}
-                <legend class="border-bottom mb-4">Workout Edit</legend>
+     <legend class="border-bottom mb-4">Workout Edit</legend>
+     <form method="post">
+         {% csrf_token %}
+         <div class="row">
+             <div class="col-md-12">
                 <div class="form-row">
                     <div class="col-1">
                         {{ form.activity | as_crispy_field }}
                     </div>
                     <div class="col-1">
-                        <div class="form-group">
-                            <label class="col-form-label">New Activity</label>
-                            <div>
-                                <input type="text" name="new_activity" placeholder="new activity" class="textinput textInput form-control border border-info">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-1">
                         {{ form.activity_type | as_crispy_field }}
                     </div>
-                    <div class="col-1">
-                        <div class="form-group">
-                            <label class="col-form-label">New Type</label>
-                            <div>
-                                <input type="text" name="new_activity_type" class="textinput textInput form-control border border-info">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         {{ form.equipment | as_crispy_field }}
-                    </div>
-                    <div class="col-1">
-                        <div class="form-group">
-                            <label class="col-form-label">New Equip</label>
-                            <div>
-                                <input type="text" name="new_equipment" class="textinput textInput form-control border border-info">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-1 mb-0">
-                        {{ form.duration | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
                         {{ form.km | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
-                        {{ form.ascent_metres | as_crispy_field }}
+                        {{ form.seconds | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
                         {{ form.rpe | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
-                        {{ form.heart_rate | as_crispy_field }}
+                        {{ form.tss | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-2 mb-0">
+                        {{ form.tss_method | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
-                        {{ form.reps | as_crispy_field }}
+                        {{ form.watts | as_crispy_field }}
+                    </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.heart_rate | as_crispy_field }}
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-1 mb-0">
-                        {{ form.tss | as_crispy_field }}
+                        {{ form.kj | as_crispy_field }}
                     </div>
-                    <div class="col-1">
-                        {{ form.tss_method | as_crispy_field }}
-                    </div>
-                    <div class="col-1">
-                        <div class="form-group">
-                            <label class="col-form-label">New Method</label>
-                            <div>
-                                <input type="text" name="new_tss_method" class="textinput textInput form-control border border-info">
-                            </div>
-                        </div>
+                    <div class="form-group col-1 mb-0">
+                        {{ form.ascent_metres | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
                         {{ form.cadence | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
-                        {{ form.kj | as_crispy_field }}
-                    </div>
-                    <div class="form-group col-1 mb-0">
-                        {{ form.watts | as_crispy_field }}
+                        {{ form.reps | as_crispy_field }}
                     </div>
                     <div class="form-group col-2 mb-0">
-                        {{ form.watts_estimated | as_crispy_field }}
-                        {{ form.is_race | as_crispy_field }}
-                        {{ form.is_brick | as_crispy_field }}
+                        {{ form.watts_estimated_yes_no | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
+                        {{ form.is_race_yes_no | as_crispy_field }}
                     </div>
                     <div class="form-group col-1 mb-0">
+                        {{ form.is_brick_yes_no | as_crispy_field }}
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-9 mb-0">
-                        {{ form.comments | as_crispy_field }}
-                    </div>
-                    <div class="form-group col-3 mb-0">
+                    <div class="form-group col-4 mb-0">
                         {{ form.keywords | as_crispy_field }}
                     </div>
                 </div>
-                <button class="btn btn-outline-primary btn-sm" type="submit">Update</button>
-            </form>
+             </div>
+             <div class="form_row">
+                 <div class="col-md-12">
+                     <button class="btn btn-outline-primary btn-block" type="submit">Update</button>
+                 </div>
+             </div>
          </div>
-     </div>
+         <div class="row">
+             <div class="col-md-12">
+                 <div class="form-row">
+                    <div class="form-group col-12 mb-0">
+                        {{ form.comments | as_crispy_field }}
+                    </div>
+                </div>
+             </div>
+         </div>
+     </form>
  </div>
 
 
@@ -160,6 +138,18 @@ $('#tss_method').select2();
 
 $(document).ready(function(){
 $('#equipment').select2();
+});
+
+$(document).ready(function(){
+$('#watts').select2();
+});
+
+$(document).ready(function(){
+$('#race').select2();
+});
+
+$(document).ready(function(){
+$('#brick').select2();
 });
 
 </script>

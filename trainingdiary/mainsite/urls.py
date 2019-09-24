@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+#
 urlpatterns = [
     path('', views.home_view, name='home'),
     path('results/ironman', views.ironman_results_view, name='ironman_results'),

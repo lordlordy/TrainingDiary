@@ -38,8 +38,6 @@ def _eddington_view(request, template):
     if request.method == 'POST':
         data = request.POST.dict()
 
-        print(data)
-
         if 'document' in request.FILES:
             uploaded_file = request.FILES['document']
             #  todo there must be a better way to check this
