@@ -38,7 +38,15 @@ class TrainingDataManager:
 
     def days(self):
         days = self.__conn.execute('SELECT date, type, comments FROM Day ORDER BY date ASC').fetchall()
-        return [Day(*d) for d in days]
+        result = []
+        count = 0
+        for d in days:
+            result.append(Day(*d))
+            count += 1
+            if count % 100 == 0:
+                print(count)
+        return result
+        # return [Day(*d) for d in days]
 
     def day_for_date(self, date):
         days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date="{str(date)}"').fetchall()
