@@ -94,7 +94,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'trainingdiary.wsgi.application'
-print("in the settings file")
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

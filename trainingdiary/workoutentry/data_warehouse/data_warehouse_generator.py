@@ -43,15 +43,18 @@ class DataWarehouseGenerator:
         self.HRV_OFF_PERCENTILE = 0.05
         self.HRV_EASY_PERCENTILE = 0.25
         self.HRV_HARD_PERCENTILE = 0.75
-        self.HRV_OFF_SDs = DataWarehouseGenerator.normalCDFInverse(self.HRV_OFF_PERCENTILE)
-        self.HRV_EASY_SDs = DataWarehouseGenerator.normalCDFInverse(self.HRV_EASY_PERCENTILE)
-        self.HRV_HARD_SDs = DataWarehouseGenerator.normalCDFInverse(self.HRV_HARD_PERCENTILE)
+        self.HRV_OFF_SDs = DataWarehouseGenerator.normal_cdf_inverse(self.HRV_OFF_PERCENTILE)
+        self.HRV_EASY_SDs = DataWarehouseGenerator.normal_cdf_inverse(self.HRV_EASY_PERCENTILE)
+        self.HRV_HARD_SDs = DataWarehouseGenerator.normal_cdf_inverse(self.HRV_HARD_PERCENTILE)
 
     def generate_from_date(self, date, print_progress=False):
         if date is None or date == '':
             from . import DataWarehouse
             last_date_str = DataWarehouse.instance().max_date()
-            from_date = dateutil.parser.parse(last_date_str).date() + datetime.timedelta(days=1)
+            if last_date_str is None:
+                from_date = None
+            else:
+                from_date = dateutil.parser.parse(last_date_str).date() + datetime.timedelta(days=1)
         else:
             from_date = date
             self.__delete_entries_from(date)
@@ -291,7 +294,7 @@ class DataWarehouseGenerator:
 
     # Implementation from https://www.johndcook.com/blog/csharp_phi_inverse/
     @classmethod
-    def rationalApproximation(cls, t):
+    def rational_approximation(cls, t):
         # Abramowitz and Stegun formula 26.2.23.
         # The absolute value of the error should be less than 4.5 e-4.
         c = [2.515517, 0.802853, 0.010328]
@@ -301,14 +304,14 @@ class DataWarehouseGenerator:
     # Implementation from https://www.johndcook.com/blog/csharp_phi_inverse/
     # this takes a percentile (probability) and returns number of SD from mean
     @classmethod
-    def normalCDFInverse(cls, p):
+    def normal_cdf_inverse(cls, p):
         if p <= 0.0 or p >= 1.0:
-            print("Invalid input argument: \(p)")
+            print("Invalid input argument: \(p) in normal_cdf_inverse")
 
         # See article above for explanation of this section.
         if p < 0.5:
             # F^-1(p) = - G^-1(p)
-            return -cls.rationalApproximation(np.sqrt(-2.0*np.log(p)) )
+            return -cls.rational_approximation(np.sqrt(-2.0 * np.log(p)))
         else:
             # F^-1(p) = G^-1(1-p)
-            return cls.rationalApproximation(np.sqrt(-2.0*np.log(1.0 - p)) )
+            return cls.rational_approximation(np.sqrt(-2.0 * np.log(1.0 - p)))

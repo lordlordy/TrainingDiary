@@ -5,7 +5,6 @@ import datetime
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from numpy.polynomial.polynomial import polyfit
 from django.shortcuts import render
 from django.conf import settings
@@ -30,11 +29,6 @@ def _graph_view(request, template):
     if request.method == 'POST':
         graphs = []
         title = "All Dates"
-
-        print(request.POST)
-        for key, value in request.POST.dict().items():
-            print(f'{key}: {value}')
-
 
         if 'popular' in request.POST:
             title = request.POST['popular']
@@ -342,7 +336,6 @@ def save_image(graphs, file_name, colour_map='rainbow', background='whitesmoke',
             ax.bar(time_series.index.values, time_series.values, label=name, color=c_map(color_idx[i]),
                    align='edge', width=width, alpha=0.5)
         elif graph.is_histogram():
-            print('in histogram')
             min_x = np.nanmin(time_series.values)
             max_x = np.nanmax(time_series.values)
             x_width = (max_x - min_x) / graph.size()
@@ -354,7 +347,6 @@ def save_image(graphs, file_name, colour_map='rainbow', background='whitesmoke',
 
             ax.hist(time_series.values, bins=xbins, color=c_map(color_idx[i]))
         else:
-            print('in time-series graph')
             ax.plot(time_series, color=c_map(color_idx[i]), label=name, linewidth=graph.size(),
                     markersize=graph.size(), linestyle=graph.line_style(), marker=graph.marker())
             if graph.is_fill():

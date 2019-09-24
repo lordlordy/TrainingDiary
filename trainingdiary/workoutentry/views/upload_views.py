@@ -12,7 +12,6 @@ from workoutentry.data_warehouse import DataWarehouse
 @login_required
 def diary_upload(request):
     if request.method == 'POST':
-        print(request.POST)
         if 'document' in request.FILES:
             uploaded_file = request.FILES['document']
             upload_diary(request, uploaded_file,
@@ -97,7 +96,6 @@ def upload_diary(request, uploaded_file, merge, overwrite):
         for rr in data['RaceResults']:
             date = dateutil.parser.parse(rr['iso8601DateString']).date()
             existing_result = tdm.race_result_for_date_and_number(date, rr['raceNumber'])
-            print(f"{str(date)} {rr['raceNumber']} resulted in {existing_result}")
             if existing_result is not None:
                 # have an existing result
                 if overwrite:
@@ -134,7 +132,6 @@ def diary_json_between_dates(from_date, to_date):
                          "Days": [d.json_dictionary() for d in days],
                          "RaceResults": [r.json_dictionary() for r in race_results]
                          }
-    print(training_diary_dd)
 
     return json.dumps(training_diary_dd, indent=4)
 

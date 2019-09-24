@@ -385,7 +385,7 @@ def create_popular_graphs(data_warehouse):
             'share_axis': 'None',
             'from': min_date,
             'to': max_date,
-            'period_array': ['W-Mon' for _ in range(9)],
+            'period_array': ['W-Sun' for _ in range(9)],
             'aggregation_array': ['Sum', 'Sum', 'Sum', 'Sum', 'Sum', 'Mean', 'Sum', 'Mean', 'Mean'],
             'activity_array':  ['Swim', 'Bike', 'Run', 'All', 'All', 'Bike', 'Bike', 'All', 'All'],
             'activity_type_array': ['All' for _ in range(9)],

@@ -113,15 +113,11 @@ class DataWarehouse:
         if self.base_table_built:
             date = self.__conn.execute('SELECT MAX(date) FROM Day_All_All_All')
             return [d[0] for d in date][0]
-        else:
-            return datetime.datetime.now().date()
 
     def min_date(self):
         if self.base_table_built:
             date = self.__conn.execute('SELECT MIN(date) FROM Day_All_All_All')
             return [d[0] for d in date][0]
-        else:
-            return datetime.datetime.now().date()
 
     def activities(self):
         activities = self.__conn.execute(f'SELECT DISTINCT activity FROM Tables')
@@ -261,9 +257,9 @@ class DataWarehouse:
         current_year = time_series.index[0].year
 
         time_series.sort_index(inplace=True)
-        print(time_series)
-        print(type(time_series))
-        print(time_series.index)
+        # print(time_series)
+        # print(type(time_series))
+        # print(time_series.index)
 
         for i, v in time_series.iteritems():
             if i.year != current_year:
