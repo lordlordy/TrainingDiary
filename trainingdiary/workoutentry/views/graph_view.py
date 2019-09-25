@@ -48,9 +48,9 @@ def popular_graph_view(request):
 def __popular_graph_view(request):
     popular_graph = DataWarehouse.instance().popular_graphs[request.POST['popular']]
 
-    if request.POST['from'] != '':
+    if 'from' in request.POST and request.POST['from'] != '':
         popular_graph['from'] = request.POST['from']
-    if request.POST['to'] != '':
+    if 'from' in request.POST and request.POST['to'] != '':
         popular_graph['to'] = request.POST['to']
 
     graphs = []
