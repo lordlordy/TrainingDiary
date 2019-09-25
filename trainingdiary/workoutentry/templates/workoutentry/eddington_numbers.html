@@ -81,6 +81,22 @@ $('#popular').select2();
         $('.dataTables_length').addClass('bs-select');
     });
 
+    $(document).ready(function(){
+        $('#monthly').DataTable({
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    $(document).ready(function(){
+        $('#monthly_summary').DataTable({
+        "pagingType": "simple",
+        "order": [[0, "desc"]]
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
 </script>
 
 {% endblock %}
@@ -89,48 +105,68 @@ $('#popular').select2();
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <h2 class="border-bottom mb=4">Eddington Numbers</h2>
+            <h2 class="border-bottom mb=1">Eddington Numbers</h2>
         </div>
     </div>
     <div class="row">
-        <div class="col-3">
-            <div class="row">
-                <div class="col-6">
-                    <h3 class="border-bottom mb-4">Select:</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="form-row">
-                            <div class="form-group col-6 mb-0">
+        <div class="col-12">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="col-5">
+                        <h5 class="border-bottom mb-0">Measure</h5>
+                        <div class="row">
+                            <div class="form-group col-3 mb-0">
                                 {{ selection_form.activity | as_crispy_field }}
                             </div>
-                            <div class="form-group col-6 mb-0">
+                            <div class="form-group col-3 mb-0">
                                 {{ selection_form.measure | as_crispy_field }}
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-6 mb-0">
+                            <div class="form-group col-3 mb-0">
                                 {{ selection_form.activity_type | as_crispy_field }}
                             </div>
-                            <div class="form-group col-6 mb-0">
+                            <div class="form-group col-3 mb-0">
                                 {{ selection_form.equipment | as_crispy_field }}
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-4 mb-0">
-                                {{ selection_form.period | as_crispy_field }}
+                    </div>
+                    <div class="col-7">
+                        <div class="row">
+                             <div class="col-6">
+                                <h5 class="border-bottom mb-0">Day</h5>
+                                <div class="row">
+                                    <div class="form-group col-4 mb-0">
+                                        {{ selection_form.day_of_week | as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-4 mb-0">
+                                        {{ selection_form.month | as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-4 mb-0">
+                                        {{ selection_form.day_type | as_crispy_field }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group col-4 mb-0">
-                                {{ selection_form.to_date | as_crispy_field }}
-                            </div>
-                            <div class="form-group col-4 mb-0">
-                                {{ selection_form.aggregation | as_crispy_field }}
+                            <div class="col-6">
+                                <h5 class="border-bottom mb-0">Period</h5>
+                                <div class="row">
+                                    <div class="form-group col-4 mb-0">
+                                        {{ selection_form.period | as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-4 mb-0">
+                                        {{ selection_form.to_date | as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-4 mb-0">
+                                        {{ selection_form.aggregation | as_crispy_field }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-row">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-4">
+                        <h5 class="border-bottom mb-0">Rolling</h5>
+                        <div class="row">
                             <div class="form-group col-4 mb-0">
                                 {{ selection_form.rolling | as_crispy_field }}
                             </div>
@@ -141,51 +177,47 @@ $('#popular').select2();
                                 {{ selection_form.rolling_aggregation | as_crispy_field }}
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-4 mb-0">
-                                {{ selection_form.day_of_week | as_crispy_field }}
-                            </div>
-                            <div class="form-group col-4 mb-0">
-                                {{ selection_form.month | as_crispy_field }}
-                            </div>
-                            <div class="form-group col-4 mb-0">
-                                {{ selection_form.day_type | as_crispy_field }}
+                    </div>
+                    <div class="col-8">
+                        <h5 class="border-bottom mb-4">Generate</h5>
+                        <div class="row">
+                            <div class="form-group col-12 mb-0">
+                                <button class="btn btn-outline-primary btn-sm btn-block" type="submit">CALCULATE</button>
                             </div>
                         </div>
-                        <button class="btn btn-outline-primary btn-sm btn-block" type="submit">CALCULATE</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h3 class="border-bottom mb-4">Life To Date:  {{ ed_num }}</h3>
+            <h4 class="border-bottom mb-4">History</h4>
+            <table id='ltd' class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>ed #</th>
+                    <th>+1</th>
+                    <th>contr</th>
+                </tr>
+                </thead>
+                {% for d in ltd %}
+                <tr>
+                    {% for i in d %}
+                    <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
         </div>
         <div class="col-9">
-
             <div class="row">
-                <div class="col-4">
-                    <h3 class="border-bottom mb-4">Life To Date:  {{ ed_num }}</h3>
-                    <h4 class="border-bottom mb-4">History</h4>
-
-                    <table id='ltd' class="table table-hover table-bordered table-striped table-sm ">
-                        <thead class="thead-light">
-                        <tr>
-                            <th>Date</th>
-                            <th>ed #</th>
-                            <th>+1</th>
-                            <th>contr</th>
-                        </tr>
-                        </thead>
-                        {% for d in ltd %}
-                        <tr>
-                            {% for i in d %}
-                            <td>{{ i }}</td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-                <div class="col-8">
+                <div class="col-6">
                     <h3 class="border-bottom mb-4">Annual:  {{ annual_ed_num }}</h3>
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-5">
                             <h4 class="border-bottom mb-4">Summary</h4>
                             <table id="summary" class="table table-hover table-bordered table-striped table-sm ">
                                 <thead class="thead-light">
@@ -204,7 +236,7 @@ $('#popular').select2();
                                 {% endfor %}
                             </table>
                         </div>
-                        <div class="col-6">
+                        <div class="col-7">
                         <h4 class="border-bottom mb-4">History</h4>
                             <table id='annual' class="table table-hover table-bordered table-striped table-sm ">
                                 <thead class="thead-light">
@@ -226,9 +258,53 @@ $('#popular').select2();
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-6">
+                    <h3 class="border-bottom mb-4">Monthly:  {{ monthly_ed_num }}</h3>
+                    <div class="row">
+                        <div class="col-5">
+                            <h4 class="border-bottom mb-4">Summary</h4>
+                            <table id="monthly_summary" class="table table-hover table-bordered table-striped table-sm ">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Month</th>
+                                    <th>ed #</th>
+                                    <th>+1</th>
+                                </tr>
+                                </thead>
+                                {% for d in monthly_summary %}
+                                <tr>
+                                    {% for i in d %}
+                                    <td>{{ i }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="col-7">
+                        <h4 class="border-bottom mb-4">History</h4>
+                            <table id='monthly' class="table table-hover table-bordered table-striped table-sm ">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>ed #</th>
+                                    <th>+1</th>
+                                    <th>contr</th>
+                                </tr>
+                                </thead>
+                                {% for d in monthly %}
+                                <tr>
+                                    {% for i in d %}
+                                    <td>{{ i }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
     <div class="row">
         <div class="col-12">
@@ -243,6 +319,14 @@ $('#popular').select2();
             <h3 class="border-bottom mb-4 text-center">Annual {{ unit }}</h3>
               <div class="embed-responsive embed-responsive-16by9">
                   <img class="embed-responsive-item" src="{% static annual_img %}">
+              </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="border-bottom mb-4 text-center">Monthly {{ unit }}</h3>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="{% static monthly_img %}">
               </div>
         </div>
     </div>
