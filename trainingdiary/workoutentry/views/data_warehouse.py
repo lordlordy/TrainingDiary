@@ -14,7 +14,7 @@ import sqlite3
 PRINT_PROGRESS = False
 
 @login_required
-def warehouse_management(request):
+def warehouse_management(request, initial=dict()):
 
     tsb = kg = fat = hr = sdnn = rmssd = hrv = latest = None
     try:
@@ -31,10 +31,10 @@ def warehouse_management(request):
 
     return render(request, 'workoutentry/warehouse_management.html',
                   {'generate_form': DataWarehouseUpdateForm(),
-                   'day_form': UpdateDayDataForm(),
-                   'tsb_form': UpdateTSBForm(),
-                   'interpolate_form': UpdateInterpolationForm(),
-                   'hrv_form': UpdateHRVForm(),
+                   'day_form': UpdateDayDataForm(initial=initial),
+                   'tsb_form': UpdateTSBForm(initial=initial),
+                   'interpolate_form': UpdateInterpolationForm(initial=initial),
+                   'hrv_form': UpdateHRVForm(initial=initial),
                    'latest_data_date': TrainingDataManager().latest_date(),
                    'tsb_to_date': tsb,
                    'kg_interpolated_to': kg,
@@ -66,21 +66,35 @@ def update_days(request):
         Warehouse days ({request.POST['from_date']} to {request.POST['to_date']}) 
         updated in {datetime.datetime.now() - start}""")
 
-    return warehouse_management(request)
+    return warehouse_management(request, initial={'from_date': request.POST['from_date'],
+                                                      'to_date': request.POST['to_date']})
 
 
 def calculate_tsb(request):
     warehouse_name = settings.DATABASES['data_warehouse_db']['NAME']
     start = datetime.datetime.now()
-    DataWarehouseGenerator(warehouse_name).generate_tsb_monotony_strain(request.POST['from_date'],
-                                                                        request.POST['to_date'],
-                                                                        print_progress=PRINT_PROGRESS)
-    messages.info(request, f"""
-        Warehouse TSB, Monotony and Strain 
-        ({request.POST['from_date']} to {request.POST['to_date']}) 
-        calculated in {datetime.datetime.now() - start}""")
 
-    return warehouse_management(request)
+    dwg = DataWarehouseGenerator(warehouse_name)
+
+    if 'table_choice' in request.POST:
+        for table in request.POST.getlist('table_choice'):
+            start = datetime.datetime.now()
+            dwg.populate_tsb_monotony_strain_for_table(table, request.POST['from_date'], request.POST['to_date'])
+            print(f'TSB done for {table}')
+            messages.info(request, f"""
+                Warehouse TSB, Monotony and Strain for {table}
+                ({request.POST['from_date']} to {request.POST['to_date']})
+                calculated in {datetime.datetime.now() - start}""")
+    else:
+        dwg.generate_tsb_monotony_strain(request.POST['from_date'], request.POST['to_date'],
+                                         print_progress=PRINT_PROGRESS)
+        messages.info(request, f"""
+            Warehouse TSB, Monotony and Strain
+            ({request.POST['from_date']} to {request.POST['to_date']})
+            calculated in {datetime.datetime.now() - start}""")
+
+    return warehouse_management(request, initial={'from_date': request.POST['from_date'],
+                                                      'to_date': request.POST['to_date']})
 
 
 def interpolate_values(request):
@@ -95,7 +109,8 @@ def interpolate_values(request):
         ({request.POST['from_date']} to {request.POST['to_date']}) 
         done in {datetime.datetime.now() - start}""")
 
-    return warehouse_management(request)
+    return warehouse_management(request, initial={'from_date': request.POST['from_date'],
+                                                      'to_date': request.POST['to_date']})
 
 
 def calculate_hrv(request):
@@ -108,4 +123,5 @@ def calculate_hrv(request):
         Warehouse HRV thresholds ({request.POST['from_date']} to {request.POST['to_date']}) 
         calculated in {datetime.datetime.now() - start}""")
 
-    return warehouse_management(request)
+    return warehouse_management(request, initial={'from_date': request.POST['from_date'],
+                                                      'to_date': request.POST['to_date']})

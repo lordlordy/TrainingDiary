@@ -120,7 +120,7 @@ class DataWarehouseGenerator:
         for t in self.__tables_dict():
             if print_progress:
                 print(f'{t}: TSB, monotony, strain')
-            self.__populate_tsb_monotony_strain(t, from_date=start_date, to_date=end_date)
+            self.populate_tsb_monotony_strain_for_table(t, from_date=start_date, to_date=end_date)
 
     def interpolate_zeroes(self, from_date, to_date, for_column, print_progress=False):
         start_date, end_date = self.__correct_bounds(from_date=from_date, to_date=to_date)
@@ -194,7 +194,7 @@ class DataWarehouseGenerator:
         self.__conn.cursor().execute(sql)
         self.__conn.commit()
 
-    def __populate_tsb_monotony_strain(self, table, from_date, to_date):
+    def populate_tsb_monotony_strain_for_table(self, table, from_date, to_date):
         c = self.__conn.cursor()
         ctl = rpe_ctl = atl = rpe_atl = 0.0
         date = dateutil.parser.parse(str(from_date)).date() - datetime.timedelta(days=1)

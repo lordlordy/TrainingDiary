@@ -10,6 +10,7 @@ class Workout:
         from . import Constants
 
         self.primary_key = args[0]
+        self.date_str = args[1]
         self.date = dateutil.parser.parse(args[1]).date()
         self.workout_number = args[2]
         self.activity = args[3]

@@ -60,6 +60,7 @@
                         {% csrf_token %}
                         {{ tsb_form.from_date | as_crispy_field }}
                         {{ tsb_form.to_date | as_crispy_field }}
+                        {{ tsb_form.table_choice | as_crispy_field }}
                         <input class="btn btn-outline-primary btn-sm btn-block" name="update" type="submit" value="Calculate"/>
                     </form>
                 </div>
@@ -102,6 +103,10 @@ $('.datepicker').datepicker({
 
 $(document).ready(function(){
 $('#col_choice').select2();
+});
+
+$(document).ready(function(){
+$('#table_choice').select2();
 });
 
 </script>

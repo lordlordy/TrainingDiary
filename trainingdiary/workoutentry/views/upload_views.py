@@ -66,7 +66,7 @@ def upload_diary(request, uploaded_file, merge, overwrite):
                 continue
 
         # only save this if it doesn't exist OR we are overwriting
-        if day_exists and overwrite:
+        if not day_exists or overwrite:
             tdm.save_day(date, d['type'], d['comments'])
             day_count += 1
 

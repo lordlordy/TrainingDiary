@@ -99,6 +99,9 @@ class DataWarehouse:
             print(e)
             self.base_table_built = False
 
+    def tables(self):
+        t = self.__conn.execute('SELECT table_name FROM Tables').fetchall()
+        return [i[0] for i in t]
 
     def float_column_names(self):
         return self.__float64_cols

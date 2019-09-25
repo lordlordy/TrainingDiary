@@ -1,6 +1,6 @@
 from django import forms
-from django.forms.widgets import Select, TextInput
-from workoutentry.data_warehouse import WarehouseColumn
+from django.forms.widgets import Select, TextInput, SelectMultiple
+from workoutentry.data_warehouse import WarehouseColumn, DataWarehouse
 
 
 class DataImportForm(forms.Form):
@@ -57,6 +57,13 @@ class UpdateTSBForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        table_choices = [(t, t) for t in DataWarehouse.instance().tables()]
+
+        self.fields['table_choice'] = forms.CharField(required=False, label='Column:',
+                                               widget=SelectMultiple(choices=table_choices,
+                                                                     attrs={'class': 'form-control', 'id': 'table_choice',
+                                                                            'multiple': 'multiple'}))
 
         self.fields['from_date'] = forms.DateField(required=True, widget=TextInput(attrs={'class': 'datepicker',
                                                                                           'placeholder': 'yyyy-mm-dd'}))

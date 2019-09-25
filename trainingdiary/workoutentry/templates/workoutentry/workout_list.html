@@ -40,7 +40,7 @@
             <td>
                 <a href="{% url 'workout_form' w.date w.workout_number %}" class="btn btn-outline-primary btn-block" role="button">Edit</a>
             </td>
-            <td>{{ w.date }}</td>
+            <td>{{ w.date_str }}</td>
             <td>{{ w.activity }}</td>
             <td>{{ w.activity_type }}</td>
             <td>{{ w.equipment }}</td>
