@@ -296,19 +296,31 @@ class DataWarehouse:
         ltd_history = []
         annual_history = []
         annual_summary = []
+        monthly_history = []
+        monthly_summary = []
         ltd_contributors_to_next = np.array([])
         this_years_annual_contributors_to_next = np.array([])
+        this_months_contributors_to_next = np.array([])
+
         ed_num = 0
         annual_ed_num = 0
         annual_plus_one = 0
+        monthly_ed_num = 0
+        monthly_plus_one = 0
         current_year = time_series.index[0].year
+        current_month = time_series.index[0].month
 
         time_series.sort_index(inplace=True)
-        # print(time_series)
-        # print(type(time_series))
-        # print(time_series.index)
 
         for i, v in time_series.iteritems():
+
+            if i.month != current_month:
+                monthly_summary.append((f'{current_year}-{current_month}', monthly_ed_num, monthly_plus_one))
+                # reset all the monthly stuff
+                current_month = i.month
+                monthly_ed_num = 0
+                this_months_contributors_to_next = np.array([])
+
             if i.year != current_year:
                 annual_summary.append((current_year, annual_ed_num, annual_plus_one))
                 # reset all the annual stuff
@@ -322,7 +334,7 @@ class DataWarehouse:
                 plus_one = (ed_num + 1) - ltd_contributors_to_next.size
                 if plus_one == 0:
                     ed_num += 1
-                    # remove non contributoes as edd num increased
+                    # remove non contributors as edd num increased
                     ltd_contributors_to_next = ltd_contributors_to_next[ltd_contributors_to_next >= ed_num+1]
                     # recalc +1
                     plus_one = (ed_num + 1) - ltd_contributors_to_next.size
@@ -340,9 +352,20 @@ class DataWarehouse:
                     annual_plus_one = (annual_ed_num + 1) - this_years_annual_contributors_to_next.size
                 annual_history.append((i.date(), annual_ed_num, annual_plus_one, round(v, 1)))
 
-        annual_summary.append((current_year, annual_ed_num, annual_plus_one))
+            if v >= monthly_ed_num + 1:
+                # this contributes to monthly
+                this_months_contributors_to_next = np.append(this_months_contributors_to_next, v)
+                monthly_plus_one = (monthly_ed_num + 1) - this_months_contributors_to_next.size
+                if monthly_plus_one == 0:
+                    monthly_ed_num += 1
+                    this_months_contributors_to_next = this_months_contributors_to_next[this_months_contributors_to_next >= monthly_ed_num + 1]
+                    monthly_plus_one = (monthly_ed_num + 1) - this_months_contributors_to_next.size
+                monthly_history.append((str(i.date()), monthly_ed_num, monthly_plus_one, round(v, 1)))
 
-        return ed_num, ltd_history, annual_history, annual_summary
+        annual_summary.append((current_year, annual_ed_num, annual_plus_one))
+        monthly_summary.append((f'{current_year}-{current_month}', monthly_ed_num, monthly_plus_one))
+
+        return ed_num, ltd_history, annual_history, annual_summary, monthly_history, monthly_summary
 
     def _name(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
                     measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',

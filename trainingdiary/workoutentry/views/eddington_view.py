@@ -79,12 +79,14 @@ def _eddington_view(request, template):
         ltd = []
         annual = []
 
-        ed_num, ltd_hist, annual_hist, annual_summary = DataWarehouse.instance().eddington_history(series)
+        ed_num, ltd_hist, annual_hist, annual_summary, monthly_hist, monthly_summary = DataWarehouse.instance().eddington_history(series)
 
         ltd_image_name = f'ltd-{unit}'
         annual_image_name = f'annual-{unit}'
+        monthly_image_name = f'monthly-{unit}'
         save_image(ltd_hist, ltd_image_name, unit)
         save_image(annual_hist, annual_image_name, unit)
+        save_image(monthly_hist, monthly_image_name, unit)
 
         for i in ltd_hist:
             ltd.append((str(i[0]), i[1], i[2], i[3]))
@@ -100,8 +102,12 @@ def _eddington_view(request, template):
                        'annual_ed_num': annual_summary[len(annual_summary)-1][1],
                        'annual': annual,
                        'annual_summary': annual_summary,
+                       'monthly_ed_num': monthly_summary[len(monthly_summary)-1][1],
+                       'monthly': monthly_hist,
+                       'monthly_summary': monthly_summary,
                        'ltd_img': f'tmp/{ltd_image_name}.png',
-                       'annual_img': f'tmp/{annual_image_name}.png'})
+                       'annual_img': f'tmp/{annual_image_name}.png',
+                       'monthly_img': f'tmp/{monthly_image_name}.png'})
 
     return render(request, template, {'selection_form': EddingtonNumberForm(),
                                       'popular_form': PopularEddingtonNumberForm()})
