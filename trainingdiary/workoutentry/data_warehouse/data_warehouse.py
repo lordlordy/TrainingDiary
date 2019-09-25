@@ -339,7 +339,7 @@ class DataWarehouse:
                     # recalc +1
                     plus_one = (ed_num + 1) - ltd_contributors_to_next.size
 
-                ltd_history.append((i.date(), ed_num, plus_one, round(v, 1)))
+                ltd_history.append((str(i.date()), ed_num, plus_one, round(v, 1)))
 
             if v >= annual_ed_num + 1:
                 # this contributes to annual
@@ -350,7 +350,7 @@ class DataWarehouse:
                     this_years_annual_contributors_to_next = this_years_annual_contributors_to_next[this_years_annual_contributors_to_next >= annual_ed_num+1]
                     # recalc +1
                     annual_plus_one = (annual_ed_num + 1) - this_years_annual_contributors_to_next.size
-                annual_history.append((i.date(), annual_ed_num, annual_plus_one, round(v, 1)))
+                annual_history.append((str(i.date()), annual_ed_num, annual_plus_one, round(v, 1)))
 
             if v >= monthly_ed_num + 1:
                 # this contributes to monthly

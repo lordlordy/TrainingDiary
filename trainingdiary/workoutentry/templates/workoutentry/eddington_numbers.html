@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'workoutentry/eddington_numbers_simple.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -190,122 +190,18 @@ $('#popular').select2();
             </form>
         </div>
     </div>
-    <div class="row">
-        <div class="col-3">
-            <h3 class="border-bottom mb-4">Life To Date:  {{ ed_num }}</h3>
-            <h4 class="border-bottom mb-4">History</h4>
-            <table id='ltd' class="table table-hover table-bordered table-striped table-sm ">
-                <thead class="thead-light">
-                <tr>
-                    <th>Date</th>
-                    <th>ed #</th>
-                    <th>+1</th>
-                    <th>contr</th>
-                </tr>
-                </thead>
-                {% for d in ltd %}
-                <tr>
-                    {% for i in d %}
-                    <td>{{ i }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
+     <div class="row">
+        <div class="col-3"></div>
+        <div class="col-2">
+            <h4 class="border-bottom mb-4 text-primary">Life To Date: {{ ed_num }}</h4>
         </div>
-        <div class="col-9">
-            <div class="row">
-                <div class="col-6">
-                    <h3 class="border-bottom mb-4">Annual:  {{ annual_ed_num }}</h3>
-                    <div class="row">
-                        <div class="col-5">
-                            <h4 class="border-bottom mb-4">Summary</h4>
-                            <table id="summary" class="table table-hover table-bordered table-striped table-sm ">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>Year</th>
-                                    <th>ed #</th>
-                                    <th>+1</th>
-                                </tr>
-                                </thead>
-                                {% for d in annual_summary %}
-                                <tr>
-                                    {% for i in d %}
-                                    <td>{{ i }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                        <div class="col-7">
-                        <h4 class="border-bottom mb-4">History</h4>
-                            <table id='annual' class="table table-hover table-bordered table-striped table-sm ">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>ed #</th>
-                                    <th>+1</th>
-                                    <th>contr</th>
-                                </tr>
-                                </thead>
-                                {% for d in annual %}
-                                <tr>
-                                    {% for i in d %}
-                                    <td>{{ i }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <h3 class="border-bottom mb-4">Monthly:  {{ monthly_ed_num }}</h3>
-                    <div class="row">
-                        <div class="col-5">
-                            <h4 class="border-bottom mb-4">Summary</h4>
-                            <table id="monthly_summary" class="table table-hover table-bordered table-striped table-sm ">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>Month</th>
-                                    <th>ed #</th>
-                                    <th>+1</th>
-                                </tr>
-                                </thead>
-                                {% for d in monthly_summary %}
-                                <tr>
-                                    {% for i in d %}
-                                    <td>{{ i }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                        <div class="col-7">
-                        <h4 class="border-bottom mb-4">History</h4>
-                            <table id='monthly' class="table table-hover table-bordered table-striped table-sm ">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>ed #</th>
-                                    <th>+1</th>
-                                    <th>contr</th>
-                                </tr>
-                                </thead>
-                                {% for d in monthly %}
-                                <tr>
-                                    {% for i in d %}
-                                    <td>{{ i }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-2">
+            <h4 class="border-bottom mb-4 text-primary">Annual: {{ annual_ed_num }} (Best: {{ best_annual }})</h4>
+        </div>
+        <div class="col-2">
+            <h4 class="border-bottom mb-4 text-primary">Monthly: {{ monthly_ed_num }} (Best: {{ best_monthly }})</h4>
         </div>
     </div>
-
     <div class="row">
         <div class="col-12">
             <h3 class="border-bottom mb-4 text-center">Life To Date {{ unit }}</h3>
@@ -330,18 +226,115 @@ $('#popular').select2();
               </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-3">
+            <h4 class="border-bottom mb-4">LTD History</h4>
+            <table id='ltd' class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>ed #</th>
+                    <th>+1</th>
+                    <th>contr</th>
+                </tr>
+                </thead>
+                {% for d in ltd %}
+                <tr>
+                    {% for i in d %}
+                    <td>{{ i }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-9">
+            <div class="row">
+                <div class="col-3">
+                    <h4 class="border-bottom mb-4">Annual</h4>
+                    <table id="summary" class="table table-hover table-bordered table-striped table-sm ">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Year</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                        </tr>
+                        </thead>
+                        {% for d in annual_summary %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-3">
+                <h4 class="border-bottom mb-4">Annual History</h4>
+                    <table id='annual' class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                            <th>contr</th>
+                        </tr>
+                        </thead>
+                        {% for d in annual %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-3">
+                    <h4 class="border-bottom mb-4">Monthly</h4>
+                    <table id="monthly_summary" class="table table-hover table-bordered table-striped table-sm ">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Month</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                        </tr>
+                        </thead>
+                        {% for d in monthly_summary %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-3">
+                <h4 class="border-bottom mb-4">Monthly History</h4>
+                    <table id='monthly' class="table table-hover table-bordered table-striped table-sm ">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>ed #</th>
+                            <th>+1</th>
+                            <th>contr</th>
+                        </tr>
+                        </thead>
+                        {% for d in monthly %}
+                        <tr>
+                            {% for i in d %}
+                            <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-{% endblock %}
-    <script type="text/javascript" language="JavaScript">
 
-    </script>
-
-
-
-
-{% block extra_scripts %}
 
 
 
 {% endblock %}
+
