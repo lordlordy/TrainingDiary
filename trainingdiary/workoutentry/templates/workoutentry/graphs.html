@@ -82,6 +82,13 @@ $(document).ready(function(){
 $('#share_axis').select2();
 });
 
+$(document).ready(function(){
+$('#recorded_only').select2();
+});
+
+$(document).ready(function(){
+$('#plot_zeroes').select2();
+});
 
 </script>
 
@@ -91,7 +98,7 @@ $('#share_axis').select2();
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">
-            <form method="post">
+            <form method="post" action="{% url 'graphs_popular_selected' %}">
                 <div class="row">
                     {% csrf_token %}
                     <div class="col-9">
@@ -107,7 +114,7 @@ $('#share_axis').select2();
             <h2 class="border-bottom mb=4">Graphing</h2>
         </div>
     </div>
-    <form method="post">
+    <form method="post" action="{% url 'graphs' %}">
         <div class="row">
             <div class="col-3">
                 <div class="row">
@@ -178,6 +185,14 @@ $('#share_axis').select2();
                                 {{ selection_form.size | as_crispy_field }}
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.recorded_only | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ selection_form.plot_zeroes | as_crispy_field }}
+                            </div>
+                        </div>
                         <button class="btn btn-outline-primary btn-sm btn-block" type="submit">Add</button>
                     </div>
                 </div>
@@ -197,10 +212,10 @@ $('#share_axis').select2();
                         {{ selection_form.share_axis | as_crispy_field }}
                     </div>
                     <div class="form-group col-2 mb-0">
-                        {{ selection_form.from | as_crispy_field }}
+                        {{ popular_form.from | as_crispy_field }}
                     </div>
                     <div class="form-group col-2 mb-0">
-                        {{ selection_form.to | as_crispy_field }}
+                        {{ popular_form.to | as_crispy_field }}
                     </div>
                 </div>
                 <div class="row">

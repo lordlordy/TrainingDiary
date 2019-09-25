@@ -11,10 +11,16 @@ class PopularGraphsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['popular'] = forms.CharField(required=True, label='',
+        self.fields['popular'] = forms.CharField(required=False, label='',
                                                  widget=Select(
                                                      choices=[(k, k) for k in DataWarehouse.instance().popular_graphs],
                                                      attrs={'class': 'form-control', 'id': 'popular'}))
+
+        self.fields['from'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
+                                                                                    'placeholder': 'yyyy-mm-dd'}))
+
+        self.fields['to'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
+                                                                                  'placeholder': 'yyyy-mm-dd'}))
 
 
 class GraphForm(EddingtonNumberForm):
@@ -28,17 +34,18 @@ class GraphForm(EddingtonNumberForm):
         super().__init__(*args, **kwargs)
 
         self.fields['colour_map'] = forms.CharField(required=True,
-                                                  widget=Select(
-                                                      choices=[(i, m) for i, m in GraphForm.colour_map.items()],
-                                                      attrs={'class': 'form-control', 'id': 'colour_map'}))
+                                                    widget=Select(
+                                                        choices=[(i, m) for i, m in GraphForm.colour_map.items()],
+                                                        attrs={'class': 'form-control', 'id': 'colour_map'}))
 
         self.fields['graph_display_type'] = forms.CharField(required=True, label='Type',
-                                                  widget=Select(
-                                                      choices=[(i, i) for i in GraphForm.TYPES],
-                                                      attrs={'class': 'form-control', 'id': 'graph_display_type'}))
+                                                            widget=Select(
+                                                                choices=[(i, i) for i in GraphForm.TYPES],
+                                                                attrs={'class': 'form-control',
+                                                                       'id': 'graph_display_type'}))
 
         self.fields['axis'] = forms.CharField(required=True,
-                                                  widget=Select(
+                                              widget=Select(
                                                       choices=[(i, i) for i in Graph.GRAPH_AXES],
                                                       attrs={'class': 'form-control', 'id': 'axis'}))
 
@@ -60,10 +67,14 @@ class GraphForm(EddingtonNumberForm):
                                                       choices=[(i, i) for i in mcolors.CSS4_COLORS],
                                                       attrs={'class': 'form-control', 'id': 'background'}))
 
-        self.fields['from'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
-                                                                                    'placeholder': 'yyyy-mm-dd'}))
+        self.fields['recorded_only'] = forms.CharField(required=False,
+                                                       widget=Select(
+                                                           choices=[('No', 'No'), ('Yes', 'Yes')],
+                                                           attrs={'class': 'form-control', 'id': 'recorded_only'}))
 
-        self.fields['to'] = forms.DateField(required=False, widget=TextInput(attrs={'class': 'datepicker',
-                                                                                  'placeholder': 'yyyy-mm-dd'}))
+        self.fields['plot_zeroes'] = forms.CharField(required=False,
+                                                     widget=Select(
+                                                       choices=[('No', 'No'), ('Yes', 'Yes')],
+                                                       attrs={'class': 'form-control', 'id': 'plot_zeroes'}))
 
 

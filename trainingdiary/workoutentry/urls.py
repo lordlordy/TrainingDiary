@@ -1,6 +1,6 @@
 from django.urls import path
 from workoutentry.views import (eddington_view, popular_eddington_view,
-                                graph_view, popular_graph_view,
+                                graph_view, popular_graph_view, popular_selected_in_graph_view,
                                 summary_view, race_results_list_view, RaceResultUpdateView, RaceResultDeleteView,
                                 days_list_view, DayUpdateView, new_day_view, new_race_result_view,
                                 workouts_list_view, WorkoutUpdateView, new_workout_view, delete_workout_view,
@@ -39,7 +39,8 @@ urlpatterns = [
     path('eddington/', eddington_view, name='eddington_numbers'),
     path('eddington/simple', popular_eddington_view, name='eddington_numbers_simple'),
     path('graphs/', graph_view, name='graphs'),
-    path('graphs/popular', popular_graph_view, name='popular_graphs'),
+    path('graphs/select/popular', popular_selected_in_graph_view, name='graphs_popular_selected'),
+    path('graphs/popular/', popular_graph_view, name='popular_graphs'),
     path('training_diary/summary/', summary_view, name='training_diary_summary'),
 
 ]

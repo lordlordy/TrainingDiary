@@ -24,9 +24,10 @@ class DataWarehouse:
     DAY_OF_WEEK = 'day_of_week'
     MONTH = 'month'
     DAY_TYPE = 'day_type'
+    RECORDED_ONLY = 'recorded_only'
 
     TIME_SERIES_VARIABLES = [PERIOD, AGGREGATION, ACTIVITY, ACTIVITY_TYPE, EQUIPMENT, MEASURE, TO_DATE, ROLLING,
-                             ROLLING_PERIODS, ROLLING_AGGREGATION, DAY_OF_WEEK, MONTH, DAY_TYPE]
+                             ROLLING_PERIODS, ROLLING_AGGREGATION, DAY_OF_WEEK, MONTH, DAY_TYPE, RECORDED_ONLY]
 
     popular_numbers = {
         'Daily Swim KM': {ACTIVITY: 'Swim', MEASURE: 'km'},
@@ -181,7 +182,7 @@ class DataWarehouse:
 
     def time_series(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
                     measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
-                    day_of_week='All', month='All', day_type='All'):
+                    day_of_week='All', month='All', day_type='All', recorded_only=False):
 
         name = self._name(period=period, aggregation=aggregation, activity=activity, activity_type=activity_type,
                           equipment=equipment, measure=measure, to_date=to_date, rolling=rolling,
@@ -202,6 +203,11 @@ class DataWarehouse:
             where_clauses.append(f' month="{month}"')
         if day_type != 'All':
             where_clauses.append(f' day_type="{day_type}"')
+        if recorded_only:
+            from . import WarehouseColumn
+            measure_recorded = WarehouseColumn(measure).recorded_column_name()
+            if measure_recorded is not None:
+                where_clauses.append(f' {measure_recorded}=1')
 
         table_name = f'day_{activity}_{activity_type}_{e}'
         if len(where_clauses) > 0:

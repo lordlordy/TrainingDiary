@@ -17,122 +17,136 @@ HEADING_MAPPINGS = dict(zip(ARRAY_NAMES, HEADINGS))
 
 
 def graph_view(request):
-    return _graph_view(request, 'workoutentry/graphs.html')
+    if request.method == 'POST':
+        return __graph_view(request)
+    else:
+        return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(), 'popular_form': PopularGraphsForm()})
+
+
+def popular_selected_in_graph_view(request):
+    pop_dict = __popular_graph_view(request)
+    return render(request, 'workoutentry/graphs.html',
+                  {'selection_form': GraphForm(initial=pop_dict),
+                   'popular_form': PopularGraphsForm(initial=pop_dict),
+                   'graph_headings': (DataWarehouse.TIME_SERIES_VARIABLES + Graph.GRAPH_VARIABLES),
+                   'graphs': pop_dict['graphs'],
+                   'title': request.POST['popular'],
+                   'graph_img': pop_dict['graph_img']})
 
 
 def popular_graph_view(request):
-    return _graph_view(request, 'workoutentry/graphs_popular.html')
-
-
-def _graph_view(request, template):
-
     if request.method == 'POST':
-        graphs = []
-        title = "All Dates"
+        pop_dict = __popular_graph_view(request)
+        return render(request, 'workoutentry/graphs_popular.html',
+                      {'popular_form': PopularGraphsForm(initial=pop_dict),
+                       'title': request.POST['popular'],
+                       'graph_img': pop_dict['graph_img']})
+    else:
+        return render(request, 'workoutentry/graphs_popular.html', {'popular_form': PopularGraphsForm()})
 
-        if 'popular' in request.POST:
-            title = request.POST['popular']
 
-            popular_graph = DataWarehouse.instance().popular_graphs[title]
-            for i in range(popular_graph['number_of_plots']):
-                g = []
-                for a in ARRAY_NAMES:
-                    g.append((a, popular_graph[a][i]))
-                graphs.append(g)
-            display_type = popular_graph['graph_display_type']
-            share_axis = popular_graph['share_axis']
+def __popular_graph_view(request):
+    popular_graph = DataWarehouse.instance().popular_graphs[request.POST['popular']]
 
-            from_date = popular_graph['from']
-            to_date = popular_graph['to']
+    if request.POST['from'] != '':
+        popular_graph['from'] = request.POST['from']
+    if request.POST['to'] != '':
+        popular_graph['to'] = request.POST['to']
 
-            if 'from' in request.POST:
-                if len(request.POST['from']) > 0:
-                    from_date = request.POST['from']
+    graphs = []
+    for i in range(popular_graph['number_of_plots']):
+        g = []
+        for a in ARRAY_NAMES:
+            g.append((a, popular_graph[a][i]))
+        graphs.append(g)
 
-            if 'to' in request.POST:
-                if len(request.POST['to']) > 0:
-                    to_date = request.POST['to']
+    file_name = f'graph-{datetime.datetime.now().strftime("%Y:%m:%d:%H:%M:%S")}'
 
-            kwargs = {'colour_map': GraphForm.colour_map[int(popular_graph['colour_map'])],
-                      'background': popular_graph['background'],
-                      'from_date': from_date,
-                      'to_date': to_date
-                      }
-            form_defaults = dict()
-            for i in graphs[0]:
-                form_defaults[i[0].replace('_array','')] = i[1]
-            form_defaults['colour_map'] = popular_graph['colour_map']
-            form_defaults['background'] = popular_graph['background']
-            form_defaults['from'] = from_date
-            form_defaults['to'] = to_date
-            form_defaults['graph_display_type'] = display_type
-            form_defaults['share_axis'] = share_axis
-        else:
-            form_defaults = request.POST
-            if ARRAY_NAMES[0] in request.POST:
-                for i in range(0, len(request.POST.getlist(ARRAY_NAMES[0]))):
-                    g = []
-                    for a in ARRAY_NAMES:
-                        g.append((a, request.POST.getlist(a)[i]))
-                    graphs.append(g)
+    kwargs = {'colour_map': GraphForm.colour_map[int(popular_graph['colour_map'])],
+              'background': popular_graph['background'],
+              'from_date': popular_graph['from'],
+              'to_date': popular_graph['to']}
 
-            if 'refresh' not in request.POST:
-                new_graph = [request.POST.get(k) for k in HEADINGS]
-                new = list(zip(ARRAY_NAMES, new_graph))
-                graphs.append(new)
+    time_series_graphs, scatter_graphs = create_graphs_for_plotting(graphs)
 
-            display_type = GraphForm.SINGLE     # this is the default
-            if 'graph_display_type' in request.POST:
-                display_type = request.POST['graph_display_type']
-            if 'share_axis' in request.POST:
-                share_axis = request.POST['share_axis']
-
-            kwargs = dict()
-
-            if 'colour_map' in request.POST:
-                kwargs['colour_map'] = GraphForm.colour_map[int(request.POST['colour_map'])]
-            if 'background' in request.POST:
-                kwargs['background'] = request.POST['background']
-
-            title_components = []
-
-            if 'from' in request.POST:
-                if len(request.POST['from']) > 0:
-                    kwargs['from_date'] = request.POST['from']
-                    title_components.append(f"From {request.POST['from']}")
-
-            if 'to' in request.POST:
-                if len(request.POST['to']) > 0:
-                    kwargs['to_date'] = request.POST['to']
-                    title_components.append(f"To {request.POST['to']}")
-
-            if len(title_components) > 0:
-                title = ' '.join(title_components)
-
-        file_name = f'graph-{datetime.datetime.now().strftime("%Y:%m:%d:%H:%M:%S")}'
-
-        time_series_graphs, scatter_graphs = create_graphs_for_plotting(graphs)
-
-        if display_type == GraphForm.SINGLE or len(graphs) == 1:
-            if len(time_series_graphs) == 0:
-                if len(scatter_graphs) > 0:
-                    save_scatter_image(scatter_graphs[0], file_name, **kwargs)
-            else:
-                save_image(time_series_graphs, file_name, **kwargs)
-        else:
-            if len(time_series_graphs) == 0 and len(scatter_graphs) == 1:
+    if popular_graph['graph_display_type'] == GraphForm.SINGLE or len(graphs) == 1:
+        if len(time_series_graphs) == 0:
+            if len(scatter_graphs) > 0:
                 save_scatter_image(scatter_graphs[0], file_name, **kwargs)
-            else:
-                save_multiplot_image(time_series_graphs, scatter_graphs, file_name, share_axis, **kwargs)
+        else:
+            save_image(time_series_graphs, file_name, **kwargs)
+    else:
+        if len(time_series_graphs) == 0 and len(scatter_graphs) == 1:
+            save_scatter_image(scatter_graphs[0], file_name, **kwargs)
+        else:
+            save_multiplot_image(time_series_graphs, scatter_graphs, file_name, popular_graph['share_axis'], **kwargs)
 
-        return render(request, template, {'selection_form': GraphForm(form_defaults),
-                                          'popular_form': PopularGraphsForm(),
-                                          'graph_headings': (DataWarehouse.TIME_SERIES_VARIABLES + Graph.GRAPH_VARIABLES),
-                                          'graphs': graphs,
-                                          'title': title,
-                                          'graph_img': f'tmp/{file_name}.png'})
+    popular_graph['graph_img'] = f'tmp/{file_name}.png'
+    popular_graph['graphs'] = graphs
+    popular_graph['popular'] = request.POST['popular']
 
-    return render(request, template, {'selection_form': GraphForm(), 'popular_form': PopularGraphsForm()})
+    return popular_graph
+
+
+def __graph_view(request):
+
+    graphs = []
+    title = "All Dates"
+
+    if ARRAY_NAMES[0] in request.POST:
+        for i in range(0, len(request.POST.getlist(ARRAY_NAMES[0]))):
+            g = []
+            for a in ARRAY_NAMES:
+                g.append((a, request.POST.getlist(a)[i]))
+            graphs.append(g)
+
+    if 'refresh' not in request.POST:
+        new_graph = [request.POST.get(k) for k in HEADINGS]
+        new = list(zip(ARRAY_NAMES, new_graph))
+        graphs.append(new)
+
+
+    kwargs = {'colour_map': GraphForm.colour_map[int(request.POST['colour_map'])],
+              'background': request.POST['background']}
+    if request.POST['from'] != '':
+        kwargs['from_date'] = request.POST['from']
+    if request.POST['to'] != '':
+        kwargs['to_date'] = request.POST['to']
+
+    title_components = []
+
+    if len(request.POST['from']) > 0:
+        title_components.append(f"From {request.POST['from']}")
+
+    if len(request.POST['to']) > 0:
+        title_components.append(f"To {request.POST['to']}")
+
+    if len(title_components) > 0:
+        title = ' '.join(title_components)
+
+    file_name = f'graph-{datetime.datetime.now().strftime("%Y:%m:%d:%H:%M:%S")}'
+
+    time_series_graphs, scatter_graphs = create_graphs_for_plotting(graphs)
+
+    if request.POST['graph_display_type'] == GraphForm.SINGLE or len(graphs) == 1:
+        if len(time_series_graphs) == 0:
+            if len(scatter_graphs) > 0:
+                save_scatter_image(scatter_graphs[0], file_name, **kwargs)
+        else:
+            save_image(time_series_graphs, file_name, **kwargs)
+    else:
+        if len(time_series_graphs) == 0 and len(scatter_graphs) == 1:
+            save_scatter_image(scatter_graphs[0], file_name, **kwargs)
+        else:
+            save_multiplot_image(time_series_graphs, scatter_graphs, file_name, request.POST['share_axis'], **kwargs)
+
+    return render(request, 'workoutentry/graphs.html', {'selection_form': GraphForm(request.POST),
+                                      'popular_form': PopularGraphsForm(request.POST),
+                                      'graph_headings': (DataWarehouse.TIME_SERIES_VARIABLES + Graph.GRAPH_VARIABLES),
+                                      'graphs': graphs,
+                                      'title': title,
+                                      'graph_img': f'tmp/{file_name}.png'})
+
 
 
 def save_scatter_image(scatter_graph, file_name, colour_map='rainbow', background='whitesmoke',
@@ -148,7 +162,7 @@ def save_scatter_image(scatter_graph, file_name, colour_map='rainbow', backgroun
 
 
 def add_heat_to(scatter_graph, fig, grid_spec=None, colour_map='rainbow', background='whitesmoke',
-                       from_date=datetime.date(2000,1,1), to_date=datetime.date(2020,1,1)):
+                from_date=datetime.date(2000,1,1), to_date=datetime.date(2020,1,1)):
 
     x_series, y_series, name, x_name, y_name = scatter_graph.time_series()
     x = x_series.loc[from_date:to_date].values

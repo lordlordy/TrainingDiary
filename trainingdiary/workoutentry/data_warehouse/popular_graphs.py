@@ -33,7 +33,9 @@ def create_popular_graphs(data_warehouse):
             'graph_type_array': ['Line', 'Line', 'Fill', 'Point'],
             'axis_array': ['Primary', 'Primary', 'Primary', 'Secondary'],
             'size_array': ['3', '3', '3', '6'],
-        }
+            'recorded_only_array': ['Yes', 'Yes', 'Yes', 'Yes'],
+            'plot_zeroes_array': ['Yes', 'Yes', 'Yes', 'No'],
+    }
 
     popular_graphs = {'tsb': tsb}
 
@@ -55,6 +57,68 @@ def create_popular_graphs(data_warehouse):
     c = tsb.copy()
     c['activity_array'] = ['Other', 'Other', 'Other', 'Other']
     popular_graphs['tsb-Other'] = c
+
+    r = range(3)
+    popular_graphs['resting hr'] = {
+        'number_of_plots': 3,
+        'colour_map': '56',
+        'background': 'dodgerblue',
+        'graph_display_type': 'Single',
+        'share_axis': 'None',
+        'from': start_date,
+        'to': end_date,
+        'period_array': ['Day' for _ in r],
+        'aggregation_array': ['Sum' for _ in r],
+        'activity_array': ['All' for _ in r],
+        'activity_type_array': ['All' for _ in r],
+        'equipment_array': ['All' for _ in r],
+        'measure_array': ['resting_hr', 'resting_hr', 'resting_hr'],
+        'to_date_array': ['No' for _ in r],
+        'rolling_array': ['No', 'Yes', 'Yes'],
+        'rolling_periods_array': [1, 7, 31],
+        'rolling_aggregation_array': ['Mean' for _ in r],
+        'day_of_week_array': ['All' for _ in r],
+        'month_array': ['All' for _ in r],
+        'day_type_array': ['All' for _ in r],
+        'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line'],
+        'axis_array': ['Primary' for _ in r],
+        'size_array': ['6', '3', '1'],
+        'recorded_only_array': ['Yes', 'No', 'No'],
+        'plot_zeroes_array': ['No' for _ in r],
+       }
+
+    hrv = {'number_of_plots': 5,
+           'colour_map': '57',
+           'background': 'aliceblue',
+           'graph_display_type': 'Single',
+           'share_axis': 'None',
+           'from': start_date,
+           'to': end_date,
+           'period_array': ['Day' for _ in range(5)],
+           'aggregation_array': ['Sum' for _ in range(5)],
+           'activity_array': ['All' for _ in range(5)],
+           'activity_type_array': ['All' for _ in range(5)],
+           'equipment_array': ['All' for _ in range(5)],
+           'measure_array': ['sdnn', 'sdnn_off', 'sdnn_easy', 'sdnn_mean', 'sdnn_hard'],
+           'to_date_array': ['No' for _ in range(5)],
+           'rolling_array': ['No' for _ in range(5)],
+           'rolling_periods_array': [1 for _ in range(5)],
+           'rolling_aggregation_array': ['Sum' for _ in range(5)],
+           'day_of_week_array': ['All' for _ in range(5)],
+           'month_array': ['All' for _ in range(5)],
+           'day_type_array': ['All' for _ in range(5)],
+           'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line'],
+           'axis_array': ['Primary' for _ in range(5)],
+           'size_array': ['5', '3', '3', '3', '3'],
+           'recorded_only_array': ['Yes' for _ in range(5)],
+           'plot_zeroes_array': ['No', 'Yes', 'Yes', 'Yes', 'Yes'],
+           }
+
+    popular_graphs['hrv_SDNN'] = hrv
+    c = hrv.copy()
+    c['measure_array'] = ['rmssd', 'rmssd_off', 'rmssd_easy', 'rmssd_mean', 'rmssd_hard']
+    popular_graphs['hrv_rMSSD'] = c
+
 
     popular_graphs['YTD-km'] = {
             'number_of_plots': 3,
@@ -80,7 +144,9 @@ def create_popular_graphs(data_warehouse):
             'graph_type_array': ['Fill', 'Fill', 'Fill'],
             'axis_array': ['Primary', 'Secondary', 'Primary'],
             'size_array': ['3', '3', '3'],
-        }
+            'recorded_only_array': ['Yes', 'Yes', 'Yes'],
+            'plot_zeroes_array': ['Yes', 'Yes', 'Yes'],
+    }
 
     equipment = data_warehouse.equipment()
     axes = ['Primary' for e in equipment]
@@ -110,7 +176,9 @@ def create_popular_graphs(data_warehouse):
             'graph_type_array': ['Line' for e in equipment],
             'axis_array': axes,
             'size_array': ['3' for e in equipment],
-        }
+            'recorded_only_array': ['Yes' for e in equipment],
+            'plot_zeroes_array': ['Yes' for e in equipment],
+    }
 
     popular_graphs['Scatter-kg-%'] = {
             'number_of_plots': 2,
@@ -136,7 +204,9 @@ def create_popular_graphs(data_warehouse):
             'graph_type_array': ['Scatter-Hist', 'Scatter-Hist'],
             'axis_array': ['Primary', 'Primary'],
             'size_array': ['3', '3'],
-        }
+            'recorded_only_array': ['Yes', 'Yes'],
+            'plot_zeroes_array': ['No', 'No'],
+    }
 
     popular_graphs['Physiological'] = {
             'number_of_plots': 9,
@@ -161,7 +231,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for i in range(9)],
             'graph_type_array': ['Fill', 'Fill', 'Fill', 'Line', 'Line', 'Line', 'Line', 'Line', 'Fill'],
             'axis_array': ['Primary' for i in range(9)],
-            'size_array': ['2' for i in range(9)]
+            'size_array': ['2' for i in range(9)],
+            'recorded_only_array': ['No' for i in range(9)],
+            'plot_zeroes_array': ['No' for i in range(9)]
     }
 
 
@@ -188,7 +260,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(9)],
             'graph_type_array': ['Histogram'for _ in range(9)],
             'axis_array': ['Primary' for _ in range(9)],
-            'size_array': ['10', '10'] + ['20' for _ in range(9)]
+            'size_array': ['10', '10'] + ['20' for _ in range(9)],
+            'recorded_only_array': ['No' for i in range(9)],
+            'plot_zeroes_array': ['No' for i in range(9)]
     }
 
 
@@ -215,7 +289,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(7)],
             'graph_type_array': ['Histogram'for _ in range(7)],
             'axis_array': ['Primary' for _ in range(7)],
-            'size_array': ['15' for _ in range(7)]
+            'size_array': ['15' for _ in range(7)],
+            'recorded_only_array': ['No' for i in range(7)],
+            'plot_zeroes_array': ['No' for i in range(7)]
     }
 
 
@@ -242,7 +318,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(7)],
             'graph_type_array': ['Histogram'for _ in range(7)],
             'axis_array': ['Primary' for _ in range(7)],
-            'size_array': ['25' for _ in range(7)]
+            'size_array': ['25' for _ in range(7)],
+            'recorded_only_array': ['No' for i in range(7)],
+            'plot_zeroes_array': ['No' for i in range(7)]
     }
 
     popular_graphs['Runs By Day Buckets'] = {
@@ -268,7 +346,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(7)],
             'graph_type_array': ['Histogram'for _ in range(7)],
             'axis_array': ['Primary' for _ in range(7)],
-            'size_array': ['20' for _ in range(7)]
+            'size_array': ['20' for _ in range(7)],
+            'recorded_only_array': ['No' for i in range(7)],
+            'plot_zeroes_array': ['No' for i in range(7)]
     }
 
     popular_graphs['Swims By Month Buckets'] = {
@@ -294,7 +374,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(12)],
             'graph_type_array': ['Histogram'for _ in range(12)],
             'axis_array': ['Primary' for _ in range(12)],
-            'size_array': ['15' for _ in range(12)]
+            'size_array': ['15' for _ in range(12)],
+            'recorded_only_array': ['No' for i in range(12)],
+            'plot_zeroes_array': ['No' for i in range(12)]
     }
 
 
@@ -321,7 +403,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(12)],
             'graph_type_array': ['Histogram'for _ in range(12)],
             'axis_array': ['Primary' for _ in range(12)],
-            'size_array': ['20' for _ in range(12)]
+            'size_array': ['20' for _ in range(12)],
+            'recorded_only_array': ['No' for i in range(12)],
+            'plot_zeroes_array': ['No' for i in range(12)]
     }
 
     popular_graphs['Runs By Month Buckets'] = {
@@ -347,7 +431,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(12)],
             'graph_type_array': ['Histogram'for _ in range(12)],
             'axis_array': ['Primary' for _ in range(12)],
-            'size_array': ['20' for _ in range(12)]
+            'size_array': ['20' for _ in range(12)],
+            'recorded_only_array': ['No' for i in range(12)],
+            'plot_zeroes_array': ['No' for i in range(12)]
     }
 
     popular_graphs['Activity Day Buckets'] = {
@@ -373,7 +459,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(9)],
             'graph_type_array': ['Histogram'for _ in range(9)],
             'axis_array': ['Primary' for _ in range(9)],
-            'size_array': ['20' for _ in range(9)]
+            'size_array': ['20' for _ in range(9)],
+            'recorded_only_array': ['No' for i in range(9)],
+            'plot_zeroes_array': ['No' for i in range(9)]
     }
 
 
@@ -400,7 +488,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(9)],
             'graph_type_array': ['Histogram'for _ in range(9)],
             'axis_array': ['Primary' for _ in range(9)],
-            'size_array': ['20' for _ in range(9)]
+            'size_array': ['20' for _ in range(9)],
+            'recorded_only_array': ['No' for i in range(9)],
+            'plot_zeroes_array': ['No' for i in range(9)]
     }
 
 
@@ -427,7 +517,9 @@ def create_popular_graphs(data_warehouse):
             'day_type_array': ['All' for _ in range(9)],
             'graph_type_array': ['Histogram'for _ in range(9)],
             'axis_array': ['Primary' for _ in range(9)],
-            'size_array': ['20' for _ in range(9)]
+            'size_array': ['20' for _ in range(9)],
+            'recorded_only_array': ['No' for i in range(9)],
+            'plot_zeroes_array': ['No' for i in range(9)]
     }
 
     popular_graphs['Sleep Impact'] = {
@@ -461,6 +553,8 @@ def create_popular_graphs(data_warehouse):
             'graph_type_array': ['Point', 'Line'] + ['Heatmap' for i in range(14)],
             'axis_array': ['Primary' for i in range(16)],
             'size_array': ['2', '2'] + ['15' for i in range(14)],
+            'recorded_only_array': ['No' for i in range(16)],
+            'plot_zeroes_array': ['No' for i in range(16)]
         }
 
     c = popular_graphs['Sleep Impact'].copy()

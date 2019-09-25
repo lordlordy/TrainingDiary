@@ -33,7 +33,8 @@ class Graph:
     TYPE = 'graph_type'
     AXIS = 'axis'
     SIZE = 'size'
-    GRAPH_VARIABLES = [TYPE, AXIS, SIZE]
+    PLOT_ZEROES = 'plot_zeroes'
+    GRAPH_VARIABLES = [TYPE, AXIS, SIZE, PLOT_ZEROES]
 
     T_LINE = 'Line'
     T_FILL = 'Fill'
@@ -58,6 +59,7 @@ class Graph:
 
     def __init__(self, **kwargs):
 
+        # set up default data
         self.__ts_dict = {DataWarehouse.PERIOD: 'Day',
                           DataWarehouse.AGGREGATION: 'Sum',
                           DataWarehouse.ACTIVITY: 'All',
@@ -70,12 +72,16 @@ class Graph:
                           DataWarehouse.ROLLING_AGGREGATION: 'Sum',
                           DataWarehouse.DAY_OF_WEEK: 'All',
                           DataWarehouse.MONTH: 'All',
-                          DataWarehouse.DAY_TYPE: 'All'}
+                          DataWarehouse.DAY_TYPE: 'All',
+                          DataWarehouse.RECORDED_ONLY: False}
 
+        # set up default graph spec
         self.__graph_dict = {Graph.TYPE: Graph.T_LINE,
                              Graph.AXIS: Graph.AXIS_PRIMARY,
-                             Graph.SIZE: 3}
+                             Graph.SIZE: 3,
+                             Graph.PLOT_ZEROES: True}
 
+        # override defaults with any values passed in
         for k in kwargs:
             if k in self.__ts_dict:
                 self.__ts_dict[k] = kwargs[k]
@@ -86,7 +92,13 @@ class Graph:
         return f'{self.__ts_dict[DataWarehouse.PERIOD]}:{self.__ts_dict[DataWarehouse.ACTIVITY]}:{self.__ts_dict[DataWarehouse.MEASURE]}'
 
     def time_series(self):
-        return DataWarehouse.instance().time_series(**self.__ts_dict)
+        time_series, name = DataWarehouse.instance().time_series(**self.__ts_dict)
+        if not self.plot_zeroes():
+            time_series = time_series[time_series!=0]
+        return time_series, name
+
+    def plot_zeroes(self):
+        return self.__graph_dict[Graph.PLOT_ZEROES]
 
     def is_primary(self):
         return self.__graph_dict[Graph.AXIS] == Graph.AXIS_PRIMARY
