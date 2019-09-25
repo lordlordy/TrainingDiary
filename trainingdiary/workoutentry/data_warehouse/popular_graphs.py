@@ -88,8 +88,8 @@ def create_popular_graphs(data_warehouse):
        }
 
     hrv = {'number_of_plots': 5,
-           'colour_map': '57',
-           'background': 'aliceblue',
+           'colour_map': '56',
+           'background': 'dodgerblue',
            'graph_display_type': 'Single',
            'share_axis': 'None',
            'from': start_date,
@@ -109,7 +109,7 @@ def create_popular_graphs(data_warehouse):
            'day_type_array': ['All' for _ in range(5)],
            'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line'],
            'axis_array': ['Primary' for _ in range(5)],
-           'size_array': ['5', '3', '3', '3', '3'],
+           'size_array': ['8', '3', '3', '3', '3'],
            'recorded_only_array': ['Yes' for _ in range(5)],
            'plot_zeroes_array': ['No', 'Yes', 'Yes', 'Yes', 'Yes'],
            }
