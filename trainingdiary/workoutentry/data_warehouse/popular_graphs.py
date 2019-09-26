@@ -87,36 +87,37 @@ def create_popular_graphs(data_warehouse):
         'plot_zeroes_array': ['No' for _ in r],
        }
 
-    hrv = {'number_of_plots': 5,
+    r = range(6)
+    hrv = {'number_of_plots': 6,
            'colour_map': '56',
            'background': 'dodgerblue',
            'graph_display_type': 'Single',
            'share_axis': 'None',
            'from': start_date,
            'to': end_date,
-           'period_array': ['Day' for _ in range(5)],
-           'aggregation_array': ['Sum' for _ in range(5)],
-           'activity_array': ['All' for _ in range(5)],
-           'activity_type_array': ['All' for _ in range(5)],
-           'equipment_array': ['All' for _ in range(5)],
-           'measure_array': ['sdnn', 'sdnn_off', 'sdnn_easy', 'sdnn_mean', 'sdnn_hard'],
-           'to_date_array': ['No' for _ in range(5)],
-           'rolling_array': ['No' for _ in range(5)],
-           'rolling_periods_array': [1 for _ in range(5)],
-           'rolling_aggregation_array': ['Sum' for _ in range(5)],
-           'day_of_week_array': ['All' for _ in range(5)],
-           'month_array': ['All' for _ in range(5)],
-           'day_type_array': ['All' for _ in range(5)],
-           'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line'],
-           'axis_array': ['Primary' for _ in range(5)],
-           'size_array': ['8', '3', '3', '3', '3'],
-           'recorded_only_array': ['Yes' for _ in range(5)],
-           'plot_zeroes_array': ['No', 'Yes', 'Yes', 'Yes', 'Yes'],
+           'period_array': ['Day' for _ in r],
+           'aggregation_array': ['Sum' for _ in r],
+           'activity_array': ['All' for _ in r],
+           'activity_type_array': ['All' for _ in r],
+           'equipment_array': ['All' for _ in r],
+           'measure_array': ['sdnn', 'sdnn_off', 'sdnn_easy', 'sdnn_mean', 'sdnn_hard', 'sdnn'],
+           'to_date_array': ['No' for _ in r],
+           'rolling_array': ['No', 'No', 'No', 'No', 'No', 'Yes'],
+           'rolling_periods_array': [1, 1, 1, 1, 1, 7],
+           'rolling_aggregation_array': ['Sum', 'Sum', 'Sum', 'Sum', 'Sum', 'Mean'],
+           'day_of_week_array': ['All' for _ in r],
+           'month_array': ['All' for _ in r],
+           'day_type_array': ['All' for _ in r],
+           'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line', 'Line'],
+           'axis_array': ['Primary' for _ in r],
+           'size_array': ['8', '3', '3', '3', '3', '1'],
+           'recorded_only_array': ['Yes', 'No', 'No', 'No', 'No', 'No'],
+           'plot_zeroes_array': ['No', 'Yes', 'Yes', 'Yes', 'Yes', 'No'],
            }
 
     popular_graphs['hrv_SDNN'] = hrv
     c = hrv.copy()
-    c['measure_array'] = ['rmssd', 'rmssd_off', 'rmssd_easy', 'rmssd_mean', 'rmssd_hard']
+    c['measure_array'] = ['rmssd', 'rmssd_off', 'rmssd_easy', 'rmssd_mean', 'rmssd_hard', 'rmssd']
     popular_graphs['hrv_rMSSD'] = c
 
 
