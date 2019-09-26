@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from workoutentry.training_data import TrainingDataManager
+from workoutentry.data_warehouse import DataWarehouse
 import datetime
 import functools
 import operator
@@ -65,7 +66,18 @@ def summary_view(request):
     start = datetime.date(end.year, end.month, 1)
     data.append(['MTD Last Year'] + values_for_range_list(start, end, workouts))
 
-    return render(request, 'workoutentry/summary.html', {'headings': SUMMARY_HEADINGS, 'data': data})
+    equipment_summary = DataWarehouse.instance().equipment_km_annual_summary()
+    headings = [i for i in equipment_summary['All'].keys()]
+    values = list()
+    values.append(['Total'] + [int(equipment_summary['All'][h]) for h in headings])
+    for k in equipment_summary:
+        if k != 'All':
+            values.append([k] + [int(equipment_summary[k][h]) for h in headings])
+    headings = [""] + headings
+
+    return render(request, 'workoutentry/summary.html', {'headings': SUMMARY_HEADINGS, 'data': data,
+                                                         'equipment_headings': headings,
+                                                         'equipment_summary': values})
 
 
 def values_for_range_list(start, end, workouts):

@@ -5,6 +5,7 @@ import decimal
 
 register = template.Library()
 
+# these are used in templates to format the html output
 
 @register.filter
 def duration(td):

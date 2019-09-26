@@ -180,6 +180,22 @@ class DataWarehouse:
         equipment = self.__conn.execute(f'SELECT DISTINCT equipment FROM Tables WHERE activity="{activity}" AND activity_type="{activity_type}"')
         return sorted([a[0] for a in equipment])
 
+    def equipment_km_annual_summary(self):
+        summary = dict()
+        for e in self.equipment():
+            table = f'day_All_All_{e}'
+            data = self.__conn.execute(f'SELECT year, sum(km) FROM {table} GROUP BY year ORDER BY year ASC').fetchall()
+            year_dict = dict()
+            for d in data:
+                year_dict[d[0]] = d[1]
+            summary[e] = year_dict
+        for key in summary['All']:
+            for k, val_dict in summary.items():
+                if k != 'All':
+                    val_dict[key] = 0.0 if key not in val_dict else val_dict[key]
+
+        return summary
+
     def time_series(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
                     measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
                     day_of_week='All', month='All', day_type='All', recorded_only=False):
