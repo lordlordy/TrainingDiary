@@ -196,6 +196,23 @@ class DataWarehouse:
 
         return summary
 
+    def activity_summary(self):
+        summary = dict()
+        for a in self.activities():
+            table = f'day_{a}_All_All'
+            data = self.__conn.execute(f'SELECT year, sum(hours), sum(km) FROM {table} GROUP BY year ORDER BY year ASC')
+            year_dict = dict()
+            for d in data:
+                year_dict[d[0]] = [d[1], d[2]]
+            summary[a] = year_dict
+        for key in summary['All']:
+            for k, val_dict in summary.items():
+                if k != 'All':
+                    hours = 0.0 if key not in val_dict else val_dict[key][0]
+                    km = 0.0 if key not in val_dict else val_dict[key][1]
+                    val_dict[key] = [hours, km]
+        return summary
+
     def time_series(self, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
                     measure='km', to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
                     day_of_week='All', month='All', day_type='All', recorded_only=False):

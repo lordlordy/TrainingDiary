@@ -73,11 +73,23 @@ def summary_view(request):
     for k in equipment_summary:
         if k != 'All':
             values.append([k] + [int(equipment_summary[k][h]) for h in headings])
-    headings = [""] + headings
 
+    activity_summary = DataWarehouse.instance().activity_summary()
+    hours_values = list()
+    km_values = list()
+    hours_values.append(['Total'] + [int(activity_summary['All'][h][0]) for h in headings])
+    km_values.append(['Total'] + [int(activity_summary['All'][h][1]) for h in headings])
+    for k in activity_summary:
+        if k != 'All':
+            hours_values.append([k] + [int(activity_summary[k][h][0]) for h in headings])
+            km_values.append([k] + [int(activity_summary[k][h][1]) for h in headings])
+
+    headings = [""] + headings
     return render(request, 'workoutentry/summary.html', {'headings': SUMMARY_HEADINGS, 'data': data,
-                                                         'equipment_headings': headings,
-                                                         'equipment_summary': values})
+                                                         'summary_headings': headings,
+                                                         'equipment_summary': values,
+                                                         'hours_summary': hours_values,
+                                                         'km_summary': km_values})
 
 
 def values_for_range_list(start, end, workouts):
