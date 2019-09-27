@@ -2,6 +2,7 @@ import dateutil.parser
 import functools
 import operator
 
+
 class Day:
 
     def __init__(self, *args):
@@ -62,6 +63,19 @@ class Day:
         if self.workout_count > 0:
             self.tss = functools.reduce(operator.add, [w.tss for w in self.workouts])
             self.training_duration = functools.reduce(operator.add, [w.seconds for w in self.workouts])
+        swim_workouts = list(filter(lambda x: x.activity == 'Swim', self.workouts))
+        bike_workouts = list(filter(lambda x: x.activity == 'Bike', self.workouts))
+        run_workouts = list(filter(lambda x: x.activity == 'Run', self.workouts))
+        self.swim_km = 0.0
+        self.bike_km = 0.0
+        self.run_km = 0.0
+        if len(swim_workouts) > 0:
+            self.swim_km = functools.reduce(operator.add, [w.km for w in swim_workouts])
+        if len(bike_workouts) > 0:
+            self.bike_km = functools.reduce(operator.add, [w.km for w in bike_workouts])
+        if len(run_workouts) > 0:
+            self.run_km = functools.reduce(operator.add, [w.km for w in run_workouts])
+
 
         # values for data warehouse. Want zero instead of null
         self.dw_sleep = rDict['sleep'] if 'sleep' in rDict else 0.0
