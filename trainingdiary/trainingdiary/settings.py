@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com']
 INSTALLED_APPS = [
     'mainsite.apps.MainsiteConfig',
     'workoutentry.apps.WorkoutentryConfig',
+    'studentTSB.apps.StudenttsbConfig',
     'blog.apps.BlogConfig',
     'django.contrib.admin',
     'django.contrib.auth',

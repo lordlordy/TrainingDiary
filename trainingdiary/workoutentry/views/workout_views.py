@@ -1,7 +1,7 @@
 from django.views.generic import UpdateView
 from django.http import HttpResponseRedirect
 from workoutentry.training_data import TrainingDataManager
-from workoutentry.forms import WorkoutEditForm
+from workoutentry.forms import WorkoutEditForm, DayFilterForm
 import datetime
 from django.shortcuts import render
 import pandas as pd
@@ -9,7 +9,14 @@ import pandas as pd
 
 def workouts_list_view(request):
     month_ago = datetime.date.today() - datetime.timedelta(days=30)
-    context = {'workouts': TrainingDataManager().workouts_between(from_date=month_ago, to_date=datetime.date.today())}
+    context = {'workouts': TrainingDataManager().workouts_between(from_date=month_ago, to_date=datetime.date.today()),
+               'form': DayFilterForm()}
+
+    if request.method == 'POST':
+        if 'to' in request.POST and 'from' in request.POST:
+            context['workouts'] = TrainingDataManager().workouts_between(from_date=request.POST['from'], to_date=request.POST['to'])
+            context['form'] = DayFilterForm(initial={'from': request.POST['from'], 'to': request.POST['to']})
+
     return render(request, 'workoutentry/workout_list.html', context)
 
 

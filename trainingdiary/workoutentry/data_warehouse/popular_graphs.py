@@ -87,8 +87,8 @@ def create_popular_graphs(data_warehouse):
         'plot_zeroes_array': ['No' for _ in r],
        }
 
-    r = range(6)
-    hrv = {'number_of_plots': 6,
+    r = range(7)
+    hrv = {'number_of_plots': 7,
            'colour_map': '56',
            'background': 'dodgerblue',
            'graph_display_type': 'Single',
@@ -100,24 +100,24 @@ def create_popular_graphs(data_warehouse):
            'activity_array': ['All' for _ in r],
            'activity_type_array': ['All' for _ in r],
            'equipment_array': ['All' for _ in r],
-           'measure_array': ['sdnn', 'sdnn_off', 'sdnn_easy', 'sdnn_mean', 'sdnn_hard', 'sdnn'],
+           'measure_array': ['sdnn', 'sdnn_off', 'sdnn_easy', 'sdnn_mean', 'sdnn_hard', 'sdnn', 'sdnn'],
            'to_date_array': ['No' for _ in r],
-           'rolling_array': ['No', 'No', 'No', 'No', 'No', 'Yes'],
-           'rolling_periods_array': [1, 1, 1, 1, 1, 7],
-           'rolling_aggregation_array': ['Sum', 'Sum', 'Sum', 'Sum', 'Sum', 'Mean'],
+           'rolling_array': ['No', 'No', 'No', 'No', 'No', 'Yes', 'Yes'],
+           'rolling_periods_array': [1, 1, 1, 1, 1, 7, 31],
+           'rolling_aggregation_array': ['Sum', 'Sum', 'Sum', 'Sum', 'Sum', 'Mean', 'Mean'],
            'day_of_week_array': ['All' for _ in r],
            'month_array': ['All' for _ in r],
            'day_type_array': ['All' for _ in r],
-           'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line', 'Line'],
+           'graph_type_array': ['Point', 'Line', 'Line', 'Line', 'Line', 'Line', 'Line'],
            'axis_array': ['Primary' for _ in r],
-           'size_array': ['8', '3', '3', '3', '3', '1'],
-           'recorded_only_array': ['Yes', 'No', 'No', 'No', 'No', 'No'],
-           'plot_zeroes_array': ['No', 'Yes', 'Yes', 'Yes', 'Yes', 'No'],
+           'size_array': ['8', '3', '3', '3', '3', '2', '1'],
+           'recorded_only_array': ['Yes', 'No', 'No', 'No', 'No', 'No', 'No'],
+           'plot_zeroes_array': ['No', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'No'],
            }
 
     popular_graphs['hrv_SDNN'] = hrv
     c = hrv.copy()
-    c['measure_array'] = ['rmssd', 'rmssd_off', 'rmssd_easy', 'rmssd_mean', 'rmssd_hard', 'rmssd']
+    c['measure_array'] = ['rmssd', 'rmssd_off', 'rmssd_easy', 'rmssd_mean', 'rmssd_hard', 'rmssd', 'rmssd']
     popular_graphs['hrv_rMSSD'] = c
 
 
