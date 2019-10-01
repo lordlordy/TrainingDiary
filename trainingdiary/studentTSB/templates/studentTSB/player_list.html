@@ -1,0 +1,59 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+       <div class="col-md-4">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">Players</h2>
+               </div>
+           </div>
+           <div class="row">
+               <div class="col-md-12">
+
+                   <a href="{% url 'player_new' %}" class="btn btn-outline-primary btn-block" role="button">New Player</a>
+
+               </div>
+           </div>
+       </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Know As</th>
+                    <th>Email</th>
+                    <th>DOB</th>
+                    <th>#Teams</th>
+                    <th></th>
+                </tr>
+                </thead>
+                {% for p in players %}
+                <tr>
+                    <td>
+                        <a href="{% url 'player_edit' p.id %}" class="btn btn-outline-primary btn-block" role="button">{{p.name}}</a>
+                    </td>
+                    <td>{{ p.known_as }}</td>
+                    <td>{{ p.email }}</td>
+                    <td>{{ p.dob }}</td>
+                    <td>{{ p.team_count }}</td>
+                    <td>{% for t in p.teams %}{{ t.name }}, {% endfor %}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+   {% block extra_scripts %}
+
+
+    {% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+       <div class="col-md-12">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">Event for {{ team.name }}</h2>
+               </div>
+           </div>
+           <div class="row">
+               <div class="col-md-6">
+                   <form action="{% url 'event_save' %}" method="post">
+                       {% csrf_token %}
+                       {{ form | crispy }}
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Update">
+                   </form>
+               </div>
+               {% if event %}
+               <div class="col-md-6">
+                   <form action="{% url 'event_generate' event.id %}" method="post">
+                       {% csrf_token %}
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Generate Occurrences">
+                   </form>
+                   <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                       <thead class="thead-light">
+                       <tr>
+                           <th>Date</th>
+                           <th>Day</th>
+                           <th>Start</th>
+                           <th>End</th>
+                           <th>TSS</th>
+                       </tr>
+                       </thead>
+                       {% for o in event.event_occurrences %}
+                       <tr>
+                           <td>{{ o.date }}</td>
+                           <td>{{ o.day }}</td>
+                           <td>{{ o.event.start_time }}</td>
+                           <td>{{ o.event.end_time }}</td>
+                           <td>{{ o.tss }}</td>
+                       </tr>
+                       {% endfor %}
+                   </table>
+               </div>
+               {% endif %}
+           </div>
+       </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+$(document).ready(function(){
+$('#frequency').select2();
+});
+
+$('#endtime').pickatime({});
+
+    {% endblock %}

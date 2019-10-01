@@ -1,0 +1,90 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="border-bottom mb-4">{{ player_name }}</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <h3 class="border-bottom mb-4">Profile</h3>
+            <form action="{% url 'player_save' %}" method="post">
+                {% csrf_token %}
+                <table class="table table-hover table-sm ">{{ form.as_table }}</table>
+                <input class="btn btn-outline-primary btn-block" type="submit" value="UPDATE">
+            </form>
+
+            <h3 class="border-bottom mb-4">Teams</h3>
+            {% if player %}
+                 <table class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Team</th>
+
+                </tr>
+                </thead>
+                {% for t in player.teams %}
+                <tr>
+                    <td>{{ t.name }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h3 class="border-bottom mb-4">Schedule</h3>
+            {% if player %}
+            <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Team</th>
+                    <th>Description</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>TSS</th>
+                </tr>
+                </thead>
+                {% for o in player.schedule %}
+                <tr>
+                    <td>{{ o.date }}</td>
+                    <td>{{ o.day }}</td>
+                    <td>{{ o.event.team.name }}</td>
+                    <td>{{ o.event.name }}</td>
+                    <td>{{ o.event.start_time }}</td>
+                    <td>{{ o.event.end_time }}</td>
+                    <td>{{ o.tss }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+       </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="border-top mb-4 text-center">Training Stress Balance</h2>
+              <div class="embed-responsive embed-responsive-16by9">
+                  <img class="embed-responsive-item" src="{% static graph_img %}">
+              </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+    $(document).ready(function(){
+        $('#teamTable').DataTable({
+            "pageLength": 10
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+{% endblock %}

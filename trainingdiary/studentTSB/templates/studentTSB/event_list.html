@@ -1,0 +1,64 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+       <div class="col-md-4">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">Events</h2>
+               </div>
+           </div>
+
+       </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Team</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Duration</th>
+                    <th>~RPE</th>
+                    <th>~TSS</th>
+                    <th>First Date</th>
+                    <th>End Date</th>
+                    <th>Frequency</th>
+                    <th>#</th>
+                </tr>
+                </thead>
+                {% for e in events %}
+                <tr>
+                    <td>
+                        <a href="{% url 'event_edit' e.team_id e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.name }}</a>
+                    </td>
+                    <td>{{ e.team }}</td>
+                    <td>{{ e.start_time }}</td>
+                    <td>{{ e.end_time }}</td>
+                    <td>{{ e.duration }}</td>
+                    <td>{{ e.estimated_rpe }}</td>
+                    <td>{{ e.estimated_tss }}</td>
+                    <td>{{ e.start_date }}</td>
+                    <td>{{ e.end_date }}</td>
+                    <td>{{ e.frequency }}</td>
+                    <td>{{ e.number_of_occurrences }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+   {% block extra_scripts %}
+
+
+
+    {% endblock %}
