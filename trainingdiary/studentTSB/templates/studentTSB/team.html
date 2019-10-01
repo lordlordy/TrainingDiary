@@ -48,7 +48,7 @@
                 {% for p in team.players %}
                 <tr>
                     <td>
-                        <a href="" class="btn btn-outline-info btn-block" role="button">{{ p.name }}</a>
+                        <a href="{% url 'player_edit' p.id %}" class="btn btn-outline-info btn-block" role="button">{{ p.name }}</a>
                     </td>
                     <td>{{ p.dob }}</td>
                     <td>
