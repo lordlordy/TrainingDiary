@@ -24,6 +24,8 @@ def tsb_time_series(date_value_pairs):
     :return:
     """
     dates = [d[0] for d in date_value_pairs]
+    if len(dates) == 0:
+        return []
     current_date = min(dates)
     last_date = max(dates)
     tss_dict = dict()
