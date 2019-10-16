@@ -157,19 +157,34 @@ def player_save_view(request):
         return player_list_view(request)
 
 
+def add_teams_to_coach_view(request, **kwargs):
+    dm = DatabaseManager()
+    for tid in request.POST.getlist('Teams'):
+        dm.add_coach_to_team(kwargs['id'], tid)
+
+    return coach_edit_view(request, **kwargs)
+
+
 def coach_edit_view(request, **kwargs):
     context = dict()
     if 'id' in kwargs:
-        coach = DatabaseManager().coach_for_id(kwargs['id'])
+        dm = DatabaseManager()
+        coach = dm.coach_for_id(kwargs['id'])
         initial_values = coach.data_dictionary()
         context['coach_name'] = coach.name
         context['coach'] = coach
+        all_teams = dm.teams()
+        team_id_dict = dict()
+        for t in all_teams:
+            team_id_dict[t.id] = t.name
+        team_ids = set([t.id for t in all_teams]) - set([t.id for t in coach.teams])
+        team_choices = [(i, team_id_dict[i]) for i in team_ids]
+        context['add_team_form'] = SelectForm('Teams', team_choices)
     else:
         initial_values = dict()
         context['coach_name'] = "New Coach"
 
     context['form'] = CoachEditForm(initial=initial_values)
-
 
     return render(request, 'studentTSB/coach_edit.html', context)
 
