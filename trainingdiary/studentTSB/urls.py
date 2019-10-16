@@ -1,7 +1,8 @@
 from django.urls import path
 from studentTSB.views import (home_view, player_list_view, coach_list_view, event_list_view, team_list_view, team_view,
                               event_edit_view, event_save_view, player_edit_view, player_save_view, team_update_view,
-                              new_team_view, coach_edit_view, coach_save_view, event_generate_view,
+                              new_team_view, coach_edit_view, coach_save_view, add_teams_to_coach_view,
+                              event_generate_view,
                               add_players_to_team_view, add_coaches_to_team_view, delete_player_from_team,
                               delete_coach_from_team, delete_event_from_team)
 
@@ -18,6 +19,7 @@ urlpatterns = [
     path('coaches/edit/<int:id>/', coach_edit_view, name='coach_edit'),
     path('coaches/new/', coach_edit_view, name='coach_new'),
     path('coaches/save/', coach_save_view, name='coach_save'),
+    path('coaches/add/teams/<int:id>', add_teams_to_coach_view, name='add_teams_to_coach'),
     path('events/list/', event_list_view, name='event_list'),
     path('events/edit/<int:team_id>/<int:id>/', event_edit_view, name='event_edit'),
     path('events/save/', event_save_view, name='event_save'),

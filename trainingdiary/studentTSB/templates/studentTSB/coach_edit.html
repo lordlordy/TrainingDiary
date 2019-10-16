@@ -16,7 +16,18 @@
 
             <h3 class="border-bottom mb-4">Teams</h3>
             {% if coach %}
-                 <table class="table table-hover table-bordered table-striped table-sm ">
+            <form action="{% url 'add_teams_to_coach' coach.id %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ add_team_form | crispy }}
+                    </div>
+                    <div class="col-md-6">
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Add Teams">
+                    </div>
+                </div>
+            </form>
+                <table class="table table-hover table-bordered table-striped table-sm ">
                 <thead class="thead-light">
                 <tr>
                     <th>Team</th>
@@ -67,7 +78,9 @@
 {% endblock %}
 
    {% block extra_scripts %}
-
+$(document).ready(function(){
+$('#Teams').select2();
+});
 
 
 
