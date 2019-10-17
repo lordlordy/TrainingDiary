@@ -148,7 +148,7 @@ class Event:
                     occurrence_id = event_occurrence.id
                 for p in self.team.players:
                     if not dm.player_event_occurrence_exists(occurrence_id, p.id):
-                        dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'scheduled', '')
+                        dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'Scheduled', '')
                 current_date = Event.__increment_by_one_week(current_date)
         else:
             event_occurrence = dm.event_occurrence(self.id, current_date)
@@ -159,7 +159,7 @@ class Event:
                 occurrence_id = event_occurrence.id
             for p in self.team.players:
                 if not dm.player_event_occurrence_exists(occurrence_id, p.id):
-                    dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'scheduled', '')
+                    dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'Scheduled', '')
 
     @staticmethod
     def __increment_by_one_week(date_str):
@@ -179,6 +179,10 @@ class EventOccurrence:
         self.comments = args[4]
 
     @property
+    def event_date(self):
+        return dateutil.parser.parse(self.date).date()
+
+    @property
     def day(self):
         return dateutil.parser.parse(self.date).strftime('%A')
 
@@ -195,6 +199,21 @@ class EventOccurrence:
     @property
     def number_of_players(self):
         return len(self.player_occurrences)
+
+    @property
+    def attendance_percentage(self):
+        return self.number_completed / len(self.player_occurrences)
+
+    @property
+    def attendance_percentage_str(self):
+        return f'{int(self.attendance_percentage * 100)}%'
+
+    @property
+    def number_completed(self):
+        completed = [p for p in self.player_occurrences if p.status == "Completed"]
+        return len(completed)
+
+
 
 
 class PlayerEventOccurrence:
@@ -221,6 +240,24 @@ class PlayerEventOccurrence:
         from . import DatabaseManager
         p = DatabaseManager().player_for_id(self.player_id)
         return p
+
+    # think these are a bit of a hack to allow selecting of status in table in event_occurrence.html
+    @property
+    def isScheduled(self):
+        return self.status == 'scheduled'
+
+    @property
+    def isCompleted(self):
+        return self.status == 'Completed'
+
+    @property
+    def isAuthorisedAbsent(self):
+        return self.status == 'Authorised Absent'
+
+    @property
+    def isAbsent(self):
+        return self.status == 'Absent'
+
 
     def data_dictionary(self):
         return {'id': self.id,

@@ -2,80 +2,7 @@ import sqlite3
 import os
 import trainingdiary
 
-
-dummy_players = [
-    ['Player', 'One', '1', '1@email.com', '2002-04-05'],
-    ['Player', 'Two', '2', '2@email.com', '2002-04-05'],
-    ['Player', 'Three', '3', '3@email.com', '2002-04-05'],
-    ['Player', 'Four', '4', '4@email.com', '2002-04-05'],
-    ['Player', 'Five', '5', '5@email.com', '2002-04-05'],
-    ['Player', 'Six', '6', '6@email.com', '2002-04-05'],
-    ['Player', 'Seven', '7', '7@email.com', '2002-04-05'],
-    ['Player', 'Eight', '8', '8@email.com', '2002-04-05'],
-    ['Player', 'Nine', '9', '9@email.com', '2002-04-05'],
-    ['Player', 'Ten', '10', '10@email.com', '2002-04-05'],
-    ['Player', 'Eleven', '11', '11@email.com', '2002-04-05'],
-]
-
-dummy_coaches = [
-    ['Coach', 'One', 'C1', 'c1@email.com'],
-    ['Coach', 'Two', 'C2', 'c2@email.com'],
-    ['Coach', 'Three', 'C3', 'c3@email.com'],
-    ['Coach', 'Four', 'C4', 'c4@email.com'],
-]
-
-dummy_teams = [
-    ['Personal Training'],
-    ['Rugby A'],
-    ['Cricket A'],
-    ['Rugby B'],
-    ['Swim Squad']
-]
-
-dummy_team_coach = [
-    [2, 12],
-    [2, 13],
-    [2, 14],
-    [3, 15],
-    [4, 14],
-    [5, 12],
-    [6, 12]
-]
-
-dummy_team_player = [
-    [2, 1],
-    [2, 2],
-    [2, 3],
-    [2, 4],
-    [2, 5],
-    [3, 1],
-    [3, 4],
-    [3, 6],
-    [3, 8],
-    [4, 7],
-    [4, 9],
-    [4, 10],
-    [4, 11],
-    [5, 5],
-]
-
-dummy_events = [
-    ['Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2019-01-01', 'one off', 1],
-    ['Main Practice', '17:00:00', '19:00:00', 5.0, '2019-09-30', '2020-03-15', 'weekly', 2],
-    ['2nd Practice', '17:00:00', '19:00:00', 5.1, '2019-10-02', '2020-03-15', 'weekly', 2],
-    ['Match - St Pauls', '09:00:00', '10:30:00', 6.0, '2019-10-05', '2019-10-05', 'one off', 2],
-    ['Match - Eton', '09:00:00', '10:30:00', 6.0, '2019-10-12', '2019-10-12', 'one off', 2],
-    ['Match - Old Boys', '09:00:00', '10:30:00', 5.5, '2019-10-19', '2019-10-19', 'one off', 2],
-    ['Main Practice', '17:00:00', '19:00:00', 5.6, '2019-09-30', '2020-03-15', 'weekly', 3],
-    ['2nd Practice', '17:00:00', '19:00:00', 4.8, '2019-10-01', '2020-03-15', 'weekly', 3],
-    ['Main Practice', '17:00:00', '19:00:00', 6.0, '2019-10-02', '2020-03-15', 'weekly', 4],
-    ['2nd Practice', '17:00:00', '19:00:00', 5.6, '2019-10-04', '2020-03-15', 'weekly', 4],
-    ['Mon Training', '17:00:00', '18:00:00', 5.2, '2019-09-30', '2020-03-15', 'weekly', 5],
-    ['Tue Training', '17:00:00', '18:00:00', 5.9, '2019-10-01', '2020-03-15', 'weekly', 5],
-    ['Wed Training', '17:00:00', '18:00:00', 4.5, '2019-10-02', '2020-03-15', 'weekly', 5],
-    ['Thu Training', '17:00:00', '18:00:00', 5.1, '2019-10-03', '2020-03-15', 'weekly', 5],
-    ['Fri Training', '17:00:00', '18:00:00', 5.7, '2019-10-04', '2020-03-15', 'weekly', 5],
-]
+occurrence_states = ['Scheduled', 'Completed', 'Authorised Absent', 'Absent']
 
 db_tables_sql = [
     f'''
@@ -170,6 +97,11 @@ class DatabaseManager:
             except Exception as e:
                 print(e)
                 print(sql)
+        # create Personal Training team and event
+        self.add_new_team('Personal Training')
+        team_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
+        self.add_new_event('Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2099-12-31', 'Adhoc',
+                           team_id)
 
     def create_dummy_data(self):
         for p in dummy_players:
@@ -584,6 +516,81 @@ class DatabaseManager:
         player_events = self.__conn.execute(sql).fetchall()
         from . import PlayerEventOccurrence
         return [PlayerEventOccurrence(*e) for e in player_events]
+
+
+
+dummy_players = [
+    ['Player', 'One', '1', '1@email.com', '2002-04-05'],
+    ['Player', 'Two', '2', '2@email.com', '2002-04-05'],
+    ['Player', 'Three', '3', '3@email.com', '2002-04-05'],
+    ['Player', 'Four', '4', '4@email.com', '2002-04-05'],
+    ['Player', 'Five', '5', '5@email.com', '2002-04-05'],
+    ['Player', 'Six', '6', '6@email.com', '2002-04-05'],
+    ['Player', 'Seven', '7', '7@email.com', '2002-04-05'],
+    ['Player', 'Eight', '8', '8@email.com', '2002-04-05'],
+    ['Player', 'Nine', '9', '9@email.com', '2002-04-05'],
+    ['Player', 'Ten', '10', '10@email.com', '2002-04-05'],
+    ['Player', 'Eleven', '11', '11@email.com', '2002-04-05'],
+]
+
+dummy_coaches = [
+    ['Coach', 'One', 'C1', 'c1@email.com'],
+    ['Coach', 'Two', 'C2', 'c2@email.com'],
+    ['Coach', 'Three', 'C3', 'c3@email.com'],
+    ['Coach', 'Four', 'C4', 'c4@email.com'],
+]
+
+dummy_teams = [
+    ['Rugby A'],
+    ['Cricket A'],
+    ['Rugby B'],
+    ['Swim Squad']
+]
+
+dummy_team_coach = [
+    [2, 12],
+    [2, 13],
+    [2, 14],
+    [3, 15],
+    [4, 14],
+    [5, 12],
+    [6, 12]
+]
+
+dummy_team_player = [
+    [2, 1],
+    [2, 2],
+    [2, 3],
+    [2, 4],
+    [2, 5],
+    [3, 1],
+    [3, 4],
+    [3, 6],
+    [3, 8],
+    [4, 7],
+    [4, 9],
+    [4, 10],
+    [4, 11],
+    [5, 5],
+]
+
+dummy_events = [
+    ['Main Practice', '17:00:00', '19:00:00', 5.0, '2019-09-30', '2020-03-15', 'weekly', 2],
+    ['2nd Practice', '17:00:00', '19:00:00', 5.1, '2019-10-02', '2020-03-15', 'weekly', 2],
+    ['Match - St Pauls', '09:00:00', '10:30:00', 6.0, '2019-10-05', '2019-10-05', 'one off', 2],
+    ['Match - Eton', '09:00:00', '10:30:00', 6.0, '2019-10-12', '2019-10-12', 'one off', 2],
+    ['Match - Old Boys', '09:00:00', '10:30:00', 5.5, '2019-10-19', '2019-10-19', 'one off', 2],
+    ['Main Practice', '17:00:00', '19:00:00', 5.6, '2019-09-30', '2020-03-15', 'weekly', 3],
+    ['2nd Practice', '17:00:00', '19:00:00', 4.8, '2019-10-01', '2020-03-15', 'weekly', 3],
+    ['Main Practice', '17:00:00', '19:00:00', 6.0, '2019-10-02', '2020-03-15', 'weekly', 4],
+    ['2nd Practice', '17:00:00', '19:00:00', 5.6, '2019-10-04', '2020-03-15', 'weekly', 4],
+    ['Mon Training', '17:00:00', '18:00:00', 5.2, '2019-09-30', '2020-03-15', 'weekly', 5],
+    ['Tue Training', '17:00:00', '18:00:00', 5.9, '2019-10-01', '2020-03-15', 'weekly', 5],
+    ['Wed Training', '17:00:00', '18:00:00', 4.5, '2019-10-02', '2020-03-15', 'weekly', 5],
+    ['Thu Training', '17:00:00', '18:00:00', 5.1, '2019-10-03', '2020-03-15', 'weekly', 5],
+    ['Fri Training', '17:00:00', '18:00:00', 5.7, '2019-10-04', '2020-03-15', 'weekly', 5],
+]
+
 
 
 if __name__ == '__main__':

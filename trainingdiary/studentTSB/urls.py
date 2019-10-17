@@ -3,9 +3,9 @@ from studentTSB.views import (home_view, player_list_view, coach_list_view, even
                               event_edit_view, event_save_view, player_edit_view, player_save_view, team_update_view,
                               new_team_view, coach_edit_view, coach_save_view, add_teams_to_coach_view,
                               event_generate_view, event_occurrence_view, player_event_occurrence_view_from_player_view,
-                              player_event_occurrence_view_from_event_view,
+                              player_event_occurrence_view_from_event_view, add_teams_to_player_view,
                               add_players_to_team_view, add_coaches_to_team_view, delete_player_from_team,
-                              delete_coach_from_team, delete_event_from_team)
+                              delete_coach_from_team, delete_event_from_team, player_personal_training_view)
 
 from django.contrib.auth.decorators import login_required
 
@@ -16,6 +16,8 @@ urlpatterns = [
     path('players/edit/<int:id>/', player_edit_view, name='player_edit'),
     path('players/new/', player_edit_view, name='player_new'),
     path('players/save/', player_save_view, name='player_save'),
+    path('players/add/teams/<int:id>/', add_teams_to_player_view, name='add_teams_to_player'),
+    path('players/add/personal_training/<int:player_id>/', player_personal_training_view, name='player_personal_training'),
     path('players/event/occurrence/<int:id>/<int:player_id>/', player_event_occurrence_view_from_player_view,
          name='player_event_occurrence_from_player_view'),
     path('coaches/list/', coach_list_view, name='coach_list'),

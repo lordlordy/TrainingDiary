@@ -30,16 +30,18 @@
 
 {% endblock %}
 
-   {% block extra_scripts %}
+{% block extra_scripts %}
+$(document).ready(function(){
+$('#status').select2();
+});
+
 
 $('.datepicker').datepicker({
     format: "yyyy-mm-dd",
 });
 
-$(document).ready(function(){
-$('#frequency').select2();
-});
 
 $('#endtime').pickatime({});
+
 
     {% endblock %}

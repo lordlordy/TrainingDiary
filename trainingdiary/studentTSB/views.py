@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team
+from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team, occurrence_states
 from studentTSB.forms import (EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm,
-                              PlayerEventOccurrenceForm)
+                              PlayerEventOccurrenceForm, PersonalTrainingForm)
 from datetime import datetime
 
 
@@ -104,8 +104,23 @@ def event_edit_view(request, **kwargs):
 
 
 def event_occurrence_view(request, **kwargs):
-    context = {'event_occurrence': DatabaseManager().event_occurrence_for_id(kwargs['id'])}
-    return render(request, 'studentTSB/event_occurrence.html', context)
+    if 'id[]' in request.POST:
+        # got ids so this is a save
+        ids = request.POST.getlist('id[]')
+        tss = request.POST.getlist('tss[]')
+        status = request.POST.getlist('status[]')
+        comments = request.POST.getlist('comments[]')
+        dm = DatabaseManager()
+        for i in range(len(ids)):
+            dm.update_player_event_occurrence(ids[i], tss[i], status[i], comments[i])
+        peo = dm.player_event_occurrence_for_id(ids[0])
+        event = peo.event_occurrence.event
+        return HttpResponseRedirect(f'/studentTSB/events/edit/{event.team.id}/{event.id}/')
+
+    else:
+        context = {'event_occurrence': DatabaseManager().event_occurrence_for_id(kwargs['id']),
+                   'status_form': SelectForm('status', [(i, i) for i in occurrence_states])}
+        return render(request, 'studentTSB/event_occurrence.html', context)
 
 
 def player_event_occurrence_view_from_player_view(request, **kwargs):
@@ -165,7 +180,8 @@ def event_save_view(request):
 def player_edit_view(request, **kwargs):
     context = dict()
     if 'id' in kwargs:
-        player = DatabaseManager().player_for_id(kwargs['id'])
+        dm = DatabaseManager()
+        player = dm.player_for_id(kwargs['id'])
         context['player'] = player
         initial_values = player.data_dictionary()
         context['player_name'] = player.name
@@ -173,6 +189,13 @@ def player_edit_view(request, **kwargs):
         file_name = f'player-{player.id}-TSB-{current_time}'
         tsb_for_player(player, file_name)
         context['graph_img'] = f'tmp/{file_name}.png'
+        all_teams = dm.teams()
+        team_id_dict = dict()
+        for t in all_teams:
+            team_id_dict[t.id] = t.name
+        team_ids = set([t.id for t in all_teams]) - set([t.id for t in player.teams])
+        team_choices = [(i, team_id_dict[i]) for i in team_ids]
+        context['add_team_form'] = SelectForm('Teams', team_choices)
     else:
         initial_values = dict()
         context['player_name'] = "New Player"
@@ -196,12 +219,38 @@ def player_save_view(request):
         return player_list_view(request)
 
 
+def player_personal_training_view(request, **kwargs):
+    if request.method == "POST":
+        # we're saving. This is personal training so is placed in personal team - this is team id 1 and the team even
+        # with id 1
+        dm = DatabaseManager()
+        # save the event
+        id = dm.add_new_event_occurrence(1, request.POST['date'], request.POST['tss'], '')
+        # then the player occurrence
+        dm.add_new_player_event_occurrence(id, request.POST['player_id'], request.POST['tss'], request.POST['status'],
+                                           request.POST['comments'])
+        return HttpResponseRedirect(f'/studentTSB/players/edit/{request.POST["player_id"]}/')
+    else:
+        player = DatabaseManager().player_for_id(kwargs['player_id'])
+        initial_values = {"player_id": player.id}
+        return render(request, 'studentTSB/player_personal_training.html', {'form': PersonalTrainingForm(initial=initial_values),
+                                                                            'player': player})
+
+
 def add_teams_to_coach_view(request, **kwargs):
     dm = DatabaseManager()
     for tid in request.POST.getlist('Teams'):
         dm.add_coach_to_team(kwargs['id'], tid)
 
     return coach_edit_view(request, **kwargs)
+
+
+def add_teams_to_player_view(request, **kwargs):
+    dm = DatabaseManager()
+    for tid in request.POST.getlist('Teams'):
+        dm.add_player_to_team(kwargs['id'], tid)
+
+    return player_edit_view(request, **kwargs)
 
 
 def coach_edit_view(request, **kwargs):
