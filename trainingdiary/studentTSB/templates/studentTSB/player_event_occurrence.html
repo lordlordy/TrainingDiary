@@ -1,0 +1,45 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+       <div class="col-md-12">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">{{ player_event_occurrence.player.name }}: {{ player_event_occurrence.event_occurrence.date }} {{ player_event_occurrence.event_occurrence.event.name }}, {{ player_event_occurrence.event_occurrence.event.team.name }}</h2>
+               </div>
+           </div>
+       </div>
+   </div>
+        <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="col-md-4">
+                {{ form.tss | as_crispy_field }}
+                {{ form.status | as_crispy_field }}
+                <button class="btn btn-outline-primary btn-block" type="submit" name="update-button">Update</button>
+            </div>
+            <div class="col-md-8">
+                {{ form.comments | as_crispy_field }}
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+$(document).ready(function(){
+$('#frequency').select2();
+});
+
+$('#endtime').pickatime({});
+
+    {% endblock %}

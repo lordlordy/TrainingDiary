@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team
-from studentTSB.forms import EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm
+from studentTSB.forms import (EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm,
+                              PlayerEventOccurrenceForm)
+from datetime import datetime
 
 
 def home_view(request):
@@ -55,7 +57,8 @@ def team_view(request, **kwargs):
     coach_choices = [(i, coach_id_dict[i]) for i in coach_ids]
     add_coach_form = SelectForm('Coaches', coach_choices)
 
-    file_name = f'team-{team.id}-TSB'
+    current_time = datetime.now().time().strftime("%H%M%S")
+    file_name = f'team-{team.id}-TSB-{current_time}'
     tsb_for_team(team, file_name)
 
     return render(request, 'studentTSB/team.html', {'team': team,
@@ -99,6 +102,44 @@ def event_edit_view(request, **kwargs):
 
     return render(request, 'studentTSB/event_edit.html', context)
 
+
+def event_occurrence_view(request, **kwargs):
+    context = {'event_occurrence': DatabaseManager().event_occurrence_for_id(kwargs['id'])}
+    return render(request, 'studentTSB/event_occurrence.html', context)
+
+
+def player_event_occurrence_view_from_player_view(request, **kwargs):
+    if 'update-button' in request.POST:
+        # this is an update
+        DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['tss'],
+                                                         request.POST['status'],
+                                                         request.POST['comments'])
+        return HttpResponseRedirect(f'/studentTSB/players/edit/{kwargs["player_id"]}/')
+
+    else:
+        occurrence = DatabaseManager().player_event_occurrence_for_id(kwargs['id'])
+        context = {'player_event_occurrence': occurrence, 'player_id': kwargs['player_id'],
+                   'form': PlayerEventOccurrenceForm(initial=occurrence.data_dictionary())}
+
+        return render(request, 'studentTSB/player_event_occurrence.html', context)
+
+
+def player_event_occurrence_view_from_event_view(request, **kwargs):
+    if 'update-button' in request.POST:
+        # this is an update
+        DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['tss'],
+                                                         request.POST['status'],
+                                                         request.POST['comments'])
+        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{kwargs["event_occurrence_id"]}/')
+
+    else:
+        occurrence = DatabaseManager().player_event_occurrence_for_id(kwargs['id'])
+        context = {'player_event_occurrence': occurrence,
+                   'form': PlayerEventOccurrenceForm(initial=occurrence.data_dictionary())}
+
+        return render(request, 'studentTSB/player_event_occurrence.html', context)
+
+
 def event_generate_view(request, **kwargs):
     event = DatabaseManager().event_for_id(kwargs['id'])
     event.generate_occurrences()
@@ -116,12 +157,9 @@ def event_save_view(request):
         event_id = dm.add_new_event(request.POST['name'], request.POST['start_time'], request.POST['end_time'],
                                     request.POST['estimated_rpe'], request.POST['start_date'], request.POST['end_date'],
                                     request.POST['frequency'], request.POST['team_id'])
-        # generate occurrences for even when first saved
-        event = dm.event_for_id(event_id)
-        event.generate_occurrences()
 
     team = DatabaseManager().team_for_id(request.POST['team_id'])
-    return HttpResponseRedirect(f'/studentTSB/teams/edit/{team.id}')
+    return HttpResponseRedirect(f'/studentTSB/teams/edit/{team.id}/')
 
 
 def player_edit_view(request, **kwargs):
@@ -131,7 +169,8 @@ def player_edit_view(request, **kwargs):
         context['player'] = player
         initial_values = player.data_dictionary()
         context['player_name'] = player.name
-        file_name = f'player-{player.id}-TSB'
+        current_time = datetime.now().time().strftime("%H%M%S")
+        file_name = f'player-{player.id}-TSB-{current_time}'
         tsb_for_player(player, file_name)
         context['graph_img'] = f'tmp/{file_name}.png'
     else:
@@ -211,7 +250,7 @@ def delete_player_from_team(request, **kwargs):
                       {'object': f"Player {player.name} from  {team.name}"})
     if request.method == "POST":
         dm.remove_player_from_team(kwargs['player_id'], kwargs['team_id'])
-        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}')
+        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
 
 
 def delete_coach_from_team(request, **kwargs):
@@ -223,7 +262,7 @@ def delete_coach_from_team(request, **kwargs):
                       {'object': f"Coach {coach.name} from  {team.name}"})
     if request.method == "POST":
         dm.remove_coach_from_team(kwargs['coach_id'], kwargs['team_id'])
-        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}')
+        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
 
 
 def delete_event_from_team(request, **kwargs):
@@ -234,4 +273,4 @@ def delete_event_from_team(request, **kwargs):
                       {'object': f"Event {event.name} and all associated training sessions"})
     if request.method == "POST":
         dm.remove_event_for_id(kwargs['event_id'])
-        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}')
+        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')

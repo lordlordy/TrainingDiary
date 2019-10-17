@@ -25,6 +25,7 @@ dummy_coaches = [
 ]
 
 dummy_teams = [
+    ['Personal Training'],
     ['Rugby A'],
     ['Cricket A'],
     ['Rugby B'],
@@ -32,47 +33,48 @@ dummy_teams = [
 ]
 
 dummy_team_coach = [
-    [1, 12],
-    [1, 13],
-    [1, 14],
-    [2, 15],
-    [3, 14],
-    [3, 12],
-    [4, 12]
+    [2, 12],
+    [2, 13],
+    [2, 14],
+    [3, 15],
+    [4, 14],
+    [5, 12],
+    [6, 12]
 ]
 
 dummy_team_player = [
-    [1, 1],
-    [1, 2],
-    [1, 3],
-    [1, 4],
-    [1, 5],
     [2, 1],
+    [2, 2],
+    [2, 3],
     [2, 4],
-    [2, 6],
-    [2, 8],
-    [3, 7],
-    [3, 9],
-    [3, 10],
-    [3, 11],
-    [4, 5],
+    [2, 5],
+    [3, 1],
+    [3, 4],
+    [3, 6],
+    [3, 8],
+    [4, 7],
+    [4, 9],
+    [4, 10],
+    [4, 11],
+    [5, 5],
 ]
 
 dummy_events = [
-    ['Main Practice', '17:00:00', '19:00:00', 5.0, '2019-09-30', '2020-03-15', 'weekly', 1],
-    ['2nd Practice', '17:00:00', '19:00:00', 5.1, '2019-10-02', '2020-03-15', 'weekly', 1],
-    ['Match - St Pauls', '09:00:00', '10:30:00', 6.0, '2019-10-05', '2019-10-05', 'one off', 1],
-    ['Match - Eton', '09:00:00', '10:30:00', 6.0, '2019-10-12', '2019-10-12', 'one off', 1],
-    ['Match - Old Boys', '09:00:00', '10:30:00', 5.5, '2019-10-19', '2019-10-19', 'one off', 1],
-    ['Main Practice', '17:00:00', '19:00:00', 5.6, '2019-09-30', '2020-03-15', 'weekly', 2],
-    ['2nd Practice', '17:00:00', '19:00:00', 4.8, '2019-10-01', '2020-03-15', 'weekly', 2],
-    ['Main Practice', '17:00:00', '19:00:00', 6.0, '2019-10-02', '2020-03-15', 'weekly', 3],
-    ['2nd Practice', '17:00:00', '19:00:00', 5.6, '2019-10-04', '2020-03-15', 'weekly', 3],
-    ['Mon Training', '17:00:00', '18:00:00', 5.2, '2019-09-30', '2020-03-15', 'weekly', 4],
-    ['Tue Training', '17:00:00', '18:00:00', 5.9, '2019-10-01', '2020-03-15', 'weekly', 4],
-    ['Wed Training', '17:00:00', '18:00:00', 4.5, '2019-10-02', '2020-03-15', 'weekly', 4],
-    ['Thu Training', '17:00:00', '18:00:00', 5.1, '2019-10-03', '2020-03-15', 'weekly', 4],
-    ['Fri Training', '17:00:00', '18:00:00', 5.7, '2019-10-04', '2020-03-15', 'weekly', 4],
+    ['Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2019-01-01', 'one off', 1],
+    ['Main Practice', '17:00:00', '19:00:00', 5.0, '2019-09-30', '2020-03-15', 'weekly', 2],
+    ['2nd Practice', '17:00:00', '19:00:00', 5.1, '2019-10-02', '2020-03-15', 'weekly', 2],
+    ['Match - St Pauls', '09:00:00', '10:30:00', 6.0, '2019-10-05', '2019-10-05', 'one off', 2],
+    ['Match - Eton', '09:00:00', '10:30:00', 6.0, '2019-10-12', '2019-10-12', 'one off', 2],
+    ['Match - Old Boys', '09:00:00', '10:30:00', 5.5, '2019-10-19', '2019-10-19', 'one off', 2],
+    ['Main Practice', '17:00:00', '19:00:00', 5.6, '2019-09-30', '2020-03-15', 'weekly', 3],
+    ['2nd Practice', '17:00:00', '19:00:00', 4.8, '2019-10-01', '2020-03-15', 'weekly', 3],
+    ['Main Practice', '17:00:00', '19:00:00', 6.0, '2019-10-02', '2020-03-15', 'weekly', 4],
+    ['2nd Practice', '17:00:00', '19:00:00', 5.6, '2019-10-04', '2020-03-15', 'weekly', 4],
+    ['Mon Training', '17:00:00', '18:00:00', 5.2, '2019-09-30', '2020-03-15', 'weekly', 5],
+    ['Tue Training', '17:00:00', '18:00:00', 5.9, '2019-10-01', '2020-03-15', 'weekly', 5],
+    ['Wed Training', '17:00:00', '18:00:00', 4.5, '2019-10-02', '2020-03-15', 'weekly', 5],
+    ['Thu Training', '17:00:00', '18:00:00', 5.1, '2019-10-03', '2020-03-15', 'weekly', 5],
+    ['Fri Training', '17:00:00', '18:00:00', 5.7, '2019-10-04', '2020-03-15', 'weekly', 5],
 ]
 
 db_tables_sql = [
@@ -134,9 +136,20 @@ db_tables_sql = [
     f'''
          CREATE TABLE EventOccurrence(
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             event_id INTEGER REFERENCES Event(id),
+             event_id INTEGER NOT NULL REFERENCES Event(id),
              date Date NOT NULL,
-             tss REAL NOT NULL
+             tss REAL NOT NULL,
+             comments TEXT
+         );
+    ''',
+    f'''
+         CREATE TABLE PlayerEventOccurrence(
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             event_occurrence_id INTEGER NOT NULL REFERENCES EventOccurrence(id),
+             player_id INTEGER NOT NULL REFERENCES Event(id),
+             tss REAL NOT NULL,
+             status varchar(32) NOT NULL,
+             comments TEXT
          );
     '''
 ]
@@ -171,8 +184,6 @@ class DatabaseManager:
             self.__add_new_team_coach(c[0], c[1])
         for e in dummy_events:
             id = self.add_new_event(e[0], e[1], e[2], e[3], e[4], e[5], e[6], e[7])
-            event = self.event_for_id(id)
-            event.generate_occurrences()
 
     def players(self):
         sql = f'''
@@ -281,12 +292,66 @@ class DatabaseManager:
         return self.__events_for_sql(sql)
 
     def event_occurrences(self, event_id):
+
         sql = f'''
-            SELECT id, event_id, date, tss
+            SELECT id, event_id, date, tss, comments
             FROM EventOccurrence
             WHERE event_id={event_id}
         '''
         return self.__event_occurrences_for_sql(sql)
+
+    def event_occurrence_for_id(self, event_occurrence_id):
+
+        sql = f'''
+            SELECT id, event_id, date, tss, comments
+            FROM EventOccurrence
+            WHERE id={event_occurrence_id}
+        '''
+        occurrences = self.__event_occurrences_for_sql(sql)
+        if len(occurrences) > 0:
+            return occurrences[0]
+        else:
+            return []
+
+    def event_occurrence(self, event_id, date):
+        sql = f'''
+            SELECT id, event_id, date, tss, comments
+            FROM EventOccurrence
+            WHERE event_id={event_id} AND date='{date}'
+        '''
+        occurrences = self.__event_occurrences_for_sql(sql)
+        if len(occurrences) > 0:
+            return occurrences[0]
+        else:
+            return None
+
+    def event_occurrences_for_player(self, player_id):
+
+        sql = f'''
+            SELECT id, event_occurrence_id, player_id, tss, status, comments
+            FROM PlayerEventOccurrence
+            WHERE player_id={player_id}
+        '''
+        return self.__player_event_occurrences_for_sql(sql)
+
+    def player_occurrences_for_event_occurrence(self, event_occurrence_id):
+
+        sql = f'''
+            SELECT id, event_occurrence_id, player_id, tss, status, comments
+            FROM PlayerEventOccurrence
+            WHERE event_occurrence_id={event_occurrence_id}
+        '''
+        return self.__player_event_occurrences_for_sql(sql)
+
+    def player_event_occurrence_for_id(self, player_event_occurrence_id):
+        sql = f'''
+            SELECT id, event_occurrence_id, player_id, tss, status, comments
+            FROM PlayerEventOccurrence
+            WHERE id={player_event_occurrence_id}
+        '''
+        occurrences = self.__player_event_occurrences_for_sql(sql)
+        if len(occurrences) > 0:
+            return occurrences[0]
 
     def event_occurrence_exists(self, event_id, date):
         sql = f'''
@@ -295,6 +360,23 @@ class DatabaseManager:
         '''
         occurrences = self.__conn.execute(sql).fetchall()
         return len(occurrences) > 0
+
+    def player_event_occurrence_exists(self, event_occurrence_id, player_id):
+        sql = f'''
+            SELECT id FROM PlayerEventOccurrence
+            WHERE event_occurrence_id={event_occurrence_id} AND player_id='{player_id}'
+        '''
+        occurrences = self.__conn.execute(sql).fetchall()
+        return len(occurrences) > 0
+
+    def update_player_event_occurrence(self, player_event_occurrence_id, tss, status, comments):
+        sql = f'''
+            UPDATE PlayerEventOccurrence
+            SET tss={tss}, status='{status}', comments='{comments}'
+            WHERE id={player_event_occurrence_id}
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
 
     def update_player(self, player_id, first_name, surname, known_as, email, dob):
         self.__update_person(player_id, first_name, surname, known_as, email)
@@ -382,12 +464,25 @@ class DatabaseManager:
         last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return last_id
 
-    def add_new_event_occurrency(self, event_id, date, tss):
+    def add_new_event_occurrence(self, event_id, date, tss, comments):
         sql = f'''
             INSERT INTO EventOccurrence
-            (event_id, date, tss)
+            (event_id, date, tss, comments)
             VALUES
-            ({event_id}, '{date}', {tss})
+            ({event_id}, '{date}', {tss}, '{comments}')
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+        last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
+        return last_id
+
+
+    def add_new_player_event_occurrence(self, event_occurrence_id, player_id, tss, status, comments):
+        sql = f'''
+            INSERT INTO PlayerEventOccurrence
+            (event_occurrence_id, player_id, tss, status, comments)
+            VALUES
+            ({event_occurrence_id}, {player_id}, {tss}, '{status}', '{comments}')
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
@@ -484,6 +579,12 @@ class DatabaseManager:
         events = self.__conn.execute(sql).fetchall()
         from . import EventOccurrence
         return [EventOccurrence(*e) for e in events]
+
+    def __player_event_occurrences_for_sql(self, sql):
+        player_events = self.__conn.execute(sql).fetchall()
+        from . import PlayerEventOccurrence
+        return [PlayerEventOccurrence(*e) for e in player_events]
+
 
 if __name__ == '__main__':
     print('Running')

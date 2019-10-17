@@ -37,17 +37,17 @@ class Player(Person):
 
     @property
     def schedule(self):
-        result = []
-        for t in self.teams:
-            result = result + t.schedule
-        result.sort(key=lambda x: x.date)
-        return result
+        from . import DatabaseManager
+        return DatabaseManager().event_occurrences_for_player(self.id)
 
     @property
     def tss_time_series(self):
-        from . import combine_date_value_arrays
-        return combine_date_value_arrays([ts.tss_time_series for ts in self.teams])
-
+        # the schedule may have two events in a day. Need to combine this schedule so only one item per date
+        date_dict = dict()
+        for s in self.schedule:
+            d = dateutil.parser.parse(s.event_occurrence.date).date()
+            date_dict[d] = date_dict.get(d, 0.0) + s.tss
+        return date_dict.items()
 
     def data_dictionary(self):
         dd = super().data_dictionary()
@@ -76,6 +76,7 @@ class Coach(Person):
             result = result + t.schedule
         result.sort(key=lambda x: x.date)
         return result
+
 
 class Event:
 
@@ -138,12 +139,27 @@ class Event:
         current_date = self.start_date
         if self.frequency == 'weekly':
             while current_date <= self.end_date:
-                if not dm.event_occurrence_exists(self.id, current_date):
-                    dm.add_new_event_occurrency(self.id, current_date, self.estimated_tss)
+                # create event occurrence
+                event_occurrence = dm.event_occurrence(self.id, current_date)
+                if event_occurrence is None:
+                    occurrence_id = dm.add_new_event_occurrence(self.id, current_date, self.estimated_tss, '')
+                else:
+                    # get the occurrence id
+                    occurrence_id = event_occurrence.id
+                for p in self.team.players:
+                    if not dm.player_event_occurrence_exists(occurrence_id, p.id):
+                        dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'scheduled', '')
                 current_date = Event.__increment_by_one_week(current_date)
         else:
-            if not dm.event_occurrence_exists(self.id, current_date):
-                dm.add_new_event_occurrency(self.id, current_date, self.estimated_tss)
+            event_occurrence = dm.event_occurrence(self.id, current_date)
+            if event_occurrence is None:
+                occurrence_id = dm.add_new_event_occurrence(self.id, current_date, self.estimated_tss, '')
+            else:
+                # get the occurrence id
+                occurrence_id = event_occurrence.id
+            for p in self.team.players:
+                if not dm.player_event_occurrence_exists(occurrence_id, p.id):
+                    dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'scheduled', '')
 
     @staticmethod
     def __increment_by_one_week(date_str):
@@ -160,6 +176,7 @@ class EventOccurrence:
         self.event_id = args[1]
         self.date = args[2]
         self.tss = args[3]
+        self.comments = args[4]
 
     @property
     def day(self):
@@ -169,6 +186,47 @@ class EventOccurrence:
     def event(self):
         from . import DatabaseManager
         return DatabaseManager().event_for_id(self.event_id)
+
+    @property
+    def player_occurrences(self):
+        from . import DatabaseManager
+        return DatabaseManager().player_occurrences_for_event_occurrence(self.id)
+
+    @property
+    def number_of_players(self):
+        return len(self.player_occurrences)
+
+
+class PlayerEventOccurrence:
+
+    def __init__(self, *args):
+        self.id = args[0]
+        self.event_occurrence_id = args[1]
+        self.player_id = args[2]
+        self.tss = args[3]
+        self.status = args[4]
+        self.comments = args[5]
+
+    @property
+    def day(self):
+        return dateutil.parser.parse(self.date).strftime('%A')
+
+    @property
+    def event_occurrence(self):
+        from . import DatabaseManager
+        return DatabaseManager().event_occurrence_for_id(self.event_occurrence_id)
+
+    @property
+    def player(self):
+        from . import DatabaseManager
+        p = DatabaseManager().player_for_id(self.player_id)
+        return p
+
+    def data_dictionary(self):
+        return {'id': self.id,
+                'tss': self.tss,
+                'status': self.status,
+                'comments': self.comments}
 
 
 class Team:

@@ -77,3 +77,13 @@ class CoachEditForm(PersonEditForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class PlayerEventOccurrenceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
+        self.fields['id'].widget.attrs['readonly'] = 'readonly'
+        self.fields['tss'] = forms.DecimalField(required=True)
+        self.fields['status'] = forms.CharField(required=True)
+        self.fields['comments'] = forms.CharField(required=False, widget=forms.Textarea())

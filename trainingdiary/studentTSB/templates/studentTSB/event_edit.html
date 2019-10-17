@@ -33,15 +33,19 @@
                            <th>Start</th>
                            <th>End</th>
                            <th>TSS</th>
+                           <th># Players</th>
                        </tr>
                        </thead>
-                       {% for o in event.event_occurrences %}
+                       {% for e in event.event_occurrences %}
                        <tr>
-                           <td>{{ o.date }}</td>
-                           <td>{{ o.day }}</td>
-                           <td>{{ o.event.start_time }}</td>
-                           <td>{{ o.event.end_time }}</td>
-                           <td>{{ o.tss }}</td>
+                           <td>
+                               <a href="{% url 'event_occurrence' e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.date }}</a>
+                           </td>
+                           <td>{{ e.day }}</td>
+                           <td>{{ e.event.start_time }}</td>
+                           <td>{{ e.event.end_time }}</td>
+                           <td>{{ e.tss }}</td>
+                           <td>{{ e.number_of_players }}</td>
                        </tr>
                        {% endfor %}
                    </table>

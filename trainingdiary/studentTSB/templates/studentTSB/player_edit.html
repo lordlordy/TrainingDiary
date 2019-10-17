@@ -45,17 +45,23 @@
                     <th>Start</th>
                     <th>End</th>
                     <th>TSS</th>
+                    <th>TSS est</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 {% for o in player.schedule %}
                 <tr>
-                    <td>{{ o.date }}</td>
-                    <td>{{ o.day }}</td>
-                    <td>{{ o.event.team.name }}</td>
-                    <td>{{ o.event.name }}</td>
-                    <td>{{ o.event.start_time }}</td>
-                    <td>{{ o.event.end_time }}</td>
+                    <td>
+                        <a href="{% url 'player_event_occurrence_from_player_view' o.id player.id %}" class="btn btn-outline-primary btn-block" role="button">{{ o.event_occurrence.date }}</a>
+                    </td>
+                    <td>{{ o.event_occurrence.day }}</td>
+                    <td>{{ o.event_occurrence.event.team.name }}</td>
+                    <td>{{ o.event_occurrence.event.name }}</td>
+                    <td>{{ o.event_occurrence.event.start_time }}</td>
+                    <td>{{ o.event_occurrence.event.end_time }}</td>
                     <td>{{ o.tss }}</td>
+                    <td>{{ o.event_occurrence.tss }}</td>
+                    <td>{{ o.status }}</td>
                 </tr>
                 {% endfor %}
             </table>
