@@ -49,11 +49,7 @@ def tsb_time_series(date_value_pairs):
 
 
 def combine_date_value_arrays(data_value_arrays):
-    """
-
-    :param data_value_arrays: array of date value pairs: [[Date, Double]]
-    :return:
-    """
+    print(data_value_arrays)
     tss_dict = dict()
     for pairs in data_value_arrays:
         for pair in pairs:

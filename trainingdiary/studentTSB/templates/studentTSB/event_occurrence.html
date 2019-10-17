@@ -1,0 +1,74 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+       <div class="col-md-12">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">{{ event_occurrence.event.name }}: {{ event_occurrence.date }}</h2>
+               </div>
+           </div>
+           <div class="row">
+
+               <div class="col-md-12">
+                   <form method="post" id="event_occurrence">
+                       {% csrf_token %}
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Save">
+
+                   <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                       <thead class="thead-light">
+                       <tr>
+                           <th>Name</th>
+                           <th>Estimated TSS</th>
+                           <th>Actual TSS</th>
+                           <th>Status</th>
+                           <th>Comments</th>
+                       </tr>
+                       </thead>
+                       {% for e in event_occurrence.player_occurrences %}
+                       <tr>
+                           <input type="hidden" name="id[]" value="{{ e.id }}">
+                           <td>
+                               <a href="{% url 'player_event_occurrence_view_from_event_view' e.id event_occurrence.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.player.name }}</a>
+                           </td>
+                           <td>{{ e.event_occurrence.tss}}</td>
+                           <td><input class="form-control" type="text" name="tss[]" value="{{e.tss}}"></td>
+                           <td>
+                               <select class="form-control" name="status[]" form="event_occurrence">
+                                   <option value="Scheduled" {% if e.isScheduled %}selected="True" {% endif %}>Scheduled</option>
+                                   <option value="Completed" {% if e.isCompleted %}selected="True" {% endif %}>Completed</option>
+                                   <option value="Authorised Absent" {% if e.isAuthorisedAbsent %}selected="True" {% endif %}>Authorised Absent</option>
+                                   <option value="Absent" {% if e.isAbsent %}selected="True" {% endif %}>Absent</option>
+                               </select>
+                           </td>
+                           <td><input class="form-control" type="text" name="comments[]" value="{{ e.comments}}"></td>
+                       </tr>
+                       {% endfor %}
+                   </table>
+                   </form>
+               </div>
+           </div>
+       </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+   {% block extra_scripts %}
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+$(document).ready(function(){
+$('#frequency').select2();
+});
+
+$('#endtime').pickatime({});
+
+    {% endblock %}

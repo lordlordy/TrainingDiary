@@ -15,8 +15,21 @@
                 <input class="btn btn-outline-primary btn-block" type="submit" value="UPDATE">
             </form>
 
-            <h3 class="border-bottom mb-4">Teams</h3>
             {% if player %}
+            <h3 class="border-bottom mb-4">Personal Training</h3>
+            <a href="{% url 'player_personal_training' player.id%}" class="btn btn-outline-primary btn-block" role="button">Add New Personal Training</a>
+            <h3 class="border-bottom mb-4">Teams</h3>
+                        <form action="{% url 'add_teams_to_player' player.id %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ add_team_form | crispy }}
+                    </div>
+                    <div class="col-md-6">
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Add Teams">
+                    </div>
+                </div>
+            </form>
                  <table class="table table-hover table-bordered table-striped table-sm ">
                 <thead class="thead-light">
                 <tr>
@@ -45,17 +58,23 @@
                     <th>Start</th>
                     <th>End</th>
                     <th>TSS</th>
+                    <th>TSS est</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 {% for o in player.schedule %}
                 <tr>
-                    <td>{{ o.date }}</td>
-                    <td>{{ o.day }}</td>
-                    <td>{{ o.event.team.name }}</td>
-                    <td>{{ o.event.name }}</td>
-                    <td>{{ o.event.start_time }}</td>
-                    <td>{{ o.event.end_time }}</td>
+                    <td>
+                        <a href="{% url 'player_event_occurrence_from_player_view' o.id player.id %}" class="btn btn-outline-primary btn-block" role="button">{{ o.event_occurrence.date }}</a>
+                    </td>
+                    <td>{{ o.event_occurrence.day }}</td>
+                    <td>{{ o.event_occurrence.event.team.name }}</td>
+                    <td>{{ o.event_occurrence.event.name }}</td>
+                    <td>{{ o.event_occurrence.event.start_time }}</td>
+                    <td>{{ o.event_occurrence.event.end_time }}</td>
                     <td>{{ o.tss }}</td>
+                    <td>{{ o.event_occurrence.tss }}</td>
+                    <td>{{ o.status }}</td>
                 </tr>
                 {% endfor %}
             </table>
@@ -86,5 +105,9 @@ $('.datepicker').datepicker({
         });
         $('.dataTables_length').addClass('bs-select');
     });
+
+$(document).ready(function(){
+$('#Teams').select2();
+});
 
 {% endblock %}

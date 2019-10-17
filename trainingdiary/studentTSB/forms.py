@@ -1,13 +1,12 @@
 from django import forms
 from django.forms.widgets import Select, TimeInput, TextInput, HiddenInput, SelectMultiple
+from studentTSB.database import occurrence_states
 
 
 class SelectForm(forms.Form):
 
     def __init__(self, name, choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        print(kwargs)
         self.fields[name] = forms.CharField(required=True, label='',
                                             widget=SelectMultiple(choices=choices, attrs={'class': 'form-control',
                                                                                           'id': name}))
@@ -32,7 +31,6 @@ class EventEditForm(forms.Form):
 
         self.fields['team_id'] = forms.IntegerField(required=False, widget=HiddenInput())
         self.fields['team_id'].widget.attrs['readonly'] = 'readonly'
-
 
         self.fields['name'] = forms.CharField(required=True)
         self.fields['start_time'] = forms.TimeField(required=True, widget=TimeInput())
@@ -77,3 +75,32 @@ class CoachEditForm(PersonEditForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class PlayerEventOccurrenceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
+        self.fields['id'].widget.attrs['readonly'] = 'readonly'
+        self.fields['tss'] = forms.DecimalField(required=True)
+        self.fields['status'] = forms.CharField(required=True,
+                                                widget=Select(choices=[(a, a) for a in occurrence_states],
+                                                              attrs={'class': 'form-control', 'id': 'status'}))
+        self.fields['comments'] = forms.CharField(required=False, widget=forms.Textarea())
+
+
+class PersonalTrainingForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['player_id'] = forms.IntegerField(required=False, widget=HiddenInput())
+
+        self.fields['date'] = forms.DateField(required=True,
+                                              widget=TextInput(attrs={'class': 'datepicker',
+                                                                      'placeholder': 'yyyy-mm-dd'}))
+        self.fields['tss'] = forms.DecimalField(required=False)
+        self.fields['status'] = forms.CharField(required=True,
+                                                widget=Select(choices=[(a, a) for a in occurrence_states],
+                                                              attrs={'class': 'form-control', 'id': 'status'}))
+        self.fields['comments'] = forms.CharField(required=False, widget=forms.Textarea())
