@@ -202,7 +202,10 @@ class EventOccurrence:
 
     @property
     def attendance_percentage(self):
-        return self.number_completed / len(self.player_occurrences)
+        if len(self.player_occurrences) > 0:
+            return self.number_completed / len(self.player_occurrences)
+        else:
+            return 0.0
 
     @property
     def attendance_percentage_str(self):
