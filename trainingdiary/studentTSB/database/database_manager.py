@@ -74,10 +74,27 @@ db_tables_sql = [
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              event_occurrence_id INTEGER NOT NULL REFERENCES EventOccurrence(id),
              player_id INTEGER NOT NULL REFERENCES Event(id),
-             tss REAL NOT NULL,
+             rpe REAL NOT NULL,
+             duration REAL NOT NULL,
              status varchar(32) NOT NULL,
              comments TEXT
          );
+    ''',
+    f'''
+        CREATE TABLE ReadingType(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name varchar(32) NOT NULL,
+            min_value REAL NOT NULL,
+            max_value REAL NOT NULL
+        );
+    ''',
+    f'''
+        CREATE TABLE Reading(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date DATE NOT NULL,
+            type_id INTEGER NOT NULL REFERENCES ReadingType(id),
+            player_id INTEGER NOT NULL REFERENCES Player(id)
+        );
     '''
 ]
 
@@ -260,7 +277,7 @@ class DatabaseManager:
     def event_occurrences_for_player(self, player_id):
 
         sql = f'''
-            SELECT id, event_occurrence_id, player_id, tss, status, comments
+            SELECT id, event_occurrence_id, player_id, rpe, duration, status, comments
             FROM PlayerEventOccurrence
             WHERE player_id={player_id}
         '''
@@ -269,7 +286,7 @@ class DatabaseManager:
     def player_occurrences_for_event_occurrence(self, event_occurrence_id):
 
         sql = f'''
-            SELECT id, event_occurrence_id, player_id, tss, status, comments
+            SELECT id, event_occurrence_id, player_id, rpe, duration, status, comments
             FROM PlayerEventOccurrence
             WHERE event_occurrence_id={event_occurrence_id}
         '''
@@ -277,7 +294,7 @@ class DatabaseManager:
 
     def player_event_occurrence_for_id(self, player_event_occurrence_id):
         sql = f'''
-            SELECT id, event_occurrence_id, player_id, tss, status, comments
+            SELECT id, event_occurrence_id, player_id, rpe, duration, status, comments
             FROM PlayerEventOccurrence
             WHERE id={player_event_occurrence_id}
         '''
@@ -301,10 +318,10 @@ class DatabaseManager:
         occurrences = self.__conn.execute(sql).fetchall()
         return len(occurrences) > 0
 
-    def update_player_event_occurrence(self, player_event_occurrence_id, tss, status, comments):
+    def update_player_event_occurrence(self, player_event_occurrence_id, rpe, duration, status, comments):
         sql = f'''
             UPDATE PlayerEventOccurrence
-            SET tss={tss}, status='{status}', comments='{comments}'
+            SET rpe={rpe}, duration='{duration}', status='{status}', comments='{comments}'
             WHERE id={player_event_occurrence_id}
         '''
         self.__conn.execute(sql)
@@ -409,12 +426,12 @@ class DatabaseManager:
         return last_id
 
 
-    def add_new_player_event_occurrence(self, event_occurrence_id, player_id, tss, status, comments):
+    def add_new_player_event_occurrence(self, event_occurrence_id, player_id, rpe, duration, status, comments):
         sql = f'''
             INSERT INTO PlayerEventOccurrence
-            (event_occurrence_id, player_id, tss, status, comments)
+            (event_occurrence_id, player_id, rpe, duration, status, comments)
             VALUES
-            ({event_occurrence_id}, {player_id}, {tss}, '{status}', '{comments}')
+            ({event_occurrence_id}, {player_id}, {rpe}, '{duration}', '{status}', '{comments}')
         '''
         self.__conn.execute(sql)
         self.__conn.commit()

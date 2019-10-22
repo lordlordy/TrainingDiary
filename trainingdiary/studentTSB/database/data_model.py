@@ -148,7 +148,8 @@ class Event:
                     occurrence_id = event_occurrence.id
                 for p in self.team.players:
                     if not dm.player_event_occurrence_exists(occurrence_id, p.id):
-                        dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'Scheduled', '')
+                        dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
+                                                           'Scheduled', '')
                 current_date = Event.__increment_by_one_week(current_date)
         else:
             event_occurrence = dm.event_occurrence(self.id, current_date)
@@ -159,7 +160,8 @@ class Event:
                 occurrence_id = event_occurrence.id
             for p in self.team.players:
                 if not dm.player_event_occurrence_exists(occurrence_id, p.id):
-                    dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_tss, 'Scheduled', '')
+                    dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
+                                                       'Scheduled', '')
 
     @staticmethod
     def __increment_by_one_week(date_str):
@@ -217,17 +219,27 @@ class EventOccurrence:
         return len(completed)
 
 
-
-
 class PlayerEventOccurrence:
 
     def __init__(self, *args):
         self.id = args[0]
         self.event_occurrence_id = args[1]
         self.player_id = args[2]
-        self.tss = args[3]
-        self.status = args[4]
-        self.comments = args[5]
+        self.rpe = args[3]
+        self.duration = args[4]
+        self.status = args[5]
+        self.comments = args[6]
+
+    @property
+    def tss(self):
+        # the 100/49 factor is to make rpe = 7 threshold. ie 1hr @ rpe 7 == 100 TSS
+        return int(self.hours * self.rpe * self.rpe * (100 / 49))
+
+    @property
+    def hours(self):
+        time = dateutil.parser.parse(self.duration).time()
+        # ignoring any milliseconds
+        return time.hour + time.minute / 60.0 + time.second / 3600.0
 
     @property
     def day(self):
@@ -264,7 +276,8 @@ class PlayerEventOccurrence:
 
     def data_dictionary(self):
         return {'id': self.id,
-                'tss': self.tss,
+                'rpe': self.rpe,
+                'duration': self.duration,
                 'status': self.status,
                 'comments': self.comments}
 

@@ -17,7 +17,8 @@
         {% csrf_token %}
         <div class="form-row">
             <div class="col-md-4">
-                {{ form.tss | as_crispy_field }}
+                {{ form.rpe | as_crispy_field }}
+                {{ form.duration | as_crispy_field }}
                 {{ form.status | as_crispy_field }}
                 <button class="btn btn-outline-primary btn-block" type="submit" name="update-button">Update</button>
             </div>

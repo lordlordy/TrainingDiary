@@ -82,7 +82,8 @@ class PlayerEventOccurrenceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
         self.fields['id'].widget.attrs['readonly'] = 'readonly'
-        self.fields['tss'] = forms.DecimalField(required=True)
+        self.fields['rpe'] = forms.DecimalField(required=True)
+        self.fields['duration'] = forms.TimeField(required=True, widget=TimeInput())
         self.fields['status'] = forms.CharField(required=True,
                                                 widget=Select(choices=[(a, a) for a in occurrence_states],
                                                               attrs={'class': 'form-control', 'id': 'status'}))
@@ -99,7 +100,8 @@ class PersonalTrainingForm(forms.Form):
         self.fields['date'] = forms.DateField(required=True,
                                               widget=TextInput(attrs={'class': 'datepicker',
                                                                       'placeholder': 'yyyy-mm-dd'}))
-        self.fields['tss'] = forms.DecimalField(required=False)
+        self.fields['rpe'] = forms.DecimalField(required=False)
+        self.fields['duration'] = forms.TimeField(required=True, widget=TimeInput())
         self.fields['status'] = forms.CharField(required=True,
                                                 widget=Select(choices=[(a, a) for a in occurrence_states],
                                                               attrs={'class': 'form-control', 'id': 'status'}))
