@@ -232,8 +232,11 @@ class PlayerEventOccurrence:
 
     @property
     def tss(self):
-        # the 100/49 factor is to make rpe = 7 threshold. ie 1hr @ rpe 7 == 100 TSS
-        return int(self.hours * self.rpe * self.rpe * (100 / 49))
+        if self.status == 'Scheduled' or self.status == 'Completed':
+            # the 100/49 factor is to make rpe = 7 threshold. ie 1hr @ rpe 7 == 100 TSS
+            return int(self.hours * self.rpe * self.rpe * (100 / 49))
+        else:
+            return 0
 
     @property
     def hours(self):
