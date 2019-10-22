@@ -1,0 +1,39 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+       <div class="col-md-12">
+           <div class="row">
+               <div class="col-md-12">
+                   <h2 class="border-bottom mb-4">{{ player.name }} Reading {{ reading.reading_type.name }}</h2>
+               </div>
+           </div>
+       </div>
+   </div>
+        <form action="{% url 'reading_update' %}" method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="col-md-4">
+                {{ form | crispy }}
+                <button class="btn btn-outline-primary btn-block" type="submit" name="update-button">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+
+$(document).ready(function(){
+$('#reading_type').select2();
+});
+
+$('.datepicker').datepicker({
+    format: "yyyy-mm-dd",
+});
+
+{% endblock %}

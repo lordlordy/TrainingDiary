@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team, occurrence_states
 from studentTSB.forms import (EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm,
-                              PlayerEventOccurrenceForm, PersonalTrainingForm, ReadingTypeEditForm)
+                              PlayerEventOccurrenceForm, PersonalTrainingForm, ReadingTypeEditForm, ReadingEditForm)
 from datetime import datetime
 
 
@@ -350,10 +350,37 @@ def reading_type_edit(request, **kwargs):
 
 
 def reading_type_update(request):
-    print(request)
     if 'id' in request.POST and request.POST['id'] != '':
         DatabaseManager().update_reading_type(request.POST['id'], request.POST['name'], request.POST['min_value'],
                                               request.POST['max_value'])
     else:
         DatabaseManager().add_new_reading_type(request.POST['name'], request.POST['min_value'], request.POST['max_value'])
     return reading_type_list_view(request)
+
+
+def reading_edit(request, **kwargs):
+    context = dict()
+    if 'id' in kwargs:
+        dm = DatabaseManager()
+        reading = dm.reading_for_id(kwargs['id'])
+        context['reading'] = reading
+        context['event_occurrence'] = reading.player
+        initial_values = reading.data_dictionary()
+    else:
+        initial_values = {'player_id': kwargs['player_id']}
+        context['player'] = DatabaseManager().player_for_id(kwargs['player_id'])
+
+    context['form'] = ReadingEditForm(initial=initial_values)
+
+    return render(request, 'studentTSB/reading_edit.html', context)
+
+
+def reading_update(request):
+    if 'id' in request.POST and request.POST['id'] != '':
+        DatabaseManager().update_reading(request.POST['id'], request.POST['date'], request.POST['value'],
+                                         request.POST['name'], request.POST['player_id'])
+    else:
+        DatabaseManager().add_new_reading(request.POST['date'], request.POST['value'], request.POST['name'],
+                                          request.POST['player_id'])
+    return reading_type_list_view(request)
+

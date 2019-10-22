@@ -94,7 +94,7 @@ db_tables_sql = [
             date DATE NOT NULL,
             value REAL NOT NULL,
             type_id INTEGER NOT NULL REFERENCES ReadingType(id),
-            player_id INTEGER NOT NULL REFERENCES Player(id)
+            player_event_occurrence_id INTEGER NOT NULL REFERENCES PlayerEventOccurrence(id)
         );
     '''
 ]
@@ -138,9 +138,10 @@ class DatabaseManager:
     def create_happiness_reading(self):
         self.add_new_reading_type('happiness', 0, 3)
 
-    def add_value_column_to_reading(self):
+    def update_reading_table(self):
         sql = f'''
-            ALTER Table Reading ADD COLUMN value REAL NOT NULL DEFAULT 0.0
+            ALTER Table Reading 
+            ADD COLUMN player_event_occurrence_id  INTEGER NOT NULL REFERENCES PlayerEventOccurrence(id)
         '''
         self.__conn.execute(sql)
         self.__conn.commit()

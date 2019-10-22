@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import Select, TimeInput, TextInput, HiddenInput, SelectMultiple
-from studentTSB.database import occurrence_states
+from studentTSB.database import occurrence_states, DatabaseManager
 
 
 class SelectForm(forms.Form):
@@ -123,5 +123,11 @@ class ReadingEditForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
         self.fields['id'].widget.attrs['readonly'] = 'readonly'
-        self.fields['name'] = forms.CharField(required=True)
+        self.fields['player_id'] = forms.IntegerField(required=False, widget=HiddenInput())
+        self.fields['player_id'].widget.attrs['readonly'] = 'readonly'
+        reading_types = DatabaseManager().reading_types()
+        self.fields['name'] = forms.CharField(required=True,
+                                              widget=Select(choices=[(r.id, r.name) for r in reading_types],
+                                                            attrs={'class': 'form-control', 'id': 'reading_type'}))
+
         self.fields['value'] = forms.DecimalField(required=True)

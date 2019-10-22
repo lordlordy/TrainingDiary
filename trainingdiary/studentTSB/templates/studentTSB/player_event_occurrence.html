@@ -17,12 +17,12 @@
         {% csrf_token %}
         <div class="form-row">
             <div class="col-md-6">
-                {{ form| crispy }}
+                {{ form | crispy }}
                 <button class="btn btn-outline-primary btn-block" type="submit" name="update-button">Update</button>
             </div>
             <div class="col-md-6">
                 <h4 class="border-bottom mb-2">Readings</h4>
-                <a href="" class="btn btn-outline-primary btn-block" role="button">Add Reading</a>
+                <a href="{% url 'reading_new' player_event_occurrence.player.id %}" class="btn btn-outline-primary btn-block" role="button">Add Reading</a>
                 <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
                     <thead class="thead-light">
                     <tr>
@@ -30,12 +30,14 @@
                     <th>Value</th>
                     </tr>
                     </thead>
+                    {% for r in player_event_occurrence.readings %}
                     <tr>
                         <td>
-                        <a href="" class="btn btn-outline-primary btn-block" role="button">TEMP</a>
+                        <a href="{% url 'reading_edit' r.id %}" class="btn btn-outline-primary btn-block" role="button">{{ r.reading_type.name }}</a>
                         </td>
-                        <td>12345.6789</td>
+                        <td>{{ r.value }}</td>
                     </tr>
+                    {% endfor %}
                 </table>
 
             </div>

@@ -276,6 +276,10 @@ class PlayerEventOccurrence:
     def isAbsent(self):
         return self.status == 'Absent'
 
+    @property
+    def reading(self):
+        from . import DatabaseManager
+        return DatabaseManager().readings_for_player(self.id)
 
     def data_dictionary(self):
         return {'id': self.id,
@@ -354,6 +358,16 @@ class Reading:
         self.value = args[2]
         self.type_id = args[3]
         self.player_id = args[4]
+
+    @property
+    def reading_type(self):
+        from . import DatabaseManager
+        return DatabaseManager().reading_type_for_id(self.type_id)
+
+    @property
+    def player(self):
+        from . import DatabaseManager
+        return DatabaseManager().player_for_id(self.player_id)
 
     def data_dictionary(self):
         return {'id': self.id,
