@@ -364,11 +364,11 @@ def reading_edit(request, **kwargs):
         dm = DatabaseManager()
         reading = dm.reading_for_id(kwargs['id'])
         context['reading'] = reading
-        context['event_occurrence'] = reading.player
+        context['event_occurrence'] = reading.player_event_occurrence
         initial_values = reading.data_dictionary()
     else:
-        initial_values = {'player_id': kwargs['player_id']}
-        context['player'] = DatabaseManager().player_for_id(kwargs['player_id'])
+        initial_values = {'player_event_occurrence_id': kwargs['player_event_occurrence_id']}
+        context['player_event_occurrence'] = DatabaseManager().player_event_occurrence_for_id(kwargs['player_event_occurrence_id'])
 
     context['form'] = ReadingEditForm(initial=initial_values)
 
@@ -378,9 +378,9 @@ def reading_edit(request, **kwargs):
 def reading_update(request):
     if 'id' in request.POST and request.POST['id'] != '':
         DatabaseManager().update_reading(request.POST['id'], request.POST['date'], request.POST['value'],
-                                         request.POST['name'], request.POST['player_id'])
+                                         request.POST['name'], request.POST['player_event_occurrence_id'])
     else:
         DatabaseManager().add_new_reading(request.POST['date'], request.POST['value'], request.POST['name'],
-                                          request.POST['player_id'])
+                                          request.POST['player_event_occurrence_id'])
     return reading_type_list_view(request)
 

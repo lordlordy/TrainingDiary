@@ -23,7 +23,7 @@ urlpatterns = [
     path('players/event/occurrence/<int:id>/<int:player_id>/', player_event_occurrence_view_from_player_view,
          name='player_event_occurrence_from_player_view'),
     path('players/reading/edit/<int:id>/', reading_edit, name='reading_edit'),
-    path('players/reading/new/<int:player_id>/', reading_edit, name='reading_new'),
+    path('players/reading/new/<int:player_event_occurrence_id>/', reading_edit, name='reading_new'),
     path('players/reading/update/', reading_update, name='reading_update'),
     path('coaches/list/', coach_list_view, name='coach_list'),
     path('coaches/edit/<int:id>/', coach_edit_view, name='coach_edit'),

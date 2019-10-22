@@ -91,7 +91,6 @@ db_tables_sql = [
     f'''
         CREATE TABLE Reading(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date DATE NOT NULL,
             value REAL NOT NULL,
             type_id INTEGER NOT NULL REFERENCES ReadingType(id),
             player_event_occurrence_id INTEGER NOT NULL REFERENCES PlayerEventOccurrence(id)
@@ -120,6 +119,7 @@ class DatabaseManager:
         team_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         self.add_new_event('Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2099-12-31', 'Adhoc',
                            team_id)
+        self.create_happiness_reading()
 
     def create_dummy_data(self):
         for p in dummy_players:
@@ -137,14 +137,6 @@ class DatabaseManager:
 
     def create_happiness_reading(self):
         self.add_new_reading_type('happiness', 0, 3)
-
-    def update_reading_table(self):
-        sql = f'''
-            ALTER Table Reading 
-            ADD COLUMN player_event_occurrence_id  INTEGER NOT NULL REFERENCES PlayerEventOccurrence(id)
-        '''
-        self.__conn.execute(sql)
-        self.__conn.commit()
 
     def players(self):
         sql = f'''
@@ -512,23 +504,23 @@ class DatabaseManager:
         if len(types) > 0:
             return types[0]
 
-    def add_new_reading(self, date, value, type_id, player_id):
+    def add_new_reading(self, value, type_id, player_event_occurrence_id):
         sql = f'''
             INSERT INTO Reading
-            (date, value, type_id, player_id)
+            (value, type_id, player_event_occurrence_id)
             VALUES
-            ('{date}', {value}, min_value={type_id}, max_value={player_id})
+            (, {value}, {type_id}, {player_event_occurrence_id})
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
         reading_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return reading_id
 
-    def update_reading(self, reading_id, date, value, type_id, player_id):
+    def update_reading(self, reading_id, value, type_id, player_event_occurrence_id):
         sql = f'''
             UPDATE Reading
             SET
-            date='{date}', value={value}, type_id={type_id}, player_id={player_id}
+            value={value}, type_id={type_id}, player_event_occurrence_id={player_event_occurrence_id}
             WHERE reading_id={reading_id}
         '''
         self.__conn.execute(sql)
@@ -536,7 +528,7 @@ class DatabaseManager:
 
     def readings_for_player(self, player_id):
         sql = f'''
-            SELECT id, date, value, type_id, player_id FROM Reading WHERE player_id={player_id}
+            SELECT id, value, type_id, player_event_occurrence_id FROM Reading WHERE player_id={player_id}
         '''
         return self.__readings_from_sql(sql)
 

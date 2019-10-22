@@ -123,8 +123,8 @@ class ReadingEditForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
         self.fields['id'].widget.attrs['readonly'] = 'readonly'
-        self.fields['player_id'] = forms.IntegerField(required=False, widget=HiddenInput())
-        self.fields['player_id'].widget.attrs['readonly'] = 'readonly'
+        self.fields['player_event_occurrence_id'] = forms.IntegerField(required=False, widget=HiddenInput())
+        self.fields['player_event_occurrence_id'].widget.attrs['readonly'] = 'readonly'
         reading_types = DatabaseManager().reading_types()
         self.fields['name'] = forms.CharField(required=True,
                                               widget=Select(choices=[(r.id, r.name) for r in reading_types],

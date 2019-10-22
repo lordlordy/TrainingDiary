@@ -354,10 +354,9 @@ class Reading:
 
     def __init__(self, *args):
         self.id = args[0]
-        self.date_str = args[1]
         self.value = args[2]
         self.type_id = args[3]
-        self.player_id = args[4]
+        self.player_event_occurrence_id = args[4]
 
     @property
     def reading_type(self):
@@ -365,13 +364,12 @@ class Reading:
         return DatabaseManager().reading_type_for_id(self.type_id)
 
     @property
-    def player(self):
+    def player_event_occurrence(self):
         from . import DatabaseManager
-        return DatabaseManager().player_for_id(self.player_id)
+        return DatabaseManager().player_event_occurrence_for_id(self.player_event_occurrence_id)
 
     def data_dictionary(self):
         return {'id': self.id,
-                'date_str': self.date_str,
                 'value': self.value,
                 'type_id': self.type_id,
-                'player_id': self.player_id}
+                'player_event_occurrence_id': self.player_event_occurrence_id}
