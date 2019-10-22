@@ -106,3 +106,14 @@ class PersonalTrainingForm(forms.Form):
                                                 widget=Select(choices=[(a, a) for a in occurrence_states],
                                                               attrs={'class': 'form-control', 'id': 'status'}))
         self.fields['comments'] = forms.CharField(required=False, widget=forms.Textarea())
+
+
+class ReadingTypeEditForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
+        # self.fields['id'] = forms.IntegerField(required=False)
+        self.fields['id'].widget.attrs['readonly'] = 'readonly'
+        self.fields['name'] = forms.CharField(required=True)
+        self.fields['min_value'] = forms.DecimalField(required=True)
+        self.fields['max_value'] = forms.DecimalField(required=True)

@@ -329,3 +329,27 @@ class Team:
     def data_dictionary(self):
         return {'id': self.id,
                 'name': self.name}
+
+
+class ReadingType:
+
+    def __init__(self, *args):
+        self.id = args[0]
+        self.name = args[1]
+        self.min_value = args[2]
+        self.max_value = args[3]
+
+    def data_dictionary(self):
+        return {'id': self.id,
+                'name': self.name,
+                'min_value': self.min_value,
+                'max_value': self.max_value}
+
+
+class Reading:
+
+    def __init__(self, *args):
+        self.id = args[0]
+        self.date_str = args[1]
+        self.type_id = args[2]
+        self.player_id = args[3]

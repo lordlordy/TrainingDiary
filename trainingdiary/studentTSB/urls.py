@@ -5,7 +5,8 @@ from studentTSB.views import (home_view, player_list_view, coach_list_view, even
                               event_generate_view, event_occurrence_view, player_event_occurrence_view_from_player_view,
                               player_event_occurrence_view_from_event_view, add_teams_to_player_view,
                               add_players_to_team_view, add_coaches_to_team_view, delete_player_from_team,
-                              delete_coach_from_team, delete_event_from_team, player_personal_training_view)
+                              delete_coach_from_team, delete_event_from_team, player_personal_training_view,
+                              reading_type_list_view, reading_type_edit, reading_type_update)
 
 from django.contrib.auth.decorators import login_required
 
@@ -42,4 +43,9 @@ urlpatterns = [
     path('teams/remove/event/<int:team_id>/<int:event_id>/', delete_event_from_team, name='event_remove'),
     path('teams/update/', team_update_view, name='team_update'),
     path('teams/new/', new_team_view, name='team_new'),
+    path('admin/reading_types/list/', reading_type_list_view, name='reading_types'),
+    path('admin/reading_types/edit/<int:id>/', reading_type_edit, name='reading_type_edit'),
+    path('admin/reading_types/update/', reading_type_update, name='reading_type_update'),
+    path('admin/reading_types/new/', reading_type_edit, name='reading_type_new'),
+
 ]

@@ -2,12 +2,18 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team, occurrence_states
 from studentTSB.forms import (EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm,
-                              PlayerEventOccurrenceForm, PersonalTrainingForm)
+                              PlayerEventOccurrenceForm, PersonalTrainingForm, ReadingTypeEditForm)
 from datetime import datetime
 
 
 def home_view(request):
     return render(request, 'studentTSB/home.html')
+
+
+def reading_type_list_view(request):
+    reading_types = DatabaseManager().reading_types()
+    print(reading_types)
+    return render(request, 'studentTSB/reading_types_list.html', {'reading_types': reading_types})
 
 
 def player_list_view(request):
@@ -227,16 +233,17 @@ def player_personal_training_view(request, **kwargs):
         # with id 1
         dm = DatabaseManager()
         # save the event
-        id = dm.add_new_event_occurrence(1, request.POST['date'], 0, '')
+        o_id = dm.add_new_event_occurrence(1, request.POST['date'], 0, '')
         # then the player occurrence
-        dm.add_new_player_event_occurrence(id, request.POST['player_id'], request.POST['rpe'], request.POST['duration'],
+        dm.add_new_player_event_occurrence(o_id, request.POST['player_id'], request.POST['rpe'], request.POST['duration'],
                                            request.POST['status'], request.POST['comments'])
         return HttpResponseRedirect(f'/studentTSB/players/edit/{request.POST["player_id"]}/')
     else:
         player = DatabaseManager().player_for_id(kwargs['player_id'])
         initial_values = {"player_id": player.id}
-        return render(request, 'studentTSB/player_personal_training.html', {'form': PersonalTrainingForm(initial=initial_values),
-                                                                            'player': player})
+        return render(request, 'studentTSB/player_personal_training.html',
+                      {'form': PersonalTrainingForm(initial=initial_values),
+                       'player': player})
 
 
 def add_teams_to_coach_view(request, **kwargs):
@@ -325,3 +332,28 @@ def delete_event_from_team(request, **kwargs):
     if request.method == "POST":
         dm.remove_event_for_id(kwargs['event_id'])
         return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
+
+
+def reading_type_edit(request, **kwargs):
+    context = dict()
+    if 'id' in kwargs:
+        dm = DatabaseManager()
+        reading_type = dm.reading_type_for_id(kwargs['id'])
+        context['reading_type'] = reading_type
+        initial_values = reading_type.data_dictionary()
+    else:
+        initial_values = dict()
+
+    context['form'] = ReadingTypeEditForm(initial=initial_values)
+
+    return render(request, 'studentTSB/reading_type_edit.html', context)
+
+
+def reading_type_update(request):
+    print(request)
+    if 'id' in request.POST and request.POST['id'] != '':
+        DatabaseManager().update_reading_type(request.POST['id'], request.POST['name'], request.POST['min_value'],
+                                              request.POST['max_value'])
+    else:
+        DatabaseManager().add_new_reading_type(request.POST['name'], request.POST['min_value'], request.POST['max_value'])
+    return reading_type_list_view(request)

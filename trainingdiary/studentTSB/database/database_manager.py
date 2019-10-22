@@ -134,6 +134,9 @@ class DatabaseManager:
         for e in dummy_events:
             id = self.add_new_event(e[0], e[1], e[2], e[3], e[4], e[5], e[6], e[7])
 
+    def create_happiness_reading(self):
+        self.add_new_reading_type('happiness', 0, 3)
+
     def players(self):
         sql = f'''
             SELECT Player.id, Person.first_name, Person.surname, Person.known_as, Person.email, Player.date_of_birth
@@ -389,6 +392,8 @@ class DatabaseManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
+
+
     def add_new_team(self, team_name):
         team_sql = f'''
             INSERT INTO Team
@@ -462,6 +467,70 @@ class DatabaseManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
+    def add_new_reading_type(self, name, min_value, max_value):
+        sql = f'''
+            INSERT INTO ReadingType
+            (name, min_value, max_value)
+            VALUES
+            ('{name}', {min_value}, {max_value})
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+        type_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
+        return type_id
+
+    def update_reading_type(self, type_id, name, min_value, max_value):
+        sql = f'''
+            UPDATE ReadingType
+            SET
+            name='{name}', min_value={min_value}, max_value={max_value}
+            WHERE id={type_id}
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def reading_types(self):
+        sql = f'''
+            SELECT id, name, min_value, max_value FROM ReadingType
+        '''
+        return self.__reading_types_from_sql(sql)
+
+    def reading_type_for_id(self, reading_type_id):
+        sql = f'''
+            SELECT id, name, min_value, max_value FROM ReadingType WHERE id={reading_type_id}
+        '''
+        types = self.__reading_types_from_sql(sql)
+        if len(types) > 0:
+            return types[0]
+
+    def add_new_reading(self, date, type_id, player_id):
+        sql = f'''
+            INSERT INTO Reading
+            (date, type_id, player_id)
+            VALUES
+            ('{date}', min_value={type_id}, max_value={player_id})
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+        reading_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
+        return reading_id
+
+    def update_reading(self, reading_id, date, type_id, player_id):
+        sql = f'''
+            UPDATE Reading
+            SET
+            date='{date}', type_id={type_id}, player_id={player_id}
+            WHERE reading_id={reading_id}
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def readings_for_player(self, player_id):
+        sql = f'''
+            SELECT id, date, type_id, player_id FROM Reading WHERE player_id={player_id}
+        '''
+        return self.__readings_from_sql(sql)
+
     def __add_new_team_player(self, team_id, player_id):
         sql = f'''
             INSERT INTO TeamPlayer
@@ -503,6 +572,16 @@ class DatabaseManager:
         self.__conn.commit()
         last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return last_id
+
+    def __readings_from_sql(self, sql):
+        readings = self.__conn.execute(sql).fetchall()
+        from . import Reading
+        return [Reading(*r) for r in readings]
+
+    def __reading_types_from_sql(self, sql):
+        types = self.__conn.execute(sql).fetchall()
+        from . import ReadingType
+        return [ReadingType(*t) for t in types]
 
     def __players_from_sql(self, sql):
         players = self.__conn.execute(sql).fetchall()
