@@ -351,5 +351,13 @@ class Reading:
     def __init__(self, *args):
         self.id = args[0]
         self.date_str = args[1]
-        self.type_id = args[2]
-        self.player_id = args[3]
+        self.value = args[2]
+        self.type_id = args[3]
+        self.player_id = args[4]
+
+    def data_dictionary(self):
+        return {'id': self.id,
+                'date_str': self.date_str,
+                'value': self.value,
+                'type_id': self.type_id,
+                'player_id': self.player_id}

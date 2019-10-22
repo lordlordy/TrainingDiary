@@ -92,6 +92,7 @@ db_tables_sql = [
         CREATE TABLE Reading(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date DATE NOT NULL,
+            value REAL NOT NULL,
             type_id INTEGER NOT NULL REFERENCES ReadingType(id),
             player_id INTEGER NOT NULL REFERENCES Player(id)
         );
@@ -136,6 +137,13 @@ class DatabaseManager:
 
     def create_happiness_reading(self):
         self.add_new_reading_type('happiness', 0, 3)
+
+    def add_value_column_to_reading(self):
+        sql = f'''
+            ALTER Table Reading ADD COLUMN value REAL NOT NULL DEFAULT 0.0
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
 
     def players(self):
         sql = f'''
@@ -503,23 +511,23 @@ class DatabaseManager:
         if len(types) > 0:
             return types[0]
 
-    def add_new_reading(self, date, type_id, player_id):
+    def add_new_reading(self, date, value, type_id, player_id):
         sql = f'''
             INSERT INTO Reading
-            (date, type_id, player_id)
+            (date, value, type_id, player_id)
             VALUES
-            ('{date}', min_value={type_id}, max_value={player_id})
+            ('{date}', {value}, min_value={type_id}, max_value={player_id})
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
         reading_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return reading_id
 
-    def update_reading(self, reading_id, date, type_id, player_id):
+    def update_reading(self, reading_id, date, value, type_id, player_id):
         sql = f'''
             UPDATE Reading
             SET
-            date='{date}', type_id={type_id}, player_id={player_id}
+            date='{date}', value={value}, type_id={type_id}, player_id={player_id}
             WHERE reading_id={reading_id}
         '''
         self.__conn.execute(sql)
@@ -527,7 +535,7 @@ class DatabaseManager:
 
     def readings_for_player(self, player_id):
         sql = f'''
-            SELECT id, date, type_id, player_id FROM Reading WHERE player_id={player_id}
+            SELECT id, date, value, type_id, player_id FROM Reading WHERE player_id={player_id}
         '''
         return self.__readings_from_sql(sql)
 
