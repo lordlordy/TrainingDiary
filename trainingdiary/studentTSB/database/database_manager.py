@@ -509,7 +509,7 @@ class DatabaseManager:
             INSERT INTO Reading
             (value, type_id, player_event_occurrence_id)
             VALUES
-            (, {value}, {type_id}, {player_event_occurrence_id})
+            ({value}, {type_id}, {player_event_occurrence_id})
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
@@ -521,16 +521,30 @@ class DatabaseManager:
             UPDATE Reading
             SET
             value={value}, type_id={type_id}, player_event_occurrence_id={player_event_occurrence_id}
-            WHERE reading_id={reading_id}
+            WHERE id={reading_id}
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
 
-    def readings_for_player(self, player_id):
+    def delete_reading(self, reading_id):
+        sql = f'''DELETE FROM Reading where id={reading_id}'''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def readings_for_player(self, player_event_occurrence_id):
         sql = f'''
-            SELECT id, value, type_id, player_event_occurrence_id FROM Reading WHERE player_id={player_id}
+            SELECT id, value, type_id, player_event_occurrence_id FROM Reading 
+            WHERE player_event_occurrence_id={player_event_occurrence_id}
         '''
         return self.__readings_from_sql(sql)
+
+    def reading_for_id(self, reading_id):
+        sql = f'''
+            SELECT id, value, type_id, player_event_occurrence_id FROM READING WHERE id={reading_id}
+        '''
+        reading = self.__readings_from_sql(sql)
+        if len(reading) > 0:
+            return reading[0]
 
     def __add_new_team_player(self, team_id, player_id):
         sql = f'''

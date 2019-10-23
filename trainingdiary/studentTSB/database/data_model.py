@@ -277,7 +277,7 @@ class PlayerEventOccurrence:
         return self.status == 'Absent'
 
     @property
-    def reading(self):
+    def readings(self):
         from . import DatabaseManager
         return DatabaseManager().readings_for_player(self.id)
 
@@ -354,9 +354,12 @@ class Reading:
 
     def __init__(self, *args):
         self.id = args[0]
-        self.value = args[2]
-        self.type_id = args[3]
-        self.player_event_occurrence_id = args[4]
+        self.value = args[1]
+        self.type_id = args[2]
+        self.player_event_occurrence_id = args[3]
+
+    def __str__(self):
+        return f'{self.reading_type.name}: {self.value} for {self.player_event_occurrence.player.name}'
 
     @property
     def reading_type(self):

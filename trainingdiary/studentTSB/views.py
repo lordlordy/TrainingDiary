@@ -377,10 +377,28 @@ def reading_edit(request, **kwargs):
 
 def reading_update(request):
     if 'id' in request.POST and request.POST['id'] != '':
-        DatabaseManager().update_reading(request.POST['id'], request.POST['date'], request.POST['value'],
-                                         request.POST['name'], request.POST['player_event_occurrence_id'])
+        reading_id = request.POST['id']
+        DatabaseManager().update_reading(request.POST['id'], request.POST['value'], request.POST['name'],
+                                         request.POST['player_event_occurrence_id'])
     else:
-        DatabaseManager().add_new_reading(request.POST['date'], request.POST['value'], request.POST['name'],
-                                          request.POST['player_event_occurrence_id'])
-    return reading_type_list_view(request)
+        reading_id = DatabaseManager().add_new_reading(request.POST['value'], request.POST['name'],
+                                                       request.POST['player_event_occurrence_id'])
+    reading = DatabaseManager().reading_for_id(reading_id)
 
+    o_id = reading.player_event_occurrence.id
+    player_id = reading.player_event_occurrence.player.id
+    return HttpResponseRedirect(f'/studentTSB/players/event/occurrence/{o_id}/{player_id}/')
+
+
+def delete_reading(request, **kwargs):
+    dm = DatabaseManager()
+    if request.method == "GET":
+        reading = dm.reading_for_id(kwargs['id'])
+        return render(request, 'studentTSB/confirm_delete.html',
+                      {'object': f"Reading: {reading}"})
+    if request.method == "POST":
+        reading = dm.reading_for_id(kwargs['id'])
+        o_id = reading.player_event_occurrence.id
+        player_id = reading.player_event_occurrence.player.id
+        dm.delete_reading(kwargs['id'])
+        return HttpResponseRedirect(f'/studentTSB/players/event/occurrence/{o_id}/{player_id}/')

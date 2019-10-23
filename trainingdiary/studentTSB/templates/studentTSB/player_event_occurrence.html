@@ -27,7 +27,8 @@
                     <thead class="thead-light">
                     <tr>
                         <th>Reading</th>
-                    <th>Value</th>
+                        <th>Value</th>
+                        <th></th>
                     </tr>
                     </thead>
                     {% for r in player_event_occurrence.readings %}
@@ -36,6 +37,9 @@
                         <a href="{% url 'reading_edit' r.id %}" class="btn btn-outline-primary btn-block" role="button">{{ r.reading_type.name }}</a>
                         </td>
                         <td>{{ r.value }}</td>
+                        <td>
+                        <a href="{% url 'delete_reading' r.id %}" class="btn btn-outline-danger btn-block" role="button">Delete</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>
