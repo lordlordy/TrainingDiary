@@ -8,7 +8,7 @@
        <div class="col-md-12">
            <div class="row">
                <div class="col-md-12">
-                   <h2 class="border-bottom mb-4">Event for {{ team.name }}</h2>
+                   <h2 class="border-bottom mb-4">Event: {{event.name}}</h2>
                </div>
            </div>
            <div class="row">
@@ -21,6 +21,37 @@
                </div>
                {% if event %}
                <div class="col-md-6">
+                   <h4 class="border-bottom mb-1 text-center">Teams</h4>
+                   <form action="{% url 'event_add_coaches' event.id %}" method="post">
+                       {% csrf_token %}
+                       <div class="row">
+                           <div class="col-md-6">
+                               {{ select_team_form | crispy }}
+                           </div>
+                           <div class="col-md-6">
+                               <input class="btn btn-outline-primary btn-block" type="submit" value="Add Teams">
+                           </div>
+                       </div>
+                   </form>
+                   <table id="teamTable" class="table table-hover table-bordered table-striped table-sm ">
+                       <thead class="thead-light">
+                       <tr>
+                           <th>Team</th>
+                           <th></th>
+                       </tr>
+                       </thead>
+                       {% for t in event.teams %}
+                       <tr>
+                           <td>{{ t.name }}</td>
+                           <td>
+                        <a href="" class="btn btn-outline-danger btn-block" role="button">Delete</a>
+                        </td>
+                       </tr>
+                       {% endfor %}
+                   </table>
+
+                   <h4 class="border-bottom mb-1 text-center">Occurrences</h4>
+
                    <form action="{% url 'event_generate' event.id %}" method="post">
                        {% csrf_token %}
                        <input class="btn btn-outline-primary btn-block" type="submit" value="Generate Occurrences">
@@ -30,6 +61,7 @@
                        <tr>
                            <th>Date</th>
                            <th>Day</th>
+                           <th>Team</th>
                            <th>Start</th>
                            <th>End</th>
                            <th>TSS</th>
@@ -43,6 +75,7 @@
                                <a href="{% url 'event_occurrence' e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.date }}</a>
                            </td>
                            <td>{{ e.day }}</td>
+                           <td>{{ e.team.name }}</td>
                            <td>{{ e.event.start_time }}</td>
                            <td>{{ e.event.end_time }}</td>
                            <td>{{ e.tss }}</td>
@@ -70,6 +103,10 @@ $('.datepicker').datepicker({
 
 $(document).ready(function(){
 $('#frequency').select2();
+});
+
+$(document).ready(function(){
+$('#Teams').select2();
 });
 
 $('#endtime').pickatime({});

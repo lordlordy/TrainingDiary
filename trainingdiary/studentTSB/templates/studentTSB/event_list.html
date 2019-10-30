@@ -37,7 +37,7 @@
                 {% for e in events %}
                 <tr>
                     <td>
-                        <a href="{% url 'event_edit' e.team_id e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.name }}</a>
+                        <a href="{% url 'event_edit' e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.name }}</a>
                     </td>
                     <td>{{ e.team }}</td>
                     <td>{{ e.start_time }}</td>

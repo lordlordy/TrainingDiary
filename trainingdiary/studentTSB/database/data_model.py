@@ -90,12 +90,11 @@ class Event:
         self.end_date = args[6]
         self.frequency = args[7]
         self.duration = dateutil.parser.parse(self.end_time) - dateutil.parser.parse(self.start_time)
-        self.team_id = args[8]
 
     @property
-    def team(self):
+    def teams(self):
         from . import DatabaseManager
-        return DatabaseManager().team_for_id(self.team_id)
+        return DatabaseManager().teams_for_event(self.id)
 
     @property
     def estimated_tss(self):
@@ -125,13 +124,11 @@ class Event:
                 'estimated_rpe': self.estimated_rpe,
                 'start_date': self.start_date,
                 'end_date': self.end_date,
-                'frequency': self.frequency,
-                'team_id': self.team_id}
+                'frequency': self.frequency}
 
     @staticmethod
     def db_columns():
-        return ['id', 'name', 'start_time', 'end_time', 'estimated_rpe', 'start_date', 'end_date', 'frequency',
-                'team_id']
+        return ['id', 'name', 'start_time', 'end_time', 'estimated_rpe', 'start_date', 'end_date', 'frequency']
 
     def generate_occurrences(self):
         from . import DatabaseManager
@@ -139,29 +136,32 @@ class Event:
         current_date = self.start_date
         if self.frequency == 'weekly':
             while current_date <= self.end_date:
-                # create event occurrence
-                event_occurrence = dm.event_occurrence(self.id, current_date)
-                if event_occurrence is None:
-                    occurrence_id = dm.add_new_event_occurrence(self.id, current_date, self.estimated_tss, '')
+                for t in self.teams:
+                    # create team event occurrence
+                    team_event_occurrence = dm.team_event_occurrence(self.id, t.id, current_date)
+                    if team_event_occurrence is None:
+                        occurrence_id = dm.add_new_team_event_occurrence(self.id, t.id, current_date,
+                                                                         self.estimated_tss, '')
+                    else:
+                        # get the occurrence id
+                        occurrence_id = team_event_occurrence.id
+                    for p in t.players:
+                        if not dm.player_event_occurrence_exists(occurrence_id, p.id):
+                            dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
+                                                               'Scheduled', '')
+                current_date = Event.__increment_by_one_week(current_date)
+        else:
+            for t in self.teams:
+                team_event_occurrence = dm.team_event_occurrence(self.id, t.id, current_date)
+                if team_event_occurrence is None:
+                    occurrence_id = dm.add_new_team_event_occurrence(self.id, t.id, current_date, self.estimated_tss, '')
                 else:
                     # get the occurrence id
-                    occurrence_id = event_occurrence.id
+                    occurrence_id = team_event_occurrence.id
                 for p in self.team.players:
                     if not dm.player_event_occurrence_exists(occurrence_id, p.id):
                         dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
                                                            'Scheduled', '')
-                current_date = Event.__increment_by_one_week(current_date)
-        else:
-            event_occurrence = dm.event_occurrence(self.id, current_date)
-            if event_occurrence is None:
-                occurrence_id = dm.add_new_event_occurrence(self.id, current_date, self.estimated_tss, '')
-            else:
-                # get the occurrence id
-                occurrence_id = event_occurrence.id
-            for p in self.team.players:
-                if not dm.player_event_occurrence_exists(occurrence_id, p.id):
-                    dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
-                                                       'Scheduled', '')
 
     @staticmethod
     def __increment_by_one_week(date_str):
@@ -171,14 +171,20 @@ class Event:
         return str(date.date())
 
 
-class EventOccurrence:
+class TeamEventOccurrence:
 
     def __init__(self, *args):
         self.id = args[0]
         self.event_id = args[1]
-        self.date = args[2]
-        self.tss = args[3]
-        self.comments = args[4]
+        self.team_id = args[2]
+        self.date = args[3]
+        self.tss = args[4]
+        self.comments = args[5]
+
+    @property
+    def team(self):
+        from . import DatabaseManager
+        return DatabaseManager().team_for_id(self.team_id)
 
     @property
     def event_date(self):
@@ -223,7 +229,7 @@ class PlayerEventOccurrence:
 
     def __init__(self, *args):
         self.id = args[0]
-        self.event_occurrence_id = args[1]
+        self.team_event_occurrence_id = args[1]
         self.player_id = args[2]
         self.rpe = args[3]
         self.duration = args[4]
@@ -251,7 +257,7 @@ class PlayerEventOccurrence:
     @property
     def event_occurrence(self):
         from . import DatabaseManager
-        return DatabaseManager().event_occurrence_for_id(self.event_occurrence_id)
+        return DatabaseManager().team_event_occurrence_for_id(self.team_event_occurrence_id)
 
     @property
     def player(self):

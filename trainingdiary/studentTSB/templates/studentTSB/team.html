@@ -104,7 +104,7 @@
                 {% for e in team.events %}
                 <tr>
                     <td>
-                        <a href="{% url 'event_edit' team.id e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.name }}</a>
+                        <a href="{% url 'event_edit' e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.name }}</a>
                     </td>
                     <td>{{ e.start_time }}</td>
                     <td>{{ e.end_time }}</td>

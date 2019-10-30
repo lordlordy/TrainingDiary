@@ -56,14 +56,22 @@ db_tables_sql = [
              estimated_rpe REAL NOT NULL,
              start_date Date NOT NULL,
              end_date Date NOT NULL,
-             frequency varchar(16) NOT NULL,
-             team_id INTEGER REFERENCES Team(id)
+             frequency varchar(16) NOT NULL
          );
     ''',
     f'''
-         CREATE TABLE EventOccurrence(
+         CREATE TABLE TeamEvent(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            team_id INTEGER REFERENCES Team(id),
+            event_id INTEGER REFERENCES Event(id),
+            UNIQUE(team_id, event_id)
+        );
+    ''',
+    f'''
+         CREATE TABLE TeamEventOccurrence(
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              event_id INTEGER NOT NULL REFERENCES Event(id),
+             team_id INTEGER NOT NULL REFERENCES Team(id),
              date Date NOT NULL,
              tss REAL NOT NULL,
              comments TEXT
@@ -72,7 +80,7 @@ db_tables_sql = [
     f'''
          CREATE TABLE PlayerEventOccurrence(
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             event_occurrence_id INTEGER NOT NULL REFERENCES EventOccurrence(id),
+             team_event_occurrence_id INTEGER NOT NULL REFERENCES TeamEventOccurrence(id),
              player_id INTEGER NOT NULL REFERENCES Event(id),
              rpe REAL NOT NULL,
              duration REAL NOT NULL,
@@ -117,8 +125,7 @@ class DatabaseManager:
         # create Personal Training team and event
         self.add_new_team('Personal Training')
         team_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
-        self.add_new_event('Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2099-12-31', 'Adhoc',
-                           team_id)
+        self.add_new_event('Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2099-12-31', 'Adhoc')
         self.create_happiness_reading()
 
     def create_dummy_data(self):
@@ -133,7 +140,7 @@ class DatabaseManager:
         for c in dummy_team_coach:
             self.__add_new_team_coach(c[0], c[1])
         for e in dummy_events:
-            id = self.add_new_event(e[0], e[1], e[2], e[3], e[4], e[5], e[6], e[7])
+            id = self.add_new_event(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
 
     def create_happiness_reading(self):
         self.add_new_reading_type('happiness', 0, 3)
@@ -207,14 +214,21 @@ class DatabaseManager:
         teams = [self.team_for_id(tid[0]) for tid in team_ids]
         return teams
 
-    def events_for_team(self, team_id):
-        from . import Event
+    def teams_for_event(self, event_id):
         sql = f'''
-            SELECT {','.join(Event.db_columns())}
-            FROM Event
-            WHERE team_id={team_id}
+            SELECT DISTINCT(team_id) FROM TeamEvent WHERE event_id={event_id}
         '''
-        return self.__events_for_sql(sql)
+        team_ids = self.__conn.execute(sql).fetchall()
+        teams = [self.team_for_id(tid[0]) for tid in team_ids]
+        return teams
+
+    def events_for_team(self, team_id):
+        sql = f'''
+            SELECT DISTINCT(event_id) FROM TeamEvent WHERE team_id={team_id}
+        '''
+        event_ids = self.__conn.execute(sql).fetchall()
+        events = [self.event_for_id(eid[0]) for eid in event_ids]
+        return events
 
     def event_for_id(self, event_id):
         from . import Event
@@ -225,12 +239,12 @@ class DatabaseManager:
         '''
         return self.__events_for_sql(sql)[0]
 
-    def update_event(self, event_id, name, start_time, end_time, estimated_rpe, start_date, end_date, frequency, team_id):
+    def update_event(self, event_id, name, start_time, end_time, estimated_rpe, start_date, end_date, frequency):
         sql = f'''
             UPDATE Event
             SET
             name='{name}', start_time='{start_time}', end_time='{end_time}', estimated_rpe={estimated_rpe}, 
-            start_date='{start_date}', end_date='{end_date}', frequency='{frequency}', team_id='{team_id}'
+            start_date='{start_date}', end_date='{end_date}', frequency='{frequency}'
             WHERE id={event_id}
         '''
         self.__conn.execute(sql)
@@ -245,20 +259,27 @@ class DatabaseManager:
         return self.__events_for_sql(sql)
 
     def event_occurrences(self, event_id):
-
         sql = f'''
-            SELECT id, event_id, date, tss, comments
-            FROM EventOccurrence
+            SELECT id, event_id, team_id, date, tss, comments
+            FROM TeamEventOccurrence
             WHERE event_id={event_id}
         '''
         return self.__event_occurrences_for_sql(sql)
 
-    def event_occurrence_for_id(self, event_occurrence_id):
+    def team_event_occurrences(self, event_id, team_id):
+        sql = f'''
+            SELECT id, event_id, team_id, date, tss, comments
+            FROM TeamEventOccurrence
+            WHERE event_id={event_id} AND team_id={team_id}
+        '''
+        return self.__event_occurrences_for_sql(sql)
+
+    def team_event_occurrence_for_id(self, team_event_occurrence_id):
 
         sql = f'''
-            SELECT id, event_id, date, tss, comments
-            FROM EventOccurrence
-            WHERE id={event_occurrence_id}
+            SELECT id, event_id, team_id, date, tss, comments
+            FROM TeamEventOccurrence
+            WHERE id={team_event_occurrence_id}
         '''
         occurrences = self.__event_occurrences_for_sql(sql)
         if len(occurrences) > 0:
@@ -266,11 +287,11 @@ class DatabaseManager:
         else:
             return []
 
-    def event_occurrence(self, event_id, date):
+    def team_event_occurrence(self, event_id, team_id, date):
         sql = f'''
-            SELECT id, event_id, date, tss, comments
-            FROM EventOccurrence
-            WHERE event_id={event_id} AND date='{date}'
+            SELECT id, event_id, team_id, date, tss, comments
+            FROM TeamEventOccurrence
+            WHERE event_id={event_id} AND team_id={team_id} AND date='{date}'
         '''
         occurrences = self.__event_occurrences_for_sql(sql)
         if len(occurrences) > 0:
@@ -281,7 +302,7 @@ class DatabaseManager:
     def event_occurrences_for_player(self, player_id):
 
         sql = f'''
-            SELECT id, event_occurrence_id, player_id, rpe, duration, status, comments
+            SELECT id, team_event_occurrence_id, player_id, rpe, duration, status, comments
             FROM PlayerEventOccurrence
             WHERE player_id={player_id}
         '''
@@ -290,15 +311,15 @@ class DatabaseManager:
     def player_occurrences_for_event_occurrence(self, event_occurrence_id):
 
         sql = f'''
-            SELECT id, event_occurrence_id, player_id, rpe, duration, status, comments
+            SELECT id, team_event_occurrence_id, player_id, rpe, duration, status, comments
             FROM PlayerEventOccurrence
-            WHERE event_occurrence_id={event_occurrence_id}
+            WHERE team_event_occurrence_id={event_occurrence_id}
         '''
         return self.__player_event_occurrences_for_sql(sql)
 
     def player_event_occurrence_for_id(self, player_event_occurrence_id):
         sql = f'''
-            SELECT id, event_occurrence_id, player_id, rpe, duration, status, comments
+            SELECT id, team_event_occurrence_id, player_id, rpe, duration, status, comments
             FROM PlayerEventOccurrence
             WHERE id={player_event_occurrence_id}
         '''
@@ -306,18 +327,18 @@ class DatabaseManager:
         if len(occurrences) > 0:
             return occurrences[0]
 
-    def event_occurrence_exists(self, event_id, date):
+    def team_event_occurrence_exists(self, event_id, team_id, date):
         sql = f'''
-            SELECT id FROM EventOccurrence
-            WHERE event_id={event_id} AND date='{date}'
+            SELECT id FROM TeamEventOccurrence
+            WHERE event_id={event_id} AND team_id={team_id} AND date='{date}'
         '''
         occurrences = self.__conn.execute(sql).fetchall()
         return len(occurrences) > 0
 
-    def player_event_occurrence_exists(self, event_occurrence_id, player_id):
+    def player_event_occurrence_exists(self, team_event_occurrence_id, player_id):
         sql = f'''
             SELECT id FROM PlayerEventOccurrence
-            WHERE event_occurrence_id={event_occurrence_id} AND player_id='{player_id}'
+            WHERE team_event_occurrence_id={team_event_occurrence_id} AND player_id='{player_id}'
         '''
         occurrences = self.__conn.execute(sql).fetchall()
         return len(occurrences) > 0
@@ -352,6 +373,9 @@ class DatabaseManager:
 
     def add_player_to_team(self, player_id, team_id):
         self.__add_new_team_player(team_id, player_id)
+
+    def add_team_to_event(self, team_id, event_id):
+        self.__add_new_team_event(team_id, event_id)
 
     def remove_player_from_team(self, player_id, team_id):
         sql = f'''
@@ -393,8 +417,6 @@ class DatabaseManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
-
-
     def add_new_team(self, team_name):
         team_sql = f'''
             INSERT INTO Team
@@ -405,13 +427,12 @@ class DatabaseManager:
         self.__conn.execute(team_sql)
         self.__conn.commit()
 
-    def add_new_event(self, event_name, start_time, end_time, estimated_rpe, start_date, end_date, frequency, team_id):
+    def add_new_event(self, event_name, start_time, end_time, estimated_rpe, start_date, end_date, frequency):
         sql = f'''
             INSERT INTO Event
-            (name, start_time, end_time, estimated_rpe, start_date, end_date, frequency, team_id)
+            (name, start_time, end_time, estimated_rpe, start_date, end_date, frequency)
             VALUES
-            ('{event_name}', '{start_time}', '{end_time}', {estimated_rpe}, '{start_date}', '{end_date}', '{frequency}', 
-            {team_id})
+            ('{event_name}', '{start_time}', '{end_time}', {estimated_rpe}, '{start_date}', '{end_date}', '{frequency}')
          ;
         '''
         self.__conn.execute(sql)
@@ -419,23 +440,22 @@ class DatabaseManager:
         last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return last_id
 
-    def add_new_event_occurrence(self, event_id, date, tss, comments):
+    def add_new_team_event_occurrence(self, event_id, team_id, date, tss, comments):
         sql = f'''
-            INSERT INTO EventOccurrence
-            (event_id, date, tss, comments)
+            INSERT INTO TeamEventOccurrence
+            (event_id, team_id, date, tss, comments)
             VALUES
-            ({event_id}, '{date}', {tss}, '{comments}')
+            ({event_id}, {team_id}, '{date}', {tss}, '{comments}')
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
         last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return last_id
 
-
     def add_new_player_event_occurrence(self, event_occurrence_id, player_id, rpe, duration, status, comments):
         sql = f'''
             INSERT INTO PlayerEventOccurrence
-            (event_occurrence_id, player_id, rpe, duration, status, comments)
+            (team_event_occurrence_id, player_id, rpe, duration, status, comments)
             VALUES
             ({event_occurrence_id}, {player_id}, {rpe}, '{duration}', '{status}', '{comments}')
         '''
@@ -556,6 +576,16 @@ class DatabaseManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
+    def __add_new_team_event(self, team_id, event_id):
+        sql = f'''
+            INSERT INTO TeamEvent
+            (team_id, event_id)
+            VALUES
+            ({team_id}, {event_id})
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
     def __add_new_team_coach(self, team_id, coach_id):
         sql = f'''
             INSERT INTO TeamCoach
@@ -620,8 +650,8 @@ class DatabaseManager:
 
     def __event_occurrences_for_sql(self, sql):
         events = self.__conn.execute(sql).fetchall()
-        from . import EventOccurrence
-        return [EventOccurrence(*e) for e in events]
+        from . import TeamEventOccurrence
+        return [TeamEventOccurrence(*e) for e in events]
 
     def __player_event_occurrences_for_sql(self, sql):
         player_events = self.__conn.execute(sql).fetchall()

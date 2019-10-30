@@ -94,16 +94,33 @@ def team_update_view(request):
     return team_view(request, **kwargs)
 
 
+def add_teams_to_event_view(request, **kwargs):
+    dm = DatabaseManager()
+    for tid in request.POST.getlist('Teams'):
+        dm.add_team_to_event(tid, kwargs['id'])
+    return event_edit_view(request, **kwargs)
+
+
 def event_edit_view(request, **kwargs):
+    dm = DatabaseManager()
     initial_values = dict()
     context = dict()
+    current_teams = set()
     if 'id' in kwargs:
-        event = DatabaseManager().event_for_id(kwargs['id'])
+        event = dm.event_for_id(kwargs['id'])
         initial_values = event.data_dictionary()
         context['event'] = event
+        current_teams = set([t.id for t in event.teams])
+    if 'team_id' in kwargs:
+        initial_values['team_id'] = kwargs['team_id']
 
-    context['team'] = DatabaseManager().team_for_id(kwargs['team_id'])
-    initial_values['team_id'] = context['team'].id
+    potential_teams = dm.teams()
+    team_id_dict = dict()
+    for t in potential_teams:
+        team_id_dict[t.id] = t.name
+    team_ids = set([t.id for t in potential_teams]) - current_teams
+    team_choices = [(i, team_id_dict[i]) for i in team_ids]
+    context['select_team_form'] = SelectForm('Teams', team_choices)
     context['form'] = EventEditForm(initial=initial_values)
 
     return render(request, 'studentTSB/event_edit.html', context)
@@ -113,18 +130,19 @@ def event_occurrence_view(request, **kwargs):
     if 'id[]' in request.POST:
         # got ids so this is a save
         ids = request.POST.getlist('id[]')
-        tss = request.POST.getlist('tss[]')
+        rpe = request.POST.getlist('rpe[]')
+        duration = request.POST.getlist('duration[]')
         status = request.POST.getlist('status[]')
         comments = request.POST.getlist('comments[]')
         dm = DatabaseManager()
         for i in range(len(ids)):
-            dm.update_player_event_occurrence(ids[i], tss[i], status[i], comments[i])
+            dm.update_player_event_occurrence(ids[i], rpe[i], duration[i], status[i], comments[i])
         peo = dm.player_event_occurrence_for_id(ids[0])
         event = peo.event_occurrence.event
-        return HttpResponseRedirect(f'/studentTSB/events/edit/{event.team.id}/{event.id}/')
+        return HttpResponseRedirect(f'/studentTSB/events/edit/{event.id}/')
 
     else:
-        context = {'event_occurrence': DatabaseManager().event_occurrence_for_id(kwargs['id']),
+        context = {'event_occurrence': DatabaseManager().team_event_occurrence_for_id(kwargs['id']),
                    'status_form': SelectForm('status', [(i, i) for i in occurrence_states])}
         return render(request, 'studentTSB/event_occurrence.html', context)
 
@@ -166,23 +184,29 @@ def player_event_occurrence_view_from_event_view(request, **kwargs):
 def event_generate_view(request, **kwargs):
     event = DatabaseManager().event_for_id(kwargs['id'])
     event.generate_occurrences()
-    dd = {'id': kwargs['id'], 'team_id': event.team_id}
+    dd = {'id': kwargs['id']}
     return event_edit_view(request, **dd)
 
 
 def event_save_view(request):
     dm = DatabaseManager()
     if 'id' in request.POST and request.POST['id'] != '':
+        event_id = request.POST['id']
+        # existing event being edited
         dm.update_event(request.POST['id'], request.POST['name'], request.POST['start_time'], request.POST['end_time'],
                         request.POST['estimated_rpe'], request.POST['start_date'], request.POST['end_date'],
-                        request.POST['frequency'], request.POST['team_id'])
+                        request.POST['frequency'])
     else:
+        # new event
         event_id = dm.add_new_event(request.POST['name'], request.POST['start_time'], request.POST['end_time'],
                                     request.POST['estimated_rpe'], request.POST['start_date'], request.POST['end_date'],
-                                    request.POST['frequency'], request.POST['team_id'])
+                                    request.POST['frequency'])
+        # if team_id was passed in need to set this up as one of it's events
+        if 'team_id' in request.POST:
+            dm.add_team_to_event(request.POST['team_id'], event_id)
 
     team = DatabaseManager().team_for_id(request.POST['team_id'])
-    return HttpResponseRedirect(f'/studentTSB/teams/edit/{team.id}/')
+    return HttpResponseRedirect(f'/studentTSB/events/edit/{event_id}/')
 
 
 def player_edit_view(request, **kwargs):
@@ -233,7 +257,7 @@ def player_personal_training_view(request, **kwargs):
         # with id 1
         dm = DatabaseManager()
         # save the event
-        o_id = dm.add_new_event_occurrence(1, request.POST['date'], 0, '')
+        o_id = dm.add_new_team_event_occurrence(1, 1, request.POST['date'], 0, '')
         # then the player occurrence
         dm.add_new_player_event_occurrence(o_id, request.POST['player_id'], request.POST['rpe'], request.POST['duration'],
                                            request.POST['status'], request.POST['comments'])
@@ -274,7 +298,12 @@ def coach_edit_view(request, **kwargs):
         team_id_dict = dict()
         for t in all_teams:
             team_id_dict[t.id] = t.name
-        team_ids = set([t.id for t in all_teams]) - set([t.id for t in coach.teams])
+        print(all_teams)
+        print(coach)
+        coach_teams = set()
+        if coach.teams is not None:
+            coach_teams = set([t.id for t in coach.teams])
+        team_ids = set([t.id for t in all_teams]) - coach_teams
         team_choices = [(i, team_id_dict[i]) for i in team_ids]
         context['add_team_form'] = SelectForm('Teams', team_choices)
     else:
