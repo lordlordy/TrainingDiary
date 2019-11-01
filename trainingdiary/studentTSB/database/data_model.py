@@ -158,7 +158,7 @@ class Event:
                 else:
                     # get the occurrence id
                     occurrence_id = team_event_occurrence.id
-                for p in self.team.players:
+                for p in t.players:
                     if not dm.player_event_occurrence_exists(occurrence_id, p.id):
                         dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
                                                            'Scheduled', '')

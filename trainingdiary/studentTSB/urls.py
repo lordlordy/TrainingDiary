@@ -34,6 +34,7 @@ urlpatterns = [
     path('events/list/', event_list_view, name='event_list'),
     path('events/edit/<int:id>/', event_edit_view, name='event_edit'),
     path('events/save/', event_save_view, name='event_save'),
+    path('events/new/', event_edit_view, name='event_new'),
     path('events/add/teams/<int:id>/', add_teams_to_event_view, name='event_add_coaches'),
     path('events/generate/<int:id>/', event_generate_view, name='event_generate'),
     path('events/occurrence/<int:id>/', event_occurrence_view, name='event_occurrence'),

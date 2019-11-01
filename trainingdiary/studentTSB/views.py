@@ -202,10 +202,11 @@ def event_save_view(request):
                                     request.POST['estimated_rpe'], request.POST['start_date'], request.POST['end_date'],
                                     request.POST['frequency'])
         # if team_id was passed in need to set this up as one of it's events
-        if 'team_id' in request.POST:
+        if 'team_id' in request.POST and request.POST['team_id'] != '':
+            print(request.POST)
             dm.add_team_to_event(request.POST['team_id'], event_id)
 
-    team = DatabaseManager().team_for_id(request.POST['team_id'])
+    # team = DatabaseManager().team_for_id(request.POST['team_id'])
     return HttpResponseRedirect(f'/studentTSB/events/edit/{event_id}/')
 
 
