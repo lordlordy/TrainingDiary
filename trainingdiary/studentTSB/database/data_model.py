@@ -394,4 +394,5 @@ class EventOccurrenceState:
 
     @property
     def count(self):
-        return 0
+        from . import DatabaseManager
+        return DatabaseManager().number_of_occurrences_for_state_id(self.id)

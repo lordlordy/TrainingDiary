@@ -497,6 +497,13 @@ class DatabaseManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
+    def number_of_occurrences_for_state_id(self, state_id):
+        sql = f'''
+            SELECT count(id) FROM PlayerEventOccurrence WHERE state_id={state_id}
+        '''
+        count = self.__conn.execute(sql).fetchall()
+        return count[0][0]
+
     def event_occurrence_states(self):
         sql = f'''
             SELECT id, name, include_in_tsb FROM EventOccurrenceState
