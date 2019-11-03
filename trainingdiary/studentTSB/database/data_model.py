@@ -251,6 +251,9 @@ class PlayerEventOccurrence:
         self.state_id = args[6]
         self.comments = args[7]
 
+    def __str__(self):
+        return f'{self.player.name}: {self.event.name} {self.date}'
+
     @property
     def tss(self):
         if self.state.include_in_tsb:
