@@ -45,7 +45,7 @@ class Player(Person):
         # the schedule may have two events in a day. Need to combine this schedule so only one item per date
         date_dict = dict()
         for s in self.schedule:
-            d = dateutil.parser.parse(s.event_occurrence.date).date()
+            d = dateutil.parser.parse(s.date).date()
             date_dict[d] = date_dict.get(d, 0.0) + s.tss
         return date_dict.items()
 
@@ -227,7 +227,7 @@ class TeamEventOccurrence:
 
     @property
     def day(self):
-        return dateutil.parser.parse(self.date).strftime('%A')
+        return dateutil.parser.parse(self.date).strftime('%a')
 
     @property
     def event(self):
@@ -272,7 +272,7 @@ class PlayerEventOccurrence:
 
     @property
     def day(self):
-        return dateutil.parser.parse(self.date).strftime('%A')
+        return dateutil.parser.parse(self.date).strftime('%a')
 
     @property
     def estimated_tss(self):

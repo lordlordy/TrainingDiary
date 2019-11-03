@@ -12,6 +12,7 @@
                </div>
            </div>
            <div class="row">
+               {% if event.id != 1 %}
                <div class="col-md-2">
                    <form action="{% url 'event_save' %}" method="post">
                        {% csrf_token %}
@@ -19,8 +20,10 @@
                        <input class="btn btn-outline-primary btn-block" type="submit" value="Update">
                    </form>
                </div>
+               {% endif %}
                {% if event %}
-               <div class="col-md-5">
+               {% if event.id != 1 %}
+               <div class="col-md-4">
                    <h2 class="border-bottom mb-1 text-center">Teams</h2>
                    <form action="{% url 'event_add_coaches' event.id %}" method="post">
                        {% csrf_token %}
@@ -71,16 +74,17 @@
                        {% endfor %}
                    </table>
                </div>
-
-               <div class="col-md-5">
+                {% endif %}
+               <div class="col-md-6">
                    <h2 class="border-bottom mb-1 text-center">Players</h2>
-
+                    {% if event.id != 1 %}
                    <h4 class="border-bottom mb-1 text-center">Occurrences</h4>
 
                    <form action="{% url 'event_generate_player' event.id %}" method="post">
                        {% csrf_token %}
                        <input class="btn btn-outline-primary btn-block" type="submit" value="Generate Occurrences">
                    </form>
+                   {% endif %}
                    <table id="playerTable" class="table table-hover table-bordered table-striped table-sm ">
                        <thead class="thead-light">
                        <tr>
@@ -95,7 +99,9 @@
                        </thead>
                        {% for p in event.player_event_occurrences %}
                        <tr>
-                           <td>{{ p.date }}</td>
+                           <td>
+                               <a href="{% url 'player_event_occurrence_view_from_event_view' p.id event.id %}" class="btn btn-outline-primary btn-block" role="button">{{ p.date }}</a>
+                           </td>
                            <td>{{ p.player.name }}</td>
                            <td>{{ p.teams_str }}</td>
                            <td>{{ p.rpe }}</td>

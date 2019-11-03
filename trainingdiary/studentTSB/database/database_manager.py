@@ -132,8 +132,8 @@ class DatabaseManager:
                 print(e)
                 print(sql)
         # create Personal Training team and event
-        self.add_new_team('Personal Training')
-        team_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
+        # self.add_new_team('Personal Training')
+        # team_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         self.add_new_event('Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2099-12-31', 'Adhoc')
         self.create_happiness_reading()
         for s in occurrence_states:

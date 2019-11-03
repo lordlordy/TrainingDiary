@@ -161,14 +161,12 @@ def event_occurrence_view(request, **kwargs):
         ids = request.POST.getlist('id[]')
         rpe = request.POST.getlist('rpe[]')
         duration = request.POST.getlist('duration[]')
-        states = request.POST.getlist('states[]')
         comments = request.POST.getlist('comments[]')
         dm = DatabaseManager()
         for i in range(len(ids)):
             state = request.POST[ids[i]]
             dm.update_player_event_occurrence(ids[i], rpe[i], duration[i], state, comments[i])
         peo = dm.player_event_occurrence_for_id(ids[0])
-        # event = peo.event_occurrence.event
         return HttpResponseRedirect(f'/studentTSB/events/occurrence/{peo.event_occurrence.id}/')
 
     else:
@@ -183,9 +181,10 @@ def event_occurrence_view(request, **kwargs):
 def player_event_occurrence_view_from_player_view(request, **kwargs):
     if 'update-button' in request.POST:
         # this is an update
+        print(request.POST)
         DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['rpe'],
                                                          request.POST['duration'],
-                                                         request.POST['status'],
+                                                         request.POST['state_id'],
                                                          request.POST['comments'])
         return HttpResponseRedirect(f'/studentTSB/players/edit/{kwargs["player_id"]}/')
 
@@ -199,12 +198,13 @@ def player_event_occurrence_view_from_player_view(request, **kwargs):
 
 def player_event_occurrence_view_from_event_view(request, **kwargs):
     if 'update-button' in request.POST:
+        print(kwargs)
         # this is an update
         DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['rpe'],
                                                          request.POST['duration'],
-                                                         request.POST['status'],
+                                                         request.POST['state_id'],
                                                          request.POST['comments'])
-        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{kwargs["event_occurrence_id"]}/')
+        return HttpResponseRedirect(f'/studentTSB/events/edit/{kwargs["event_id"]}/')
 
     else:
         occurrence = DatabaseManager().player_event_occurrence_for_id(kwargs['id'])
@@ -297,11 +297,8 @@ def player_personal_training_view(request, **kwargs):
         # we're saving. This is personal training so is placed in personal team - this is team id 1 and the team even
         # with id 1
         dm = DatabaseManager()
-        # save the event
-        o_id = dm.add_new_team_event_occurrence(1, 1, request.POST['date'], 0, '')
-        # then the player occurrence
-        dm.add_new_player_event_occurrence(o_id, request.POST['player_id'], request.POST['rpe'], request.POST['duration'],
-                                           request.POST['status'], request.POST['comments'])
+        dm.add_new_player_event_occurrence(1, request.POST['player_id'], request.POST['date'], request.POST['rpe'],
+                                           request.POST['duration'],request.POST['state_id'], request.POST['comments'])
         return HttpResponseRedirect(f'/studentTSB/players/edit/{request.POST["player_id"]}/')
     else:
         player = DatabaseManager().player_for_id(kwargs['player_id'])
