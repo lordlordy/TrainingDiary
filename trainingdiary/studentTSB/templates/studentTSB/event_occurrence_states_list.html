@@ -42,7 +42,13 @@
                         <td>
                             <input class="btn btn-outline-primary btn-block" type="submit" value="Update">
                         </td>
-                        <td><input class="form-control" type="text" name="name" value="{{s.name}}"></td>
+                        <td>
+                            {% if s.id == 1 or s.id == 2 %}
+                            {{ s.name }}
+                            {% else %}
+                            <input class="form-control" type="text" name="name" value="{{s.name}}">
+                            {% endif %}
+                        </td>
                         <td>
                             <select class="form-control" name="state">
                                    <option value="1" {% if s.include_in_tsb %}selected="True" {% endif %}>Yes</option>
@@ -52,7 +58,11 @@
                     </form>
                     <td>{{ s.count }}</td>
                     <td>
-                        {% if s.count == 0 %}
+                        {% if s.id == 1 %}
+                        Cannot delete Scheduled state
+                        {% elif s.id == 2 %}
+                        Cannot delete Completed state
+                        {% elif s.count == 0 %}
                         <a href="{% url 'event_occurrence_state_delete' s.id %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
                         {% else %}
                         Unable to delete as count is non zero
