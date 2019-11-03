@@ -8,11 +8,11 @@
        <div class="col-md-12">
            <div class="row">
                <div class="col-md-12">
-                   <h2 class="border-bottom mb-4">Event: {{event.name}}</h2>
+                   <h1 class="border-bottom mb-4">Event: {{event.name}}</h1>
                </div>
            </div>
            <div class="row">
-               <div class="col-md-6">
+               <div class="col-md-2">
                    <form action="{% url 'event_save' %}" method="post">
                        {% csrf_token %}
                        {{ form | crispy }}
@@ -20,8 +20,8 @@
                    </form>
                </div>
                {% if event %}
-               <div class="col-md-6">
-                   <h4 class="border-bottom mb-1 text-center">Teams</h4>
+               <div class="col-md-5">
+                   <h2 class="border-bottom mb-1 text-center">Teams</h2>
                    <form action="{% url 'event_add_coaches' event.id %}" method="post">
                        {% csrf_token %}
                        <div class="row">
@@ -52,7 +52,7 @@
 
                    <h4 class="border-bottom mb-1 text-center">Occurrences</h4>
 
-                   <form action="{% url 'event_generate' event.id %}" method="post">
+                   <form action="{% url 'event_generate_team' event.id %}" method="post">
                        {% csrf_token %}
                        <input class="btn btn-outline-primary btn-block" type="submit" value="Generate Occurrences">
                    </form>
@@ -60,32 +60,52 @@
                        <thead class="thead-light">
                        <tr>
                            <th>Date</th>
-                           <th>Day</th>
-                           <th>Team</th>
-                           <th>Start</th>
-                           <th>End</th>
-                           <th>TSS</th>
-                           <th># Players</th>
-                           <th>Attendance</th>
+                           <th>Teams</th>
                        </tr>
                        </thead>
-                       {% for e in event.event_occurrences %}
+                       {% for e in event.events_summary %}
                        <tr>
-                           <td>
-                               <a href="{% url 'event_occurrence' e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.date }}</a>
-                           </td>
-                           <td>{{ e.day }}</td>
-                           <td>{{ e.team.name }}</td>
-                           <td>{{ e.event.start_time }}</td>
-                           <td>{{ e.event.end_time }}</td>
-                           <td>{{ e.tss }}</td>
-                           <td>{{ e.number_of_players }}</td>
-                           <td>{{ e.attendance_percentage_str }}</td>
+                           <td>{{ e.0 }}</td>
+                           <td>{{ e.1}}</td>
                        </tr>
                        {% endfor %}
                    </table>
                </div>
-               {% endif %}
+
+               <div class="col-md-5">
+                   <h2 class="border-bottom mb-1 text-center">Players</h2>
+
+                   <h4 class="border-bottom mb-1 text-center">Occurrences</h4>
+
+                   <form action="{% url 'event_generate_player' event.id %}" method="post">
+                       {% csrf_token %}
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Generate Occurrences">
+                   </form>
+                   <table id="playerTable" class="table table-hover table-bordered table-striped table-sm ">
+                       <thead class="thead-light">
+                       <tr>
+                           <th>Date</th>
+                           <th>Name</th>
+                           <th>Teams</th>
+                           <th>rpe</th>
+                           <th>duration</th>
+                           <th>tss</th>
+                           <th>state</th>
+                       </tr>
+                       </thead>
+                       {% for p in event.player_event_occurrences %}
+                       <tr>
+                           <td>{{ p.date }}</td>
+                           <td>{{ p.player.name }}</td>
+                           <td>{{ p.teams_str }}</td>
+                           <td>{{ p.rpe }}</td>
+                           <td>{{ p.duration }}</td>
+                           <td>{{ p.tss }}</td>
+                           <td>{{ p.state }}</td>
+                       </tr>
+                       {% endfor %}
+                   </table>
+               </div>               {% endif %}
            </div>
        </div>
     </div>
@@ -96,6 +116,13 @@
 {% endblock %}
 
    {% block extra_scripts %}
+
+    $(document).ready(function(){
+        $('#playerTable').DataTable({
+            "pageLength": 10
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
 
 $('.datepicker').datepicker({
     format: "yyyy-mm-dd",

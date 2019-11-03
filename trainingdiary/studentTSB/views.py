@@ -214,9 +214,16 @@ def player_event_occurrence_view_from_event_view(request, **kwargs):
         return render(request, 'studentTSB/player_event_occurrence.html', context)
 
 
-def event_generate_view(request, **kwargs):
+def event_generate_team_view(request, **kwargs):
     event = DatabaseManager().event_for_id(kwargs['id'])
-    event.generate_occurrences()
+    event.generate_team_occurrences()
+    dd = {'id': kwargs['id']}
+    return event_edit_view(request, **dd)
+
+
+def event_generate_player_view(request, **kwargs):
+    event = DatabaseManager().event_for_id(kwargs['id'])
+    event.generate_player_occurrences()
     dd = {'id': kwargs['id']}
     return event_edit_view(request, **dd)
 
