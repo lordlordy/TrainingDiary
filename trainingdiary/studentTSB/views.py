@@ -22,6 +22,17 @@ def event_occurrence_states_list_view(request):
                   {'states': states, 'form': EventOccurrenceStatusEditForm()})
 
 
+def team_event_occurrence_list_view(request):
+    events = DatabaseManager().events()
+    data = list()
+    for e in events:
+        for s in e.events_summary:
+            summary = {'date': s[0], 'teams': s[1], 'event': e}
+            data.append(summary)
+
+    return render(request, 'studentTSB/team_event_occurrence_list.html', {'data': data})
+
+
 def new_event_occurrence_state(request):
     if 'name' in request.POST:
         DatabaseManager().add_event_occurrence_state(request.POST['name'], 1)
