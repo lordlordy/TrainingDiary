@@ -68,7 +68,9 @@
                        </thead>
                        {% for e in event.events_summary %}
                        <tr>
-                           <td>{{ e.0 }}</td>
+                           <td>
+                               <a href="{% url 'event_occurrence' event.id e.0 %}" class="btn btn-outline-primary btn-block" role="button">{{ e.0 }}</a>
+                           </td>
                            <td>{{ e.1}}</td>
                        </tr>
                        {% endfor %}
@@ -100,7 +102,7 @@
                        {% for p in event.player_event_occurrences %}
                        <tr>
                            <td>
-                               <a href="{% url 'player_event_occurrence_view_from_event_view' p.id event.id %}" class="btn btn-outline-primary btn-block" role="button">{{ p.date }}</a>
+                               <a href="{% url 'player_event_occurrence_from_event_view' p.id event.id %}" class="btn btn-outline-primary btn-block" role="button">{{ p.date }}</a>
                            </td>
                            <td>{{ p.player.name }}</td>
                            <td>{{ p.teams_str }}</td>

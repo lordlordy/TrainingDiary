@@ -156,6 +156,7 @@ def event_edit_view(request, **kwargs):
 
 
 def event_occurrence_view(request, **kwargs):
+    print(kwargs)
     if 'id[]' in request.POST:
         # got ids so this is a save
         ids = request.POST.getlist('id[]')
@@ -166,19 +167,22 @@ def event_occurrence_view(request, **kwargs):
         for i in range(len(ids)):
             state = request.POST[ids[i]]
             dm.update_player_event_occurrence(ids[i], rpe[i], duration[i], state, comments[i])
-        peo = dm.player_event_occurrence_for_id(ids[0])
-        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{peo.event_occurrence.id}/')
+        # peo = dm.player_event_occurrence_for_id(ids[0])
+        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{kwargs["id"]}/{kwargs["date"]}/')
 
     else:
-        states = DatabaseManager().event_occurrence_states()
-        event_occurrence = DatabaseManager().team_event_occurrence_for_id(kwargs['id'])
+        dm = DatabaseManager()
+        states = dm.event_occurrence_states()
+        event = dm.event_for_id(kwargs['id'])
+        player_event_occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
+        print(player_event_occurrences)
         players = [(p, SelectSingleForm(str(p.id), [(s.id, s.name) for s in states], initial={str(p.id): p.state.id}))
-                   for p in event_occurrence.player_occurrences]
-        context = {'event_occurrence': event_occurrence, 'players': players}
+                   for p in player_event_occurrences]
+        context = {'event': event, 'date': kwargs['date'], 'players': players}
         return render(request, 'studentTSB/event_occurrence.html', context)
 
 
-def player_event_occurrence_view_from_player_view(request, **kwargs):
+def player_event_occurrence_from_player_view(request, **kwargs):
     if 'update-button' in request.POST:
         # this is an update
         print(request.POST)
@@ -196,9 +200,8 @@ def player_event_occurrence_view_from_player_view(request, **kwargs):
         return render(request, 'studentTSB/player_event_occurrence.html', context)
 
 
-def player_event_occurrence_view_from_event_view(request, **kwargs):
+def player_event_occurrence_from_event_view(request, **kwargs):
     if 'update-button' in request.POST:
-        print(kwargs)
         # this is an update
         DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['rpe'],
                                                          request.POST['duration'],
@@ -212,6 +215,24 @@ def player_event_occurrence_view_from_event_view(request, **kwargs):
                    'form': PlayerEventOccurrenceForm(initial=occurrence.data_dictionary())}
 
         return render(request, 'studentTSB/player_event_occurrence.html', context)
+
+
+def player_event_occurrence_from_event_occurrence_view(request, **kwargs):
+    if 'update-button' in request.POST:
+        # this is an update
+        DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['rpe'],
+                                                         request.POST['duration'],
+                                                         request.POST['state_id'],
+                                                         request.POST['comments'])
+        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{kwargs["event_id"]}/{kwargs["date"]}/')
+
+    else:
+        occurrence = DatabaseManager().player_event_occurrence_for_id(kwargs['id'])
+        context = {'player_event_occurrence': occurrence,
+                   'form': PlayerEventOccurrenceForm(initial=occurrence.data_dictionary())}
+
+        return render(request, 'studentTSB/player_event_occurrence.html', context)
+
 
 
 def event_generate_team_view(request, **kwargs):
