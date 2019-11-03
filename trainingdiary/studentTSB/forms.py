@@ -12,6 +12,14 @@ class SelectForm(forms.Form):
                                                                                           'id': name}))
 
 
+class SelectSingleForm(forms.Form):
+
+    def __init__(self, name, choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[name] = forms.CharField(required=True, label='',
+                                            widget=Select(choices=choices, attrs={'class': 'form-control', 'id': name}))
+
+
 class TeamEditForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -84,9 +92,10 @@ class PlayerEventOccurrenceForm(forms.Form):
         self.fields['id'].widget.attrs['readonly'] = 'readonly'
         self.fields['rpe'] = forms.DecimalField(required=True)
         self.fields['duration'] = forms.TimeField(required=True, widget=TimeInput())
-        self.fields['status'] = forms.CharField(required=True,
-                                                widget=Select(choices=[(a, a) for a in occurrence_states],
-                                                              attrs={'class': 'form-control', 'id': 'status'}))
+        states = DatabaseManager().event_occurrence_states()
+        self.fields['state_id'] = forms.CharField(required=True, label='state',
+                                                  widget=Select(choices=[(s.id, s.name) for s in states],
+                                                                attrs={'class': 'form-control', 'id': 'status'}))
         self.fields['comments'] = forms.CharField(required=False, widget=forms.Textarea())
 
 
@@ -131,3 +140,11 @@ class ReadingEditForm(forms.Form):
                                                             attrs={'class': 'form-control', 'id': 'reading_type'}))
 
         self.fields['value'] = forms.DecimalField(required=True)
+
+
+class EventOccurrenceStatusEditForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'] = forms.CharField(required=True, label='',
+                                              widget=TextInput(attrs={'placeholder': 'New Event Occurrence State'}))

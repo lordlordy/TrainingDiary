@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team, occurrence_states
 from studentTSB.forms import (EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm,
-                              PlayerEventOccurrenceForm, PersonalTrainingForm, ReadingTypeEditForm, ReadingEditForm)
+                              PlayerEventOccurrenceForm, PersonalTrainingForm, ReadingTypeEditForm, ReadingEditForm,
+                              EventOccurrenceStatusEditForm, SelectSingleForm)
 from datetime import datetime
 
 
@@ -12,8 +13,36 @@ def home_view(request):
 
 def reading_type_list_view(request):
     reading_types = DatabaseManager().reading_types()
-    print(reading_types)
     return render(request, 'studentTSB/reading_types_list.html', {'reading_types': reading_types})
+
+
+def event_occurrence_states_list_view(request):
+    states = DatabaseManager().event_occurrence_states()
+    return render(request, 'studentTSB/event_occurrence_states_list.html',
+                  {'states': states, 'form': EventOccurrenceStatusEditForm()})
+
+
+def new_event_occurrence_state(request):
+    if 'name' in request.POST:
+        DatabaseManager().add_event_occurrence_state(request.POST['name'], 1)
+    return event_occurrence_states_list_view(request)
+
+
+def update_event_occurrence_state(request, **kwargs):
+    if 'id' in kwargs and 'name' in request.POST and 'state' in request.POST:
+        DatabaseManager().update_event_occurrence_state(kwargs['id'], request.POST['name'], request.POST['state'])
+    return event_occurrence_states_list_view(request)
+
+
+def delete_event_occurrence_state(request, **kwargs):
+    dm = DatabaseManager()
+    if request.method == "GET":
+        state = dm.event_occurrence_state_for_id(kwargs['state_id'])
+        return render(request, 'studentTSB/confirm_delete.html',
+                      {'object': f"State {state.name}"})
+    if request.method == "POST":
+        dm.delete_event_occurrence_state(kwargs['state_id'])
+        return HttpResponseRedirect(f'/studentTSB/admin/event_occurrence_states/list/')
 
 
 def player_list_view(request):
@@ -132,18 +161,22 @@ def event_occurrence_view(request, **kwargs):
         ids = request.POST.getlist('id[]')
         rpe = request.POST.getlist('rpe[]')
         duration = request.POST.getlist('duration[]')
-        status = request.POST.getlist('status[]')
+        states = request.POST.getlist('states[]')
         comments = request.POST.getlist('comments[]')
         dm = DatabaseManager()
         for i in range(len(ids)):
-            dm.update_player_event_occurrence(ids[i], rpe[i], duration[i], status[i], comments[i])
+            state = request.POST[ids[i]]
+            dm.update_player_event_occurrence(ids[i], rpe[i], duration[i], state, comments[i])
         peo = dm.player_event_occurrence_for_id(ids[0])
-        event = peo.event_occurrence.event
-        return HttpResponseRedirect(f'/studentTSB/events/edit/{event.id}/')
+        # event = peo.event_occurrence.event
+        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{peo.event_occurrence.id}/')
 
     else:
-        context = {'event_occurrence': DatabaseManager().team_event_occurrence_for_id(kwargs['id']),
-                   'status_form': SelectForm('status', [(i, i) for i in occurrence_states])}
+        states = DatabaseManager().event_occurrence_states()
+        event_occurrence = DatabaseManager().team_event_occurrence_for_id(kwargs['id'])
+        players = [(p, SelectSingleForm(str(p.id), [(s.id, s.name) for s in states], initial={str(p.id): p.state.id}))
+                   for p in event_occurrence.player_occurrences]
+        context = {'event_occurrence': event_occurrence, 'players': players}
         return render(request, 'studentTSB/event_occurrence.html', context)
 
 
@@ -299,8 +332,6 @@ def coach_edit_view(request, **kwargs):
         team_id_dict = dict()
         for t in all_teams:
             team_id_dict[t.id] = t.name
-        print(all_teams)
-        print(coach)
         coach_teams = set()
         if coach.teams is not None:
             coach_teams = set([t.id for t in coach.teams])

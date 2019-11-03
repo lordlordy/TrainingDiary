@@ -2,7 +2,7 @@ import sqlite3
 import os
 import trainingdiary
 
-occurrence_states = ['Scheduled', 'Completed', 'Authorised Absent', 'Absent']
+occurrence_states = [['Scheduled', 1], ['Completed', 1], ['Authorised Absent', 0], ['Absent', 0]]
 
 db_tables_sql = [
     f'''
@@ -84,7 +84,7 @@ db_tables_sql = [
              player_id INTEGER NOT NULL REFERENCES Event(id),
              rpe REAL NOT NULL,
              duration REAL NOT NULL,
-             status varchar(32) NOT NULL,
+             state_id INTEGER REFERENCES EventOccurrenceState(id),
              comments TEXT
          );
     ''',
@@ -102,6 +102,13 @@ db_tables_sql = [
             value REAL NOT NULL,
             type_id INTEGER NOT NULL REFERENCES ReadingType(id),
             player_event_occurrence_id INTEGER NOT NULL REFERENCES PlayerEventOccurrence(id)
+        );
+    ''',
+    f'''
+        CREATE TABLE EventOccurrenceState(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name varchar(32) NOT NULL,
+            include_in_tsb BOOL NOT NULL 
         );
     '''
 ]
@@ -127,6 +134,8 @@ class DatabaseManager:
         team_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         self.add_new_event('Personal Training', '00:00:00', '01:00:00', 5.0, '2019-01-01', '2099-12-31', 'Adhoc')
         self.create_happiness_reading()
+        for s in occurrence_states:
+            self.add_event_occurrence_state(s[0], s[1])
 
     def create_dummy_data(self):
         for p in dummy_players:
@@ -302,7 +311,7 @@ class DatabaseManager:
     def event_occurrences_for_player(self, player_id):
 
         sql = f'''
-            SELECT id, team_event_occurrence_id, player_id, rpe, duration, status, comments
+            SELECT id, team_event_occurrence_id, player_id, rpe, duration, state_id, comments
             FROM PlayerEventOccurrence
             WHERE player_id={player_id}
         '''
@@ -311,7 +320,7 @@ class DatabaseManager:
     def player_occurrences_for_event_occurrence(self, event_occurrence_id):
 
         sql = f'''
-            SELECT id, team_event_occurrence_id, player_id, rpe, duration, status, comments
+            SELECT id, team_event_occurrence_id, player_id, rpe, duration, state_id, comments
             FROM PlayerEventOccurrence
             WHERE team_event_occurrence_id={event_occurrence_id}
         '''
@@ -319,7 +328,7 @@ class DatabaseManager:
 
     def player_event_occurrence_for_id(self, player_event_occurrence_id):
         sql = f'''
-            SELECT id, team_event_occurrence_id, player_id, rpe, duration, status, comments
+            SELECT id, team_event_occurrence_id, player_id, rpe, duration, state_id, comments
             FROM PlayerEventOccurrence
             WHERE id={player_event_occurrence_id}
         '''
@@ -343,10 +352,10 @@ class DatabaseManager:
         occurrences = self.__conn.execute(sql).fetchall()
         return len(occurrences) > 0
 
-    def update_player_event_occurrence(self, player_event_occurrence_id, rpe, duration, status, comments):
+    def update_player_event_occurrence(self, player_event_occurrence_id, rpe, duration, state_id, comments):
         sql = f'''
             UPDATE PlayerEventOccurrence
-            SET rpe={rpe}, duration='{duration}', status='{status}', comments='{comments}'
+            SET rpe={rpe}, duration='{duration}', state_id='{state_id}', comments='{comments}'
             WHERE id={player_event_occurrence_id}
         '''
         self.__conn.execute(sql)
@@ -452,12 +461,12 @@ class DatabaseManager:
         last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return last_id
 
-    def add_new_player_event_occurrence(self, event_occurrence_id, player_id, rpe, duration, status, comments):
+    def add_new_player_event_occurrence(self, event_occurrence_id, player_id, rpe, duration, state_id, comments):
         sql = f'''
             INSERT INTO PlayerEventOccurrence
-            (team_event_occurrence_id, player_id, rpe, duration, status, comments)
+            (team_event_occurrence_id, player_id, rpe, duration, state_id, comments)
             VALUES
-            ({event_occurrence_id}, {player_id}, {rpe}, '{duration}', '{status}', '{comments}')
+            ({event_occurrence_id}, {player_id}, {rpe}, '{duration}', '{state_id}', '{comments}')
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
@@ -485,6 +494,48 @@ class DatabaseManager:
         self.__conn.commit()
         # remove associated occurences
         sql = f'DELETE FROM EventOccurrence WHERE event_id={event_id}'
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def event_occurrence_states(self):
+        sql = f'''
+            SELECT id, name, include_in_tsb FROM EventOccurrenceState
+        '''
+        return self.__event_occurrence_states_from_sql(sql)
+
+    def add_event_occurrence_state(self, name, include_in_tsb):
+        sql = f'''
+            INSERT INTO EventOccurrenceState
+            (name, include_in_tsb)
+            VALUES
+            ('{name}', {include_in_tsb})
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+        status_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
+        return status_id
+
+    def update_event_occurrence_state(self, state_id, name, include_in_tsb=1):
+        sql = f'''
+            UPDATE EventOccurrenceState
+            SET
+            name='{name}', include_in_tsb='{include_in_tsb}'
+            WHERE id={state_id}
+        '''
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def event_occurrence_state_for_id(self, state_id):
+        sql = f'''
+            SELECT id, name, include_in_tsb FROM EventOccurrenceState
+            WHERE id={state_id}
+        '''
+        states = self.__event_occurrence_states_from_sql(sql)
+        if len(states) > 0:
+            return states[0]
+
+    def delete_event_occurrence_state(self, state_id):
+        sql = f'DELETE FROM EventOccurrenceState WHERE id={state_id}'
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -617,6 +668,11 @@ class DatabaseManager:
         self.__conn.commit()
         last_id = self.__conn.execute('SELECT last_insert_rowid()').fetchall()[0][0]
         return last_id
+
+    def __event_occurrence_states_from_sql(self, sql):
+        states = self.__conn.execute(sql).fetchall()
+        from . import EventOccurrenceState
+        return [EventOccurrenceState(*s) for s in states]
 
     def __readings_from_sql(self, sql):
         readings = self.__conn.execute(sql).fetchall()

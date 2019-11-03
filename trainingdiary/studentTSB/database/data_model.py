@@ -148,7 +148,7 @@ class Event:
                     for p in t.players:
                         if not dm.player_event_occurrence_exists(occurrence_id, p.id):
                             dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
-                                                               'Scheduled', '')
+                                                               1, '')
                 current_date = Event.__increment_by_one_week(current_date)
         else:
             for t in self.teams:
@@ -161,7 +161,7 @@ class Event:
                 for p in t.players:
                     if not dm.player_event_occurrence_exists(occurrence_id, p.id):
                         dm.add_new_player_event_occurrence(occurrence_id, p.id, self.estimated_rpe, self.duration,
-                                                           'Scheduled', '')
+                                                           1, '')
 
     @staticmethod
     def __increment_by_one_week(date_str):
@@ -221,7 +221,7 @@ class TeamEventOccurrence:
 
     @property
     def number_completed(self):
-        completed = [p for p in self.player_occurrences if p.status == "Completed"]
+        completed = [p for p in self.player_occurrences if p.state_id == 2]
         return len(completed)
 
 
@@ -233,16 +233,21 @@ class PlayerEventOccurrence:
         self.player_id = args[2]
         self.rpe = args[3]
         self.duration = args[4]
-        self.status = args[5]
+        self.state_id = args[5]
         self.comments = args[6]
 
     @property
     def tss(self):
-        if self.status == 'Scheduled' or self.status == 'Completed':
+        if self.state.include_in_tsb:
             # the 100/49 factor is to make rpe = 7 threshold. ie 1hr @ rpe 7 == 100 TSS
             return int(self.hours * self.rpe * self.rpe * (100 / 49))
         else:
             return 0
+
+    @property
+    def state(self):
+        from . import DatabaseManager
+        return DatabaseManager().event_occurrence_state_for_id(self.state_id)
 
     @property
     def hours(self):
@@ -253,6 +258,10 @@ class PlayerEventOccurrence:
     @property
     def day(self):
         return dateutil.parser.parse(self.date).strftime('%A')
+
+    @property
+    def estimated_tss(self):
+        return self.event_occurrence.event.estimated_tss
 
     @property
     def event_occurrence(self):
@@ -267,20 +276,12 @@ class PlayerEventOccurrence:
 
     # think these are a bit of a hack to allow selecting of status in table in event_occurrence.html
     @property
-    def isScheduled(self):
-        return self.status == 'scheduled'
+    def is_scheduled(self):
+        return self.state_id == 1
 
     @property
-    def isCompleted(self):
-        return self.status == 'Completed'
-
-    @property
-    def isAuthorisedAbsent(self):
-        return self.status == 'Authorised Absent'
-
-    @property
-    def isAbsent(self):
-        return self.status == 'Absent'
+    def is_completed(self):
+        return self.state_id == 2
 
     @property
     def readings(self):
@@ -291,7 +292,7 @@ class PlayerEventOccurrence:
         return {'id': self.id,
                 'rpe': self.rpe,
                 'duration': self.duration,
-                'status': self.status,
+                'state_id': self.state_id,
                 'comments': self.comments}
 
 
@@ -382,3 +383,15 @@ class Reading:
                 'value': self.value,
                 'type_id': self.type_id,
                 'player_event_occurrence_id': self.player_event_occurrence_id}
+
+
+class EventOccurrenceState:
+
+    def __init__(self, *args):
+        self.id = args[0]
+        self.name = args[1]
+        self.include_in_tsb = args[2]
+
+    @property
+    def count(self):
+        return 0

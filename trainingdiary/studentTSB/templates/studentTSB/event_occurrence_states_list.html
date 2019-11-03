@@ -1,0 +1,73 @@
+{% extends 'tsb_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <h2 class="border-bottom mb-4">Event Occurrence States</h2>
+        </div>
+       <div class="col-md-8">
+           <form action="{% url 'event_occurrence_state_new' %}" method="post">
+               {% csrf_token %}
+               <div class="row">
+                   <div class="col-md-6">
+                   {{ form.name | as_crispy_field }}
+                   </div>
+                   <div class="col-md-6">
+                       <input class="btn btn-outline-primary btn-block" type="submit" value="Add New State">
+                   </div>
+               </div>
+           </form>
+       </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
+                <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>In TSB?</th>
+                    <th>Count</th>
+                    <th></th>
+                </tr>
+                </thead>
+                {% for s in states %}
+                <tr>
+                    <form action="{% url 'event_occurrence_state_update' s.id %}" method="post" id="event_occurrence">
+                       {% csrf_token %}
+                        <td>
+                            <input class="btn btn-outline-primary btn-block" type="submit" value="Update">
+                        </td>
+                        <td><input class="form-control" type="text" name="name" value="{{s.name}}"></td>
+                        <td>
+                            <select class="form-control" name="state">
+                                   <option value="1" {% if s.include_in_tsb %}selected="True" {% endif %}>Yes</option>
+                                   <option value="0" {% if not s.include_in_tsb %}selected="True" {% endif %}>No</option>
+                            </select>
+                        </td>
+                    </form>
+                    <td>{{ s.count }}</td>
+                    <td>
+                        {% if s.count == 0 %}
+                        <a href="{% url 'event_occurrence_state_delete' s.id %}" class="btn btn-outline-danger btn-block" role="button">DELETE</a>
+                        {% else %}
+                        Unable to delete as count is non zero
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+   {% block extra_scripts %}
+
+
+
+    {% endblock %}

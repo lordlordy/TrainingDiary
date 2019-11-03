@@ -26,29 +26,24 @@
                            <th>Actual Duration</th>
                            <th>Actual RPE</th>
                            <th>Actual TSS</th>
-                           <th>Status</th>
+                           <th>state</th>
                            <th>Comments</th>
                        </tr>
                        </thead>
-                       {% for e in event_occurrence.player_occurrences %}
+                       {% for p in players %}
                        <tr>
-                           <input type="hidden" name="id[]" value="{{ e.id }}">
+                           <input type="hidden" name="id[]" value="{{ p.0.id }}">
                            <td>
-                               <a href="{% url 'player_event_occurrence_view_from_event_view' e.id event_occurrence.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.player.name }}</a>
+                               <a href="{% url 'player_event_occurrence_view_from_event_view' p.0.id event_occurrence.id %}" class="btn btn-outline-primary btn-block" role="button">{{ p.0.player.name }}</a>
                            </td>
-                           <td>{{ e.event_occurrence.tss}}</td>
-                           <td><input class="form-control" type="text" name="duration[]" value="{{e.duration}}"></td>
-                           <td><input class="form-control" type="text" name="rpe[]" value="{{e.rpe}}"></td>
-                           <td>{{e.tss}}</td>
+                           <td>{{ event_occurrence.tss}}</td>
+                           <td><input class="form-control" type="text" name="duration[]" value="{{p.0.duration}}"></td>
+                           <td><input class="form-control" type="text" name="rpe[]" value="{{p.0.rpe}}"></td>
+                           <td>{{p.0.tss}}</td>
                            <td>
-                               <select class="form-control" name="status[]" form="event_occurrence">
-                                   <option value="Scheduled" {% if e.isScheduled %}selected="True" {% endif %}>Scheduled</option>
-                                   <option value="Completed" {% if e.isCompleted %}selected="True" {% endif %}>Completed</option>
-                                   <option value="Authorised Absent" {% if e.isAuthorisedAbsent %}selected="True" {% endif %}>Authorised Absent</option>
-                                   <option value="Absent" {% if e.isAbsent %}selected="True" {% endif %}>Absent</option>
-                               </select>
+                               {{ p.1 | crispy }}
                            </td>
-                           <td><input class="form-control" type="text" name="comments[]" value="{{ e.comments}}"></td>
+                           <td><input class="form-control" type="text" name="comments[]" value="{{ p.0.comments}}"></td>
                        </tr>
                        {% endfor %}
                    </table>
@@ -69,9 +64,11 @@ $('.datepicker').datepicker({
     format: "yyyy-mm-dd",
 });
 
-$(document).ready(function(){
-$('#frequency').select2();
-});
+{% for p in players %}
+    $(document).ready(function(){
+    $('#{{p.0.id}}').select2();
+    });
+{% endfor %}
 
 $('#endtime').pickatime({});
 
