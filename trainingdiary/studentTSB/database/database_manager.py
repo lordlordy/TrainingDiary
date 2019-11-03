@@ -327,6 +327,14 @@ class DatabaseManager:
         '''
         return self.__player_event_occurrences_for_sql(sql)
 
+    def player_occurrences_for_event_and_date(self, event_id, date):
+        sql = f'''
+            SELECT id, event_id, player_id, date, rpe, duration, state_id, comments
+            FROM PlayerEventOccurrence
+            WHERE event_id={event_id} and date='{date}'
+        '''
+        return self.__player_event_occurrences_for_sql(sql)
+
     def player_event_occurrence_for_id(self, player_event_occurrence_id):
         sql = f'''
             SELECT id, event_id, player_id, date, rpe, duration, state_id, comments
