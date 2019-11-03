@@ -111,9 +111,10 @@ class PersonalTrainingForm(forms.Form):
                                                                       'placeholder': 'yyyy-mm-dd'}))
         self.fields['rpe'] = forms.DecimalField(required=False)
         self.fields['duration'] = forms.TimeField(required=True, widget=TimeInput())
-        self.fields['status'] = forms.CharField(required=True,
-                                                widget=Select(choices=[(a, a) for a in occurrence_states],
-                                                              attrs={'class': 'form-control', 'id': 'status'}))
+        states = DatabaseManager().event_occurrence_states()
+        self.fields['state_id'] = forms.CharField(required=True,
+                                                  widget=Select(choices=[(s.id, s.name) for s in states],
+                                                                attrs={'class': 'form-control', 'id': 'status'}))
         self.fields['comments'] = forms.CharField(required=False, widget=forms.Textarea())
 
 
