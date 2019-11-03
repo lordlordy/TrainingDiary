@@ -12,10 +12,65 @@
                </div>
            </div>
            <div class="row">
-
+               <div class="col-md-3">
+                   <h5 class="border-bottom mb-1">Duration</h5>
+                   <form action="{% url 'update_all_player_event_duration' event.id date %}" method="post">
+                       {% csrf_token %}
+                       <div class="row">
+                           <div class="col-md-6">
+                               <input class="form-control" type="text" name="duration" value="hh:mm:ss">
+                           </div>
+                           <div class="col-md-6">
+                               <input class="btn btn-outline-primary btn-block" type="submit" value="Update All">
+                           </div>
+                       </div>
+                   </form>
+               </div>
+               <div class="col-md-3">
+                   <h5 class="border-bottom mb-1">RPE</h5>
+                   <form action="{% url 'update_all_player_event_rpe' event.id date %}" method="post">
+                       {% csrf_token %}
+                       <div class="row">
+                           <div class="row-md-6">
+                               <input class="form-control" type="text" name="rpe" value="5.0">
+                           </div>
+                           <div class="row-md-6">
+                               <input class="btn btn-outline-primary btn-block" type="submit" value="Update All">
+                           </div>
+                       </div>
+                   </form>
+               </div>
+               <div class="col-md-3">
+                   <h5 class="border-bottom mb-1">State</h5>
+                   <form action="{% url 'update_all_player_event_state' event.id date %}" method="post">
+                       {% csrf_token %}
+                       <div class="row">
+                           <div class="row-md-6">
+                               {{ state_form | crispy }}
+                           </div>
+                           <div class="row-md-6">
+                               <input class="btn btn-outline-primary btn-block" type="submit" value="Update All">
+                           </div>
+                       </div>
+                   </form>
+               </div>
+               <div class="col-md-3">
+                   <h5 class="border-bottom mb-1">Comments</h5>
+                   <form action="{% url 'update_all_player_event_comments' event.id date %}" method="post">
+                       {% csrf_token %}
+                       <div class="row">
+                           <div class="row-md-6">
+                               <input class="form-control" type="text" name="comments" value="">
+                           </div>
+                           <div class="row-md-6">
+                               <input class="btn btn-outline-primary btn-block" type="submit" value="Add to All">
+                           </div>
+                       </div>
+                   </form>
+               </div>
+           </div>
+           <div class="row">
                <div class="col-md-12">
-
-
                    <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
                        <thead class="thead-light">
                        <tr>
@@ -73,6 +128,10 @@ $('.datepicker').datepicker({
     $('#{{p.0.id}}').select2();
     });
 {% endfor %}
+
+    $(document).ready(function(){
+    $('#state_all').select2();
+    });
 
 $('#endtime').pickatime({});
 

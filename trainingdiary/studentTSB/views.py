@@ -174,7 +174,8 @@ def event_occurrence_view(request, **kwargs):
     player_event_occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
     players = [(p, SelectSingleForm('state', [(s.id, s.name) for s in states], initial={'state': p.state.id}))
                for p in player_event_occurrences]
-    context = {'event': event, 'date': kwargs['date'], 'players': players}
+    state_form = SelectSingleForm('state_all', [(s.id, s.name) for s in states])
+    context = {'event': event, 'date': kwargs['date'], 'players': players, 'state_form': state_form}
     return render(request, 'studentTSB/event_occurrence.html', context)
 
 
@@ -237,6 +238,54 @@ def update_player_event_occurrence(request, **kwargs):
     peo = dm.player_event_occurrence_for_id(request.POST['id'])
     messages.info(request, f'{peo} saved')
 
+    return HttpResponseRedirect(f'/studentTSB/events/occurrence/edit/{kwargs["id"]}/{kwargs["date"]}/')
+
+
+def update_all_player_event_duration(request, **kwargs):
+    if request.POST['duration'] != 'hh:mm:ss':
+        dm = DatabaseManager()
+        occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
+        players_added = list()
+        for o in occurrences:
+            dm.update_player_event_occurrence(o.id, o.rpe, request.POST['duration'], o.state_id, o.comments)
+            players_added.append(o.player.name)
+        messages.info(request, f"duration updated to {request.POST['duration']} for {len(players_added)} players: {', '.join(players_added)}")
+    return HttpResponseRedirect(f'/studentTSB/events/occurrence/edit/{kwargs["id"]}/{kwargs["date"]}/')
+
+
+def update_all_player_event_rpe(request, **kwargs):
+    dm = DatabaseManager()
+    occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
+    players_added = list()
+    for o in occurrences:
+        dm.update_player_event_occurrence(o.id, request.POST['rpe'], o.duration, o.state_id, o.comments)
+        players_added.append(o.player.name)
+    messages.info(request, f"RPE updated to {request.POST['rpe']} for {len(players_added)} players: {', '.join(players_added)}")
+    return HttpResponseRedirect(f'/studentTSB/events/occurrence/edit/{kwargs["id"]}/{kwargs["date"]}/')
+
+
+def update_all_player_event_state(request, **kwargs):
+    dm = DatabaseManager()
+    occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
+    players_added = list()
+    for o in occurrences:
+        dm.update_player_event_occurrence(o.id, o.rpe, o.duration, request.POST['state_all'], o.comments)
+        players_added.append(o.player.name)
+    state = dm.event_occurrence_state_for_id(request.POST['state_all'])
+    messages.info(request,
+                  f"State updated to {state.name} for {len(players_added)} players: {', '.join(players_added)}")
+    return HttpResponseRedirect(f'/studentTSB/events/occurrence/edit/{kwargs["id"]}/{kwargs["date"]}/')
+
+
+def update_all_player_event_comments(request, **kwargs):
+    dm = DatabaseManager()
+    occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
+    players_added = list()
+    for o in occurrences:
+        dm.update_player_event_occurrence(o.id, o.rpe, o.duration, o.state_id, o.comments + ' ' + request.POST['comments'])
+        players_added.append(o.player.name)
+    messages.info(request,
+                  f"Comments: {request.POST['comments']} added for {len(players_added)} players: {', '.join(players_added)}")
     return HttpResponseRedirect(f'/studentTSB/events/occurrence/edit/{kwargs["id"]}/{kwargs["date"]}/')
 
 
