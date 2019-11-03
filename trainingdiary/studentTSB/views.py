@@ -156,7 +156,6 @@ def event_edit_view(request, **kwargs):
 
 
 def event_occurrence_view(request, **kwargs):
-    print(kwargs)
     if 'id[]' in request.POST:
         # got ids so this is a save
         ids = request.POST.getlist('id[]')

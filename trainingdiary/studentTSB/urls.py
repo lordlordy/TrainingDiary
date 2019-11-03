@@ -68,7 +68,7 @@ urlpatterns = [
     path('events/add/teams/<int:id>/', add_teams_to_event_view, name='event_add_coaches'),
     path('events/generate/team/<int:id>/', event_generate_team_view, name='event_generate_team'),
     path('events/generate/player/<int:id>/', event_generate_player_view, name='event_generate_player'),
-    path('events/occurrence/<int:id>/<str:date>/', event_occurrence_view, name='event_occurrence'),
+    path('events/occurrence/edit/<int:id>/<str:date>/', event_occurrence_view, name='event_occurrence'),
     path('events/occurrence/player/<int:id>/<int:event_id>/<str:date>/',
          player_event_occurrence_from_event_occurrence_view, name='player_event_occurrence_from_event_occurrence_view'),
     path('events/player/occurrence/<int:id>/<int:event_id>/', player_event_occurrence_from_event_view,

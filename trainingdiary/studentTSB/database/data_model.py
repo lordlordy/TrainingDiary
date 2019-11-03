@@ -130,7 +130,7 @@ class Event:
             o_list.append(o)
             occ_dict[o.date] = o_list
         result = list()
-        for k,v in occ_dict.items():
+        for k, v in occ_dict.items():
             result.append((k, ', '.join([t.team.name for t in v])))
         return result
 
