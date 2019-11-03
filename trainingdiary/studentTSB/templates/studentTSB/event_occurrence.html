@@ -14,9 +14,7 @@
            <div class="row">
 
                <div class="col-md-12">
-                   <form method="post" id="event_occurrence">
-                       {% csrf_token %}
-                       <input class="btn btn-outline-primary btn-block" type="submit" value="Save">
+
 
                    <table id="dataTable" class="table table-hover table-bordered table-striped table-sm ">
                        <thead class="thead-light">
@@ -28,26 +26,32 @@
                            <th>Actual TSS</th>
                            <th>state</th>
                            <th>Comments</th>
+                           <th></th>
                        </tr>
                        </thead>
                        {% for p in players %}
                        <tr>
-                           <input type="hidden" name="id[]" value="{{ p.0.id }}">
-                           <td>
-                               <a href="{% url 'player_event_occurrence_from_event_occurrence_view' p.0.id event.id date %}" class="btn btn-outline-primary btn-block" role="button">{{ p.0.player.name }}</a>
-                           </td>
-                           <td>{{ event.estimated_tss}}</td>
-                           <td><input class="form-control" type="text" name="duration[]" value="{{p.0.duration}}"></td>
-                           <td><input class="form-control" type="text" name="rpe[]" value="{{p.0.rpe}}"></td>
-                           <td>{{p.0.tss}}</td>
-                           <td>
-                               {{ p.1 | crispy }}
-                           </td>
-                           <td><input class="form-control" type="text" name="comments[]" value="{{ p.0.comments}}"></td>
+                           <form action="{% url 'update_player_event_occurrence' event.id date %}" method="post" id="event_occurrence">
+                               {% csrf_token %}
+                               <input type="hidden" name="id" value="{{ p.0.id }}">
+                               <td>
+                                   <a href="{% url 'player_event_occurrence_from_event_occurrence_view' p.0.id event.id date %}" class="btn btn-outline-info btn-block" role="button">{{ p.0.player.name }}</a>
+                               </td>
+                               <td>{{ event.estimated_tss}}</td>
+                               <td><input class="form-control" type="text" name="duration" value="{{p.0.duration}}"></td>
+                               <td><input class="form-control" type="text" name="rpe" value="{{p.0.rpe}}"></td>
+                               <td>{{p.0.tss}}</td>
+                               <td>
+                                   {{ p.1 | crispy }}
+                               </td>
+                               <td><input class="form-control" type="text" name="comments" value="{{ p.0.comments}}"></td>
+                               <th>
+                                   <input class="btn btn-outline-primary btn-block" type="submit" value="Save">
+                               </th>
+                           </form>
                        </tr>
                        {% endfor %}
                    </table>
-                   </form>
                </div>
            </div>
        </div>

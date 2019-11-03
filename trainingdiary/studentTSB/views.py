@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 from studentTSB.database import DatabaseManager, tsb_for_player, tsb_for_team, occurrence_states
 from studentTSB.forms import (EventEditForm, PlayerEditForm, TeamEditForm, CoachEditForm, SelectForm,
                               PlayerEventOccurrenceForm, PersonalTrainingForm, ReadingTypeEditForm, ReadingEditForm,
@@ -167,35 +168,19 @@ def event_edit_view(request, **kwargs):
 
 
 def event_occurrence_view(request, **kwargs):
-    if 'id[]' in request.POST:
-        # got ids so this is a save
-        ids = request.POST.getlist('id[]')
-        rpe = request.POST.getlist('rpe[]')
-        duration = request.POST.getlist('duration[]')
-        comments = request.POST.getlist('comments[]')
-        dm = DatabaseManager()
-        for i in range(len(ids)):
-            state = request.POST[ids[i]]
-            dm.update_player_event_occurrence(ids[i], rpe[i], duration[i], state, comments[i])
-        # peo = dm.player_event_occurrence_for_id(ids[0])
-        return HttpResponseRedirect(f'/studentTSB/events/occurrence/{kwargs["id"]}/{kwargs["date"]}/')
-
-    else:
-        dm = DatabaseManager()
-        states = dm.event_occurrence_states()
-        event = dm.event_for_id(kwargs['id'])
-        player_event_occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
-        print(player_event_occurrences)
-        players = [(p, SelectSingleForm(str(p.id), [(s.id, s.name) for s in states], initial={str(p.id): p.state.id}))
-                   for p in player_event_occurrences]
-        context = {'event': event, 'date': kwargs['date'], 'players': players}
-        return render(request, 'studentTSB/event_occurrence.html', context)
+    dm = DatabaseManager()
+    states = dm.event_occurrence_states()
+    event = dm.event_for_id(kwargs['id'])
+    player_event_occurrences = dm.player_occurrences_for_event_and_date(kwargs['id'], kwargs['date'])
+    players = [(p, SelectSingleForm('state', [(s.id, s.name) for s in states], initial={'state': p.state.id}))
+               for p in player_event_occurrences]
+    context = {'event': event, 'date': kwargs['date'], 'players': players}
+    return render(request, 'studentTSB/event_occurrence.html', context)
 
 
 def player_event_occurrence_from_player_view(request, **kwargs):
     if 'update-button' in request.POST:
         # this is an update
-        print(request.POST)
         DatabaseManager().update_player_event_occurrence(kwargs['id'], request.POST['rpe'],
                                                          request.POST['duration'],
                                                          request.POST['state_id'],
@@ -243,6 +228,16 @@ def player_event_occurrence_from_event_occurrence_view(request, **kwargs):
 
         return render(request, 'studentTSB/player_event_occurrence.html', context)
 
+
+def update_player_event_occurrence(request, **kwargs):
+    dm = DatabaseManager()
+    dm.update_player_event_occurrence(request.POST['id'], request.POST['rpe'], request.POST['duration'],
+                                      request.POST['state'], request.POST['comments'])
+
+    peo = dm.player_event_occurrence_for_id(request.POST['id'])
+    messages.info(request, f'{peo} saved')
+
+    return HttpResponseRedirect(f'/studentTSB/events/occurrence/edit/{kwargs["id"]}/{kwargs["date"]}/')
 
 
 def event_generate_team_view(request, **kwargs):
