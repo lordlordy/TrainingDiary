@@ -45,7 +45,7 @@
                     <td>
                         <a href="{% url 'event_edit' e.id %}" class="btn btn-outline-primary btn-block" role="button">{{ e.name }}</a>
                     </td>
-                    <td>{{ e.team }}</td>
+                    <td>{{ e.teams_str }}</td>
                     <td>{{ e.start_time }}</td>
                     <td>{{ e.end_time }}</td>
                     <td>{{ e.duration }}</td>

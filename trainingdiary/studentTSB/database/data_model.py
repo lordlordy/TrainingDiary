@@ -97,6 +97,10 @@ class Event:
         return DatabaseManager().teams_for_event(self.id)
 
     @property
+    def teams_str(self):
+        return ', '.join([t.name for t in self.teams])
+
+    @property
     def players(self):
         # unique list of players at event. If player in two teams for same event will only appear once
         player_ids = set()

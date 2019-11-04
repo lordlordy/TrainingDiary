@@ -470,7 +470,7 @@ def delete_event_from_team(request, **kwargs):
         return render(request, 'studentTSB/confirm_delete.html',
                       {'object': f"Event {event.name} and all associated training sessions"})
     if request.method == "POST":
-        dm.remove_event_for_id(kwargs['event_id'])
+        dm.remove_event_from_team(kwargs['event_id'], kwargs['team_id'])
         return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
 
 
