@@ -143,6 +143,11 @@ class Event:
         return len(self.team_event_occurrences)
 
     @property
+    def can_delete(self):
+        # only if no occurrences generated - may change in futre
+        return self.number_of_occurrences == 0 and len(self.player_event_occurrences) == 0 and self.id != 1
+
+    @property
     def tss_time_series(self):
         ts = []
         for e in self.team_event_occurrences:

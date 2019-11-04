@@ -1,8 +1,11 @@
 import sqlite3
 import os
 import trainingdiary
+import datetime
 
-occurrence_states = [['Scheduled', 1], ['Completed', 1], ['Authorised Absent', 0], ['Absent', 0]]
+SCHEDULED_STATE = 'Scheduled'
+COMPLETED_STATE = 'Completed'
+occurrence_states = [[SCHEDULED_STATE, 1], [COMPLETED_STATE, 1], ['Authorised Absent', 0], ['Absent', 0]]
 
 db_tables_sql = [
     f'''
@@ -155,6 +158,29 @@ class DatabaseManager:
 
     def create_happiness_reading(self):
         self.add_new_reading_type('happiness', 0, 3)
+
+    def state_id_for_name(self, name):
+        sql = f'''
+            SELECT id FROM EventOccurrenceState WHERE name='{name}'
+        '''
+        ids = self.__conn.execute(sql).fetchall()
+        if len(ids) > 0:
+            return ids[0][0]
+
+    def update_player_event_occurrence_state(self):
+        # This looks for all player event occurrences that are today or before that are state == 'scheduled'
+        # all these are changed to 'completed'
+        completed_id = self.state_id_for_name(COMPLETED_STATE)
+        scheduled_id = self.state_id_for_name(SCHEDULED_STATE)
+        if completed_id is not None and scheduled_id is not None:
+            today = datetime.datetime.now().date()
+            sql = f'''
+                UPDATE PlayerEventOccurrence
+                SET state_id='{completed_id}'
+                WHERE state_id='{scheduled_id}' AND date <= '{today}'
+            '''
+            self.__conn.execute(sql)
+            self.__conn.commit()
 
     def players(self):
         sql = f'''
@@ -560,6 +586,15 @@ class DatabaseManager:
         states = self.__event_occurrence_states_from_sql(sql)
         if len(states) > 0:
             return states[0]
+
+    def delete_event(self, event_id):
+        # for now only delete if there are no occurrences
+        players = self.__conn.execute(f'SELECT COUNT(id) FROM PlayerEventOccurrence WHERE event_id={event_id}').fetchall()
+        teams = self.__conn.execute(f'SELECT COUNT(id) FROM TeamEventOccurrence WHERE event_id={event_id}').fetchall()
+
+        if len(players) > 0 and len(teams) > 0 and players[0][0] == 0 and teams[0][0] == 0:
+            self.__conn.execute(f'DELETE From Event WHERE id={event_id}')
+            self.__conn.commit()
 
     def delete_event_occurrence_state(self, state_id):
         sql = f'DELETE FROM EventOccurrenceState WHERE id={state_id}'

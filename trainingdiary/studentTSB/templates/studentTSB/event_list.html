@@ -54,7 +54,13 @@
                     <td>{{ e.start_date }}</td>
                     <td>{{ e.end_date }}</td>
                     <td>{{ e.frequency }}</td>
-                    <td>{{ e.number_of_occurrences }}</td>
+                    <td>
+                        {% if e.can_delete %}
+                            <a href="{% url 'delete_event' e.id %}" class="btn btn-outline-danger btn-block" role="button">-</a>
+                        {% else %}
+                            {{ e.number_of_occurrences }}
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </table>

@@ -463,6 +463,16 @@ def delete_coach_from_team(request, **kwargs):
         return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
 
 
+def delete_event(request, **kwargs):
+    if request.method == "GET":
+        event = DatabaseManager().event_for_id(kwargs['event_id'])
+        return render(request, 'studentTSB/confirm_delete.html',
+                      {'object': f"Event {event.name} for {event.teams_str}"})
+    if request.method == "POST":
+        DatabaseManager().delete_event(kwargs['event_id'])
+        return HttpResponseRedirect(f'/studentTSB/events/list/')
+
+
 def delete_event_from_team(request, **kwargs):
     dm = DatabaseManager()
     if request.method == "GET":
