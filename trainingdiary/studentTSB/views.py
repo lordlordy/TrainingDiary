@@ -467,11 +467,20 @@ def delete_event_from_team(request, **kwargs):
     dm = DatabaseManager()
     if request.method == "GET":
         event = dm.event_for_id(kwargs['event_id'])
+        team = dm.team_for_id(kwargs['team_id'])
         return render(request, 'studentTSB/confirm_delete.html',
-                      {'object': f"Event {event.name} and all associated training sessions"})
+                      {'object': f"Event {event.name} from {team.name} and all associated training sessions"})
     if request.method == "POST":
         dm.remove_event_from_team(kwargs['event_id'], kwargs['team_id'])
         return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
+
+
+def remove_team_from_event(request, **kwargs):
+    r = delete_event_from_team(request, **kwargs)
+    if request.method == 'POST':
+        return HttpResponseRedirect(f'/studentTSB/events/edit/{kwargs["event_id"]}/')
+    else:
+        return r
 
 
 def reading_type_edit(request, **kwargs):

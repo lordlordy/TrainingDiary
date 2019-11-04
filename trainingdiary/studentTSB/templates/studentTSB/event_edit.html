@@ -47,7 +47,7 @@
                        <tr>
                            <td>{{ t.name }}</td>
                            <td>
-                        <a href="" class="btn btn-outline-danger btn-block" role="button">Delete</a>
+                        <a href="{% url 'remove_team_from_event' t.id event.id %}" class="btn btn-outline-danger btn-block" role="button">Delete</a>
                         </td>
                        </tr>
                        {% endfor %}
