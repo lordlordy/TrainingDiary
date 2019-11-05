@@ -162,7 +162,14 @@ def event_edit_view(request, **kwargs):
     team_ids = set([t.id for t in potential_teams]) - current_teams
     team_choices = [(i, team_id_dict[i]) for i in team_ids]
     context['select_team_form'] = SelectForm('Teams', team_choices)
-    context['form'] = EventEditForm(initial=initial_values)
+    event_form = EventEditForm(initial=initial_values)
+    context['form'] = event_form
+    if 'id' in kwargs:
+        event = dm.event_for_id(kwargs['id'])
+        if not event.can_delete:
+            event_form.fields['start_date'].disabled = True
+            event_form.fields['end_date'].disabled = True
+            event_form.fields['frequency'].disabled = True
 
     return render(request, 'studentTSB/event_edit.html', context)
 

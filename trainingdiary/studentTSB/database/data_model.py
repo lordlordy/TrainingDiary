@@ -146,7 +146,7 @@ class Event:
 
     @property
     def can_delete(self):
-        # only if no occurrences generated - may change in futre
+        # only if no occurrences generated - may change in future
         return self.number_of_occurrences == 0 and len(self.player_event_occurrences) == 0 and self.id != 1
 
     @property
