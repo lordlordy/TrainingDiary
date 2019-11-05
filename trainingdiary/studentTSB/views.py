@@ -167,9 +167,9 @@ def event_edit_view(request, **kwargs):
     if 'id' in kwargs:
         event = dm.event_for_id(kwargs['id'])
         if not event.can_delete:
-            event_form.fields['start_date'].disabled = True
-            event_form.fields['end_date'].disabled = True
-            event_form.fields['frequency'].disabled = True
+            event_form.fields['start_date'].widget.attrs['disabled'] = True
+            event_form.fields['end_date'].widget.attrs['disabled'] = True
+            event_form.fields['frequency'].widget.attrs['disabled'] = True
 
     return render(request, 'studentTSB/event_edit.html', context)
 
@@ -314,10 +314,13 @@ def event_save_view(request):
     dm = DatabaseManager()
     if 'id' in request.POST and request.POST['id'] != '':
         event_id = request.POST['id']
+        event = dm.event_for_id(event_id)
+        start_date = event.start_date if 'start_date' not in request.POST else request.POST['start_date']
+        end_date = event.end_date if 'end_date' not in request.POST else request.POST['end_date']
+        frequency = event.frequency if 'frequency' not in request.POST else request.POST['frequency']
         # existing event being edited
         dm.update_event(request.POST['id'], request.POST['name'], request.POST['start_time'], request.POST['end_time'],
-                        request.POST['estimated_rpe'], request.POST['start_date'], request.POST['end_date'],
-                        request.POST['frequency'])
+                        request.POST['estimated_rpe'], start_date, end_date, frequency)
     else:
         # new event
         event_id = dm.add_new_event(request.POST['name'], request.POST['start_time'], request.POST['end_time'],
