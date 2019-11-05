@@ -478,11 +478,20 @@ def delete_event_from_team(request, **kwargs):
     if request.method == "GET":
         event = dm.event_for_id(kwargs['event_id'])
         team = dm.team_for_id(kwargs['team_id'])
+        team_occurrences = dm.team_event_occurrences(kwargs['event_id'], kwargs['team_id'])
+        historic_occurrences = [o for o in team_occurrences if o.date < str(datetime.now().date())]
+        message = f"""
+            {team.name} from {event.name} and all associated training sessions. There have been 
+            {len(historic_occurrences)} sessions prior to today which will be remoed. Are you sure ?
+        """
         return render(request, 'studentTSB/confirm_delete.html',
-                      {'object': f"Event {event.name} from {team.name} and all associated training sessions"})
+                      {'object': message})
     if request.method == "POST":
+        event = dm.event_for_id(kwargs['event_id'])
+        team = dm.team_for_id(kwargs['team_id'])
         dm.remove_event_from_team(kwargs['event_id'], kwargs['team_id'])
-        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
+        messages.info(request, f'{team.name} removed from {event.name} and all associated training sessions deleted')
+        return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}')
 
 
 def remove_team_from_event(request, **kwargs):

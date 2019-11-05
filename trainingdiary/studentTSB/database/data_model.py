@@ -140,6 +140,8 @@ class Event:
 
     @property
     def number_of_occurrences(self):
+        if self.id == 1:
+            return len(self.player_event_occurrences)
         return len(self.team_event_occurrences)
 
     @property
