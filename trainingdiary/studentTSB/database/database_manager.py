@@ -430,6 +430,18 @@ class DatabaseManager:
         '''
         self.__conn.execute(sql)
         self.__conn.commit()
+        # need to remove PlayerEventOccurrences associated with this team. Only remove future ones
+        # get all the players event occurrences and remove those that now don't have any team
+        # associated and are in the future.
+        today = datetime.datetime.now().date()
+        for e in self.event_occurrences_for_player(player_id):
+            if e.date >= str(today) and len(e.teams) == 0:
+                sql = f'''
+                    DELETE FROM PlayerEventOccurrence
+                    WHERE id={e.id}
+                '''
+                self.__conn.execute(sql)
+                self.__conn.commit()
 
     def add_coach_to_team(self, coach_id, team_id):
         self.__add_new_team_coach(team_id, coach_id)

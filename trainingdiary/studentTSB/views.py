@@ -455,10 +455,24 @@ def delete_player_from_team(request, **kwargs):
         player = dm.player_for_id(kwargs['player_id'])
         team = dm.team_for_id(kwargs['team_id'])
         return render(request, 'studentTSB/confirm_delete.html',
-                      {'object': f"Player {player.name} from  {team.name}"})
+                      {'object': f"Player {player.name} from  {team.name}. NB this will also remove all future "
+                                 f"PlayerEventOccurrences for this player and team"})
     if request.method == "POST":
         dm.remove_player_from_team(kwargs['player_id'], kwargs['team_id'])
         return HttpResponseRedirect(f'/studentTSB/teams/edit/{kwargs["team_id"]}/')
+
+
+def remove_team_from_player(request, **kwargs):
+    dm = DatabaseManager()
+    if request.method == "GET":
+        player = dm.player_for_id(kwargs['player_id'])
+        team = dm.team_for_id(kwargs['team_id'])
+        return render(request, 'studentTSB/confirm_delete.html',
+                      {'object': f"Team {team.name} from  {player.name}. NB this will also remove all future "
+                                 f"PlayerEventOccurrences for this player and team"})
+    if request.method == "POST":
+        dm.remove_player_from_team(kwargs['player_id'], kwargs['team_id'])
+        return HttpResponseRedirect(f'/studentTSB/players/edit/{kwargs["player_id"]}/')
 
 
 def delete_coach_from_team(request, **kwargs):

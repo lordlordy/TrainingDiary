@@ -34,12 +34,15 @@
                 <thead class="thead-light">
                 <tr>
                     <th>Team</th>
-
+                    <th></th>
                 </tr>
                 </thead>
                 {% for t in player.teams %}
                 <tr>
                     <td>{{ t.name }}</td>
+                    <td>
+                        <a href="{% url 'remove_team_from_player' player.id t.id %}" class="btn btn-outline-danger btn-block" role="button">Remove</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
