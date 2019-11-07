@@ -298,16 +298,34 @@ def update_all_player_event_comments(request, **kwargs):
 
 def event_generate_team_view(request, **kwargs):
     event = DatabaseManager().event_for_id(kwargs['id'])
-    event.generate_team_occurrences()
-    dd = {'id': kwargs['id']}
-    return event_edit_view(request, **dd)
+    if 'All' in request.POST:
+        event.generate_team_occurrences()
+        dd = {'id': kwargs['id']}
+        return event_edit_view(request, **dd)
+    elif 'Future' in request.POST:
+        today = str(datetime.now().date())
+        event.generate_team_occurrences(from_date=today)
+        dd = {'id': kwargs['id']}
+        return event_edit_view(request, **dd)
+    else:
+        return render(request, 'studentTSB/generate_historic.html',
+                      {'object': f"State {event.name}"})
 
 
 def event_generate_player_view(request, **kwargs):
     event = DatabaseManager().event_for_id(kwargs['id'])
-    event.generate_player_occurrences()
-    dd = {'id': kwargs['id']}
-    return event_edit_view(request, **dd)
+    if 'All' in request.POST:
+        event.generate_player_occurrences()
+        dd = {'id': kwargs['id']}
+        return event_edit_view(request, **dd)
+    elif 'Future' in request.POST:
+        today = str(datetime.now().date())
+        event.generate_player_occurrences(from_date=today)
+        dd = {'id': kwargs['id']}
+        return event_edit_view(request, **dd)
+    else:
+        return render(request, 'studentTSB/generate_historic.html',
+                      {'object': f"State {event.name}"})
 
 
 def event_save_view(request):

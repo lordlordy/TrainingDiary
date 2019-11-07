@@ -297,6 +297,14 @@ class DatabaseManager:
         '''
         return self.__events_for_sql(sql)
 
+    def team_event_occurrences_for_team(self, team_id):
+        sql = f'''
+            SELECT id, event_id, team_id, date, tss, comments
+            FROM TeamEventOccurrence
+            WHERE team_id={team_id}
+        '''
+        return self.__event_occurrences_for_sql(sql)
+
     def team_event_occurrences_for_event(self, event_id):
         sql = f'''
             SELECT id, event_id, team_id, date, tss, comments

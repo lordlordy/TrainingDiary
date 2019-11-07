@@ -170,10 +170,13 @@ class Event:
     def db_columns():
         return ['id', 'name', 'start_time', 'end_time', 'estimated_rpe', 'start_date', 'end_date', 'frequency']
 
-    def generate_team_occurrences(self):
+    def generate_team_occurrences(self, from_date=None):
         from . import DatabaseManager
         dm = DatabaseManager()
         current_date = self.start_date
+        if from_date is not None:
+            while current_date < from_date:
+                current_date = Event.__increment_by_one_week(current_date)
         if self.frequency == 'weekly':
             while current_date <= self.end_date:
                 for t in self.teams:
@@ -188,10 +191,13 @@ class Event:
                 if team_event_occurrence is None:
                     dm.add_new_team_event_occurrence(self.id, t.id, current_date, self.estimated_tss, '')
 
-    def generate_player_occurrences(self):
+    def generate_player_occurrences(self, from_date=None):
         from . import DatabaseManager
         dm = DatabaseManager()
         current_date = self.start_date
+        if from_date is not None:
+            while current_date < from_date:
+                current_date = Event.__increment_by_one_week(current_date)
         if self.frequency == 'weekly':
             while current_date <= self.end_date:
                 for p in self.players:
@@ -358,9 +364,8 @@ class Team:
 
     @property
     def schedule(self):
-        result = []
-        for e in self.events:
-            result = result + e.team_event_occurrences
+        from . import DatabaseManager
+        result = DatabaseManager().team_event_occurrences_for_team(self.id)
         result.sort(key=lambda x: x.date)
         return result
 
