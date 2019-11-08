@@ -19,8 +19,9 @@
                        {{ form | crispy }}
                        <input class="btn btn-outline-primary btn-block" type="submit" value="Update">
                    </form>
+                   {% if event %}
                    <h2 class="border-bottom mb-3 text-center">Teams</h2>
-                   <form action="{% url 'event_add_coaches' event.id %}" method="post">
+                   <form action="{% url 'event_add_teams' event.id %}" method="post">
                        {% csrf_token %}
                        <div class="row">
                            <div class="col-md-12">
@@ -45,6 +46,7 @@
                        </tr>
                        {% endfor %}
                    </table>
+                   {% endif %}
                </div>
                {% endif %}
                {% if event %}
