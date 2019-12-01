@@ -348,7 +348,7 @@ class DataWarehouse:
         for i, v in time_series.iteritems():
 
             if i.month != current_month:
-                monthly_summary.append((f'{current_year}-{current_month}', monthly_ed_num, monthly_plus_one))
+                monthly_summary.append((f'{current_year}-{current_month:02}', monthly_ed_num, monthly_plus_one))
                 # reset all the monthly stuff
                 current_month = i.month
                 monthly_ed_num = 0
@@ -396,7 +396,7 @@ class DataWarehouse:
                 monthly_history.append((str(i.date()), monthly_ed_num, monthly_plus_one, round(v, 1)))
 
         annual_summary.append((current_year, annual_ed_num, annual_plus_one))
-        monthly_summary.append((f'{current_year}-{current_month}', monthly_ed_num, monthly_plus_one))
+        monthly_summary.append((f'{current_year}-{current_month:02}', monthly_ed_num, monthly_plus_one))
 
         return ed_num, ltd_history, annual_history, annual_summary, monthly_history, monthly_summary
 
