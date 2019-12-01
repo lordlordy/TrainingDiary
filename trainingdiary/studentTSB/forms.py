@@ -91,7 +91,7 @@ class PlayerEventOccurrenceForm(forms.Form):
         self.fields['id'] = forms.IntegerField(required=False, widget=HiddenInput())
         self.fields['id'].widget.attrs['readonly'] = 'readonly'
         self.fields['rpe'] = forms.DecimalField(required=True)
-        self.fields['duration'] = forms.TimeField(required=True, widget=TimeInput())
+        self.fields['duration'] = forms.TimeField(required=True, widget=TimeInput(attrs={'placeholder': 'hh:mm:ss'}))
         states = DatabaseManager().event_occurrence_states()
         self.fields['state_id'] = forms.CharField(required=True, label='state',
                                                   widget=Select(choices=[(s.id, s.name) for s in states],

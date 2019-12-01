@@ -17,6 +17,7 @@ RUN_KM = 'Run KM'
 
 SUMMARY_HEADINGS = [TOTAL_TIME, TOTAL_KM, TOTAL_ASCENT, SWIM_TIME, SWIM_KM, BIKE_TIME, BIKE_KM, RUN_TIME, RUN_KM]
 
+
 def summary_view(request):
     data = []
 
@@ -51,11 +52,13 @@ def summary_view(request):
     data.append(['YTD Last Year'] + values_for_range_list(start, end, workouts))
 
     end = datetime.datetime.now().date()
-    start = datetime.date(end.year-1, end.month, end.day-1)
+    # start = datetime.date(end.year-1, end.month, end.day-1)
+    start = end - datetime.timedelta(days=365)
     data.append(['R Year'] + values_for_range_list(start, end, workouts))
 
     end = datetime.date(end.year-1, end.month, end.day)
-    start = datetime.date(end.year-1, end.month, end.day-1)
+    # start = datetime.date(end.year-1, end.month, end.day-1)
+    start = end - datetime.timedelta(days=365)
     data.append(['R Year Last Year'] + values_for_range_list(start, end, workouts))
 
     end = datetime.datetime.now().date()
