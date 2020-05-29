@@ -82,8 +82,8 @@ def upload_diary(request, uploaded_file, merge, overwrite):
                     ''')
                     continue
                 equipment = ""
-                if 'equipmentName' in w:
-                    equipment = w['equipmentName']
+                if 'equipment' in w:
+                    equipment = w['equipment']
                     if equipment == 'Not Set':
                         equipment = ""
 
@@ -96,7 +96,7 @@ def upload_diary(request, uploaded_file, merge, overwrite):
         if 'Readings' in d:
             for r in d['Readings']:
                 if skip_reading(merge, date, r['type']):
-                    continue
+                    continu
                 tdm.save_reading(date, r['type'], r['value'])
                 reading_count += 1
 

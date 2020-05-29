@@ -150,7 +150,6 @@ class DataWarehouse:
         if len(d) > 0:
             return self.max_date() if d[0][0] is None else d[0][0]
 
-
     def earliest_recording(self, column):
         from . import WarehouseColumn
         recorded_col = WarehouseColumn(column).recorded_column_name()
@@ -323,7 +322,6 @@ class DataWarehouse:
             print('Series Index:')
             print(e)
             return None, name
-
 
     def eddington_history(self, time_series):
         ltd_history = []

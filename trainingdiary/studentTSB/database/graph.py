@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class Graph:
 
     TYPE = 'graph_type'
