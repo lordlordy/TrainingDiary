@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -51,9 +52,9 @@ def data_warehouse_update(request):
     start = datetime.datetime.now()
     DataWarehouseGenerator(warehouse_name).generate_from_date(request.POST['update_warehouse_date'],
                                                               print_progress=PRINT_PROGRESS)
-    messages.info(request, f'Warehouse updated in {datetime.datetime.now() - start}')
+    # messages.info(request, f'Warehouse updated in {datetime.datetime.now() - start}')
 
-    return warehouse_management(request)
+    return JsonResponse(data={'time': f'{datetime.datetime.now() - start}'})
 
 
 def update_days(request):

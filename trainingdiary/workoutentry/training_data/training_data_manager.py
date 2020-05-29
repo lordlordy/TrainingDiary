@@ -174,7 +174,7 @@ class TrainingDataManager:
             {seconds}, {rpe}, {tss}, "{tss_method}", {km}, {kj}, {ascent_metres}, {reps}, {is_race}, {cadence}, {watts}, 
             {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.datetime.now()}")
         """
-        print(sql)
+        # print(sql)
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -183,7 +183,7 @@ class TrainingDataManager:
             DELETE FROM Workout
             WHERE date="{str(date)}" AND workout_number={workout_number}
         '''
-        print(sql)
+        # print(sql)
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -215,7 +215,7 @@ class TrainingDataManager:
             DELETE FROM Reading
             WHERE date="{str(date)}" AND type="{reading_type}"
         '''
-        print(sql)
+        # print(sql)
         self.__conn.execute(sql)
         self.__conn.commit()
 
@@ -281,7 +281,7 @@ class TrainingDataManager:
             {race_result_select_sql}
             WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"
         '''
-        print(sql)
+        # print(sql)
         r_results = self.__conn.execute(sql)
         return [RaceResult(*r) for r in r_results]
 
@@ -333,7 +333,7 @@ class TrainingDataManager:
             {t2_seconds}, {run_seconds}, {swim_km}, {bike_km}, {run_km}, "{comments}", "{race_report}", 
             "{datetime.datetime.now()}")
         """
-        print(sql)
+        # print(sql)
         self.__conn.execute(sql)
         self.__conn.commit()
 

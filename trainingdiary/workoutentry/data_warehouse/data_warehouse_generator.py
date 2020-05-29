@@ -90,9 +90,11 @@ class DataWarehouseGenerator:
         count = 0
         while current_date <= last_date:
             count += 1
-            print(current_date)
             d = TrainingDataManager().day_for_date(current_date)
             # create new tables as required
+            if d is None:
+                current_date = current_date + datetime.timedelta(days=1)
+                continue
             for t in d.workout_types():
                 table_name = f"day_{str(t)}"
                 if table_name not in tables:

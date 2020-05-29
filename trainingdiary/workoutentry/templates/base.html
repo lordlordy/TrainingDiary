@@ -69,9 +69,9 @@
           <a class="dropdown-item" href="{% url 'graphs' %}">Adhoc</a>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/blog/">Blog</a>
-      </li>
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link" href="/blog/">Blog</a>-->
+<!--      </li>-->
 
         {% if user.is_authenticated %}
       <li class="nav-item dropdown">
@@ -102,10 +102,10 @@
 </nav>
 <body>
 
-        <div class="container-fluid">
+        <div id="user_messages" class="container-fluid">
             {% if messages %}
             <h5 class="border-bottom mb-4 ">Info / Warnings / Errors</h5>
-            <ul class="messages">
+            <ul  class="messages">
                 {% for message in messages %}
                 <div class="alert {{ message.tags }} alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">

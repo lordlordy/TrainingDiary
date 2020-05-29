@@ -26,7 +26,7 @@
                     <div class="row"><div class="col-md-12"><small class="text-muted">rmssd interpolated to: {{ rmssd_interpolated_to }}</small></div></div>
                 </div>
             </div>
-            <form method="post" action="{% url 'date_warehouse_update' %}">
+            <form id='update_data_warehouse' method="post" action="{% url 'date_warehouse_update' %}">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-12">
@@ -95,7 +95,52 @@
    {% block extra_scripts %}
 
 <script type='text/javascript'>
+    $("#update_data_warehouse").submit(function(){
+        $.ajax({
+            data: $(this).serialize(),
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            success: update_done
+        });
+        return false;
+    });
 
+    function update_done(data){
+        const m_div = document.getElementById('user_messages');
+        console.log(m_div);
+        const heading = document.createElement('h5');
+        const headingText = document.createTextNode('Info');
+        heading.setAttribute('class', 'border-bottom mb-4');
+        heading.appendChild(headingText);
+
+        const u = document.createElement('ul');
+        u.setAttribute('class', 'messsages');
+        m_div.prepend(u);
+        m_div.prepend(heading);
+
+        const msg_div = document.createElement('div');
+        const msg = document.createTextNode('Warehouse updated in ' + data['time']);
+        msg_div.appendChild(msg);
+        msg_div.setAttribute('class', 'alert alert-info alert-dismissible');
+        msg_div.setAttribute('role', 'alert');
+
+        const b = document.createElement('button');
+        b.setAttribute('type', 'button');
+        b.setAttribute('class', 'close');
+        b.setAttribute('data-dismiss', 'alert');
+        b.setAttribute('aria-label', 'close');
+
+        const s = document.createElement('span');
+        s.setAttribute('area-hidden', 'true');
+        const t = document.createTextNode('x');
+
+        s.appendChild(t);
+        b.appendChild(s);
+        msg_div.appendChild(b);
+        u.appendChild(msg_div);
+
+        console.log('done' + data);
+    }
 
 $('.datepicker').datepicker({
     format: "yyyy-mm-dd",

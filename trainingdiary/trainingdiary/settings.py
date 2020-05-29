@@ -34,8 +34,8 @@ ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com']
 INSTALLED_APPS = [
     'mainsite.apps.MainsiteConfig',
     'workoutentry.apps.WorkoutentryConfig',
-    'studentTSB.apps.StudenttsbConfig',
-    'blog.apps.BlogConfig',
+    # 'studentTSB.apps.StudenttsbConfig',
+    # 'blog.apps.BlogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,20 +46,20 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_registration',
 
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail.core',
+    # 'wagtail.contrib.forms',
+    # 'wagtail.contrib.redirects',
+    # 'wagtail.embeds',
+    # 'wagtail.sites',
+    # 'wagtail.users',
+    # 'wagtail.snippets',
+    # 'wagtail.documents',
+    # 'wagtail.images',
+    # 'wagtail.search',
+    # 'wagtail.admin',
+    # 'wagtail.core',
 
     'modelcluster',
-    'taggit',
+    # 'taggit',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -73,8 +73,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'wagtail.core.middleware.SiteMiddleware',
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+    # 'wagtail.core.middleware.SiteMiddleware',
+    # 'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'trainingdiary.urls'
