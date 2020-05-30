@@ -4,7 +4,7 @@ certifi==2019.3.9
 chardet==3.0.4
 confusable-homoglyphs==3.2.0
 cycler==0.10.0
-Django==2.2.1
+Django==2.2.10
 django-crispy-forms==1.7.2
 django-filter==2.1.0
 django-modelcluster==4.4
