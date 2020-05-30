@@ -16,3 +16,8 @@ Exam.py
 trainingdiary/*.sqlite3
 trainingdiary/media/*
 trainingdiary/workoutentry/static/tmp/*
+bin/
+lib/
+pip-selfcheck.json
+pyvenv.cfg
+trainingdiary/pyvenv.cfg
