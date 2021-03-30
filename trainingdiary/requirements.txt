@@ -1,5 +1,5 @@
 bootstrap4==0.1.0
-Django==3.0.3
+Django==3.0.12
 django-crispy-forms==1.8.1
 django-filter==2.1.0
 django-modelcluster==4.4
