@@ -24,8 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('trainingdiary/', include('workoutentry.urls')),
-    path('studentTSB/', include('studentTSB.urls')),
-    # path('', include('blog.urls')),
+    path('', include('workoutentry.rest_urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns

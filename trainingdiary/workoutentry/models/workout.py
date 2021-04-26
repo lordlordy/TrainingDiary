@@ -81,7 +81,8 @@ class Workout:
                 'last_save': self.last_save}
 
     def json_dictionary(self):
-        return {"activity": self.activity,
+        return {"DT_RowId": self.primary_key,
+                "activity": self.activity,
                 "isRace": self.is_race,
                 "ascentMetres": self.ascent_metres,
                 "rpe": self.rpe,

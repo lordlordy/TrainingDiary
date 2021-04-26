@@ -1,12 +1,9 @@
 from django.shortcuts import render
 from workoutentry.training_data import TrainingDataManager
-# from workoutentry.models import RaceResult
-# import datetime
-#
-#
+
+
 def home_view(request):
-    results = sorted(TrainingDataManager().future_races(), key=lambda x: x.date)
-    return render(request, 'mainsite/home.html', {'upcoming_races': results})
+    return render(request, 'index.html')
 
 
 def ironman_results_view(request):

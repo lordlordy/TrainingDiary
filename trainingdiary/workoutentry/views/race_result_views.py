@@ -23,7 +23,6 @@ class RaceResultUpdateView(UpdateView):
             return render(request, 'workoutentry/race_result_form.html',
                           {'race_result': race_result, 'form': form})
 
-
     def post(self, request, *args, **kwargs):
         swim_seconds = pd.to_timedelta(request.POST['swim_seconds']).seconds
         t1_seconds = pd.to_timedelta(request.POST['t1_seconds']).seconds

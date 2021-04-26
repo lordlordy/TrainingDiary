@@ -4,6 +4,9 @@ import os
 import trainingdiary
 from workoutentry.models import Day, Reading, Workout, RaceResult
 import datetime
+import pandas as pd
+
+from workoutentry.training_data.utitilties import sql_for_aggregator
 
 workout_select_sql = f'''
         SELECT primary_key, date, workout_number, activity, activity_type, equipment, seconds, rpe, tss, 
@@ -19,8 +22,8 @@ race_result_select_sql = f'''
         FROM RaceResult
     '''
 
-class TrainingDataManager:
 
+class TrainingDataManager:
 
     def __init__(self, db_name=None):
         if db_name is None:
@@ -187,7 +190,6 @@ class TrainingDataManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
-
     def readings(self):
         readings = self.__conn.execute('SELECT date, type, value FROM Reading').fetchall()
         return [Reading(*r) for r in readings]
@@ -204,7 +206,6 @@ class TrainingDataManager:
             if r.reading_type not in readings_taken:
                 result.append(r)
         return result
-
 
     def reading_for_date_and_type(self, date, reading_type):
         readings = self.__conn.execute(f'SELECT date, type, value FROM Reading WHERE date="{str(date)}" AND type="{reading_type}"').fetchall()
@@ -385,3 +386,64 @@ class TrainingDataManager:
     def race_categories(self):
         types = self.__conn.execute('SELECT DISTINCT category FROM RaceResult').fetchall()
         return [t[0] for t in types]
+
+    def bike_summary(self):
+        sql_str = "Select equipment,strftime('%Y', date) as Year, round(sum(km)) from workout where activity='Bike' group by Year, equipment"
+        dd = dict()
+        years = set()
+        for i in self.__conn.execute(sql_str).fetchall():
+            years.add(i[1])
+            year_dict = dd.get(i[0], dict())
+            year_dict[i[1]] = i[2]
+            dd[i[0]] = year_dict
+        # fill in zero for missing years
+        for k, v in dd.items():
+            v['total'] = sum(v.values())
+            for y in years:
+                if y not in v:
+                    v[y] = 0
+        return dd
+
+    def training_annual_summary(self):
+        sql_str = "Select activity, strftime('%Y', date) as Year, round(sum(km)), sum(seconds) from workout group by Year, activity"
+        dd = dict()
+        activities = set()
+        for i in self.__conn.execute(sql_str).fetchall():
+            activities.add(i[0])
+            year_dict = dd.get(i[1], dict())
+            year_dict[i[0]] = {'km': i[2], 'seconds': i[3]}
+            dd[i[1]] = year_dict
+        # fill in missing activities
+        for year, values in dd.items():
+            for activity in activities:
+                if activity not in values:
+                    values[activity] = {'km': 0, 'seconds': 0}
+            totals = {
+                'km': sum([values[k]['km'] for k in values.keys()]),
+                'seconds': sum([values[k]['seconds'] for k in values.keys()]),
+            }
+            values['Total'] = totals
+
+        return dd
+
+    def day_data_df(self, time_period, activity, activity_type, equipment, measure, day_aggregator):
+        sql = f"SELECT date, {sql_for_aggregator(day_aggregator, measure)} as {measure} FROM {self.table_for_measure(measure)} WHERE "
+        wheres = list()
+        if activity != 'All':
+            wheres.append(f"activity='{activity}'")
+        if activity_type != 'All':
+            wheres.append(f"activity_type='{activity_type}'")
+        if equipment != 'All':
+            wheres.append(f"equipment='{equipment}'")
+        if len(wheres) > 0:
+            sql += f"{' AND'.join(wheres)} "
+        sql += f"AND date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
+        df = pd.read_sql_query(sql, self.__conn)
+        df = df.set_index('date')
+        df.index = pd.to_datetime(df.index)
+        return df
+
+    def table_for_measure(self, measure) -> str:
+        if measure in self.reading_types():
+            return "Reading"
+        return "Workout"
