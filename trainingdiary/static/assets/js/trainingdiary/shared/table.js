@@ -24,7 +24,10 @@ function create_table(table_id, headings, data_keys, decimal_places, render_dict
         }
     });
     let $table = $(table_id).DataTable({
-        select: true,
+        select: {
+            style: 'single',
+            items: 'cell',
+        },
         info: false,
         searching: false,
         paging: false,

@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.http import JsonResponse
 
 from workoutentry.modelling.modelling_types import DayAggregator
@@ -48,9 +50,10 @@ class TrainingSummary(TrainingDiaryResource):
         years = list()
         for yr, v in summary.items():
             for activity, dd in v.items():
-                a_dd = totals.get(activity, {'km': 0, 'seconds': 0})
+                a_dd = totals.get(activity, {'km': 0, 'seconds': 0, 'tss': 0})
                 a_dd['km'] += dd['km']
                 a_dd['seconds'] += dd['seconds']
+                a_dd['tss'] += dd['tss']
                 totals[activity] = a_dd
             v['name'] = yr
             years.append(v)
@@ -62,16 +65,52 @@ class TrainingSummary(TrainingDiaryResource):
 
 class TSBData(TrainingDiaryResource):
 
-    URL = '/training/tsb/'
+    URL = '/training/data/canned/'
+
+    def required_post_fields(self):
+        return ['year', 'activity', 'graph']
 
     def call_resource(self, request):
         response = TrainingDiaryResponse()
         tms = TimeSeriesManager()
-        values = tms.time_series(time_period=TimePeriod('2021-01-01', '2021-12-31'),
-                                 activity='Swim',
-                                 activity_type='All',
-                                 equipment='All',
-                                 measure='TSS',
-                                 day_aggregation_method=DayAggregator.SUM)
-        response.add_data('values', values)
+        graph = request.POST['graph']
+        activity = request.POST['activity']
+        year_str = request.POST['year']
+        title_components = [year_str if year_str != 'Total' else "All Time", activity if activity != "Total" else "All Activitivies"]
+
+        if year_str == 'Total':
+            tp = None
+        else:
+            year = int(year_str)
+            tp = TimePeriod(date(year,1,1), date(year,12,31))
+
+        if graph == 'tss':
+            title_components.append("Training Stress Balance")
+            values = tms.time_series(requested_time_period=tp,
+                                     activity='All' if activity == "Total" else activity,
+                                     activity_type='All',
+                                     equipment='All',
+                                     measure='tss',
+                                     day_aggregation_method=DayAggregator.SUM)
+        elif graph == 'duration':
+            title_components.append("Duration")
+            values = tms.time_series(requested_time_period=tp,
+                                     activity='All' if activity == "Total" else activity,
+                                     activity_type='All',
+                                     equipment='All',
+                                     measure='hours',
+                                     day_aggregation_method=DayAggregator.SUM)
+        elif graph == 'km':
+            title_components.append("KM")
+            values = tms.time_series(requested_time_period=tp,
+                                     activity='All' if activity == "Total" else activity,
+                                     activity_type='All',
+                                     equipment='All',
+                                     measure='km',
+                                     day_aggregation_method=DayAggregator.SUM)
+        else:
+            values = dict()
+
+        response.add_data('chart_title', " ".join(title_components))
+        response.add_data('time_series', values)
         return JsonResponse(data=response.as_dict())

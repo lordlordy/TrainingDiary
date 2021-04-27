@@ -24,33 +24,119 @@
             </div><button class="btn btn-primary" type="button">Login</button>
         </div>
     </nav>
+    <div class="card">
+        <div class="card-header">
+            <h4>TSS Summary<img id="tss_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="tss_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col"><div id="tss-chart-container" style="width: 100%;">
+    <canvas id="tss-chart"></canvas>
+</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4>Duration Summary<img id="duration_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="tss_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="duration_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col"><div id="duration-chart-container" style="width: 100%;">
+    <canvas id="duration-chart"></canvas>
+</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4>KM Summary<img id="km_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="tss_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="km_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col"><div id="km-chart-container" style="width: 100%;">
+    <canvas id="km-chart"></canvas>
+</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4>Bike Summary<img id="bike_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="tss_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="bike_summary_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col"><div id="chart-container" style="width: 100%;">
+    <canvas id="chart"></canvas>
+</div></div>
+            </div>
+        </div>
+    </div>
     <div class="card-columns mt-1" style="background: rgba(0,0,0,0.1);">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Bikes</h4>
-                <div class="table-responsive">
-                    <table class="table table-striped table-dark table-sm" id="bike_summary_table">
-                        <thead>
-                            <tr></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">KM Summary</h4>
-                <div class="table-responsive">
-                    <table class="table table-striped table-dark table-sm" id="km_table">
-                        <thead>
-                            <tr></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Data Entry</h4>
@@ -79,19 +165,6 @@
                 <h5 class="card-title">Workouts</h5>
                 <div class="table-responsive">
                     <table class="table table-striped table-dark table-sm" id="workouts_table">
-                        <thead>
-                            <tr></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Duration Summary</h4>
-                <div class="table-responsive">
-                    <table class="table table-striped table-dark table-sm" id="duration_table">
                         <thead>
                             <tr></tr>
                         </thead>
@@ -204,9 +277,11 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/datatables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.0/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="assets/js/trainingdiary/anyone/index_only.js"></script>
     <script src="assets/js/trainingdiary/shared/anyone_api.js"></script>
+    <script src="assets/js/trainingdiary/shared/chart.js"></script>
     <script src="assets/js/trainingdiary/shared/common.js"></script>
     <script src="assets/js/trainingdiary/shared/me_api.js"></script>
     <script src="assets/js/trainingdiary/shared/table.js"></script>

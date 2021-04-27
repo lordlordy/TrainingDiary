@@ -2,6 +2,7 @@ from django.conf import settings
 import sqlite3
 import os
 import trainingdiary
+from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.models import Day, Reading, Workout, RaceResult
 import datetime
 import pandas as pd
@@ -33,6 +34,9 @@ class TrainingDataManager:
 
         db_path = os.path.join(trainingdiary.BASE_DIR, self.__db_name)
         self.__conn = sqlite3.connect(db_path)
+
+    def diary_time_period(self) -> TimePeriod:
+        return TimePeriod(self.earliest_date(), self.latest_date())
 
     def latest_date(self):
         sql = 'SELECT date FROM Day ORDER BY date DESC LIMIT 1'
@@ -405,22 +409,23 @@ class TrainingDataManager:
         return dd
 
     def training_annual_summary(self):
-        sql_str = "Select activity, strftime('%Y', date) as Year, round(sum(km)), sum(seconds) from workout group by Year, activity"
+        sql_str = "Select activity, strftime('%Y', date) as Year, round(sum(km)), sum(seconds), round(sum(tss)) from workout group by Year, activity"
         dd = dict()
         activities = set()
         for i in self.__conn.execute(sql_str).fetchall():
             activities.add(i[0])
             year_dict = dd.get(i[1], dict())
-            year_dict[i[0]] = {'km': i[2], 'seconds': i[3]}
+            year_dict[i[0]] = {'km': i[2], 'seconds': i[3], 'tss': i[4]}
             dd[i[1]] = year_dict
         # fill in missing activities
         for year, values in dd.items():
             for activity in activities:
                 if activity not in values:
-                    values[activity] = {'km': 0, 'seconds': 0}
+                    values[activity] = {'km': 0, 'seconds': 0, 'tss': 0}
             totals = {
                 'km': sum([values[k]['km'] for k in values.keys()]),
                 'seconds': sum([values[k]['seconds'] for k in values.keys()]),
+                'tss': sum([values[k]['tss'] for k in values.keys()]),
             }
             values['Total'] = totals
 
@@ -436,11 +441,10 @@ class TrainingDataManager:
         if equipment != 'All':
             wheres.append(f"equipment='{equipment}'")
         if len(wheres) > 0:
-            sql += f"{' AND'.join(wheres)} "
-        sql += f"AND date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
+            sql += f"{' AND'.join(wheres)} AND "
+
+        sql += f"date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
         df = pd.read_sql_query(sql, self.__conn)
-        df = df.set_index('date')
-        df.index = pd.to_datetime(df.index)
         return df
 
     def table_for_measure(self, measure) -> str:

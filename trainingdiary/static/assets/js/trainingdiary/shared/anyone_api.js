@@ -20,7 +20,10 @@ function training_summary(callback_function) {
         resource: '/training/summary/'}, callback_function);
 }
 
-function tsb(callback_function) {
+function graph_data(graph, year, activity, callback_function) {
     get_anyone_resource({
-        resource: '/training/tsb/'}, callback_function);
+        'graph': graph,
+        'year': year,
+        'activity': activity,
+        resource: '/training/data/canned/'}, callback_function);
 }
