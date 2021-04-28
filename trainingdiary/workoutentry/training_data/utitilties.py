@@ -1,17 +1,17 @@
-from workoutentry.modelling.modelling_types import DayAggregator
+from workoutentry.modelling.modelling_types import DayAggregation
 
 
 def sql_for_aggregator(aggregator, measure) -> str:
-    if aggregator == DayAggregator.SUM:
+    if aggregator == DayAggregation.SUM:
         return f"sum({measure})"
-    elif aggregator == DayAggregator.MEAN:
+    elif aggregator == DayAggregation.MEAN:
         return f"avg({measure})"
-    elif aggregator == DayAggregator.MAX:
+    elif aggregator == DayAggregation.MAX:
         return f"max({measure})"
-    elif aggregator == DayAggregator.MIN:
+    elif aggregator == DayAggregation.MIN:
         return f"min({measure})"
-    elif aggregator == DayAggregator.TIME_WEIGHTED_AVERAGE:
+    elif aggregator == DayAggregation.TIME_WEIGHTED_AVERAGE:
         return f"sum({measure} * seconds) / sum(seconds)"
-    elif aggregator == DayAggregator.DISTANCE_WEIGHTED_AVERAGE:
+    elif aggregator == DayAggregation.DISTANCE_WEIGHTED_AVERAGE:
         return f"sum({measure} * km) / sum(km)"
 

@@ -1,40 +1,52 @@
-from datetime import timedelta
-
-from workoutentry.modelling.converters import measure_converter
+from workoutentry.modelling.data_definition import SeriesDefinition
 from workoutentry.modelling.graph_defaults import Scales, TimeSeriesDefaults
-from workoutentry.modelling.modelling_types import DayAggregator
-from workoutentry.modelling.time_period import TimePeriod
-from workoutentry.modelling.tsb import TSBProcessor
-from workoutentry.training_data import TrainingDataManager
-import pandas as pd
-import numpy as np
-import math
-
-
-def pre_days_for_tsb(ctl_decay_days) -> int:
-    target_percentage = 0.05
-    decay_per_day = np.exp(-1 / ctl_decay_days)
-    days = math.log(target_percentage) / math.log(decay_per_day)
-    return int(days)
+from workoutentry.modelling.processor import NoOpProcessor
 
 
 class TimeSeriesManager:
 
-    def __init__(self):
-        self.tdm = TrainingDataManager()
+    class TimeSeriesSet:
 
-    def time_series(self, requested_time_period, period='Day', aggregation='Sum', activity='All', activity_type='All', equipment='All',
-                    measure='km', day_aggregation_method=DayAggregator.SUM, to_date=False, rolling=False, rolling_periods=0, rolling_aggregation='Sum',
-                    day_of_week='All', month='All', day_type='All', recorded_only=False):
+        def __init__(self, data_definition, series_definition=SeriesDefinition(), processor=NoOpProcessor()):
+            self.data_definition = data_definition
+            self.series_definition = series_definition
+            self.processor = processor
 
-        if requested_time_period is None:
-            time_period = self.tdm.diary_time_period()
-        else:
-            time_period = self.__adjusted_time_period(42, requested_time_period)
-        df = self.__day_data(time_period, activity, activity_type, equipment, measure, day_aggregation_method)
-        df = self.__fill_gaps(df, 'zeros')
-        tsb = TSBProcessor(7, 7, 42, 42)
-        df = tsb.process(df)
+    def time_series(self, requested_time_period, time_series_list):
+        scales = Scales()
+        ts_list = list()
+        data_titles = list()
+        processor_titles = list()
+        for tss in time_series_list:
+            data_title = tss.data_definition.title_component()
+            if data_title not in data_titles:
+                data_titles.append(data_title)
+            if not tss.processor.no_op():
+                processor_title = tss.processor.title_component()
+                if processor_title not in processor_titles:
+                    processor_titles.append(processor_title)
+
+            time_series = self.__time_series(requested_time_period, tss, scales)
+
+            if time_series is not None:
+                ts_list += time_series
+        title = ' / '.join(data_titles)
+        if len(processor_titles) > 0:
+            title += f" {' / '.join(processor_titles)}"
+        return {'title': title,
+                'datasets': ts_list,
+                'scales': scales.data_dictionary()}
+
+    def __time_series(self, requested_time_period, time_series_set, scales):
+
+        time_period = time_series_set.processor.adjusted_time_period(requested_time_period)
+
+        df = time_series_set.data_definition.day_data(time_period)
+        if df is None:
+            return None
+        df = time_series_set.series_definition.period.aggregate_to_period(df)
+        df = time_series_set.series_definition.rolling_definition.roll_it_up(df)
+        df = time_series_set.processor.process(df)
         df.index = df.index.date
 
         if requested_time_period is not None:
@@ -48,41 +60,19 @@ class TimeSeriesManager:
                 if col != 'date':
                     values_dict[col].append({'x': index, 'y': float(row[col])})
 
-        return self.__add_graph_defaults(values_dict)
+        time_series = self.__add_graph_defaults(values_dict,
+                                                time_series_set.processor.series_definitions(time_series_set.data_definition.measure, time_series_set.series_definition),
+                                                scales)
 
-    def __add_graph_defaults(self, values_dict) -> dict:
-        scales = Scales()
+        return time_series
+
+    def __add_graph_defaults(self, values_dict, series_definitions, scales) -> list:
         time_series = list()
         tsd = TimeSeriesDefaults()
         for measure, data in values_dict.items():
-            defaults = tsd.defaults(measure)
+            defaults = tsd.defaults(series_definitions.get(measure, None))
             scale_id = scales.add(defaults)
             defaults.dataset.set_data(data)
             defaults.dataset.set_yaxis_id(scale_id)
             time_series.append(defaults.dataset.data_dictionary())
-        return {'datasets': time_series,
-                'scales': scales.data_dictionary()}
-
-    def __day_data(self, time_period, activity, activity_type, equipment, measure, aggregation_method):
-        converter = measure_converter(measure)
-        target_measure = measure if converter is None else converter.underlying_measure()
-        df = self.tdm.day_data_df(time_period, activity, activity_type, equipment, target_measure, aggregation_method)
-        if converter is not None:
-            df[measure] = df[target_measure].astype('float')
-            df = df.drop(columns=[target_measure])
-            df[measure] = df[measure].apply(converter.convert_lambda())
-        df = df.set_index('date')
-        df.index = pd.to_datetime(df.index)
-        return df
-
-    def __fill_gaps(self, df, interpolation_method):
-        max_date = df.index.max()
-        min_date = df.index.min()
-        index = pd.date_range(min_date, max_date)
-        df = df.reindex(index, fill_value=0)
-        return df
-
-    def __adjusted_time_period(self, ctl_decay_days, tp):
-        days = pre_days_for_tsb(42)
-        print(days)
-        return TimePeriod(tp.start - timedelta(days), tp.end)
+        return time_series

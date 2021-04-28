@@ -12,15 +12,37 @@ class TimeSeriesDefaults:
             'tss': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tss', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
             'seconds': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'seconds', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
             'minutes': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'minutes', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
-            'hours': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'hours', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
-            'km': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'km', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True)
+            'hours': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('bar', 'hours', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
+            'km': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('bar', 'km', '#171743', '#171743', False, 5, 15, False), 'right', 1, 'linear', True)
         }
 
-    def defaults(self, measure):
+    def defaults(self, series_definition):
+        if series_definition is None:
+            return TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'Unknown Measure', '#111111', '#777777', True, 3, 15, True), 'left', 1, 'linear', True)
+        measure = series_definition.measure
         if measure in self.dd:
-            return self.dd[measure]
+            defaults = self.dd[measure]
         else:
-            return TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', measure, '#111111', '#777777', True, 3, 15, True), 'left', 1,  'linear', True)
+            defaults = TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', measure, '#111111', '#777777', True, 3, 15, True), 'left', 1,  'linear', True)
+
+        return self.__adjust_for_definition(defaults, series_definition)
+
+    def __adjust_for_definition(self, defaults, series_definition):
+        if series_definition.is_rolling():
+            defaults.position = 'left'
+            defaults.dataset.chart_type = 'line'
+            defaults.dataset.showLine = True
+            defaults.dataset.fill = False
+            defaults.dataset.label += f" {series_definition.title_component()}"
+            defaults.dataset.borderColour = self.__adjust_colour_by(defaults.dataset.borderColour, 0.85)
+            defaults.dataset.backgroundColour = defaults.dataset.borderColour
+            defaults.dataset.pointRadius = 1
+            defaults.dataset.pointHoverRadius = 7
+        return defaults
+
+    def __adjust_colour_by(self, colour, percentage):
+        as_int = int(int(colour.strip("#"), 16) * percentage)
+        return f"#{hex(as_int).strip('0x')}"
 
     class Default:
 

@@ -4,10 +4,9 @@ import os
 import trainingdiary
 from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.models import Day, Reading, Workout, RaceResult
-import datetime
+from datetime import datetime
+from dateutil import parser
 import pandas as pd
-
-from workoutentry.training_data.utitilties import sql_for_aggregator
 
 workout_select_sql = f'''
         SELECT primary_key, date, workout_number, activity, activity_type, equipment, seconds, rpe, tss, 
@@ -36,7 +35,9 @@ class TrainingDataManager:
         self.__conn = sqlite3.connect(db_path)
 
     def diary_time_period(self) -> TimePeriod:
-        return TimePeriod(self.earliest_date(), self.latest_date())
+        start = parser.parse(self.earliest_date()).date()
+        end = parser.parse(self.latest_date()).date()
+        return TimePeriod(start, end)
 
     def latest_date(self):
         sql = 'SELECT date FROM Day ORDER BY date DESC LIMIT 1'
@@ -159,7 +160,7 @@ class TrainingDataManager:
             rpe={rpe}, tss={tss}, tss_method="{tss_method}", km={km}, kj={kj}, ascent_metres={ascent_metres}, 
             reps={reps}, is_race={is_race}, cadence={cadence}, watts={watts}, watts_estimated={watts_estimated}, 
             heart_rate={heart_rate}, is_brick={is_brick}, keywords="{keywords}", comments="{comments}", 
-            last_save="{datetime.datetime.now()}"
+            last_save="{datetime.now()}"
             WHERE date="{date}" AND workout_number={workout_number}
         """
         self.__conn.execute(sql)
@@ -179,7 +180,7 @@ class TrainingDataManager:
             VALUES
             ("{date}-{workout_number}", "{date}", {workout_number}, "{activity}", "{activity_type}", "{equipment}", 
             {seconds}, {rpe}, {tss}, "{tss_method}", {km}, {kj}, {ascent_metres}, {reps}, {is_race}, {cadence}, {watts}, 
-            {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.datetime.now()}")
+            {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.now()}")
         """
         # print(sql)
         self.__conn.execute(sql)
@@ -250,7 +251,7 @@ class TrainingDataManager:
     def future_races(self):
         sql = f'''
                     {race_result_select_sql}
-                    WHERE date>="{str(datetime.date.today())}"
+                    WHERE date>="{str(datetime.now().date())}"
                 '''
         r_results = self.__conn.execute(sql)
         return [RaceResult(*r) for r in r_results]
@@ -307,7 +308,7 @@ class TrainingDataManager:
             overall_position={overall_position}, category_position={category_position}, swim_seconds={swim_seconds}, 
             t1_seconds={t1_seconds}, bike_seconds={bike_seconds}, t2_seconds={t2_seconds}, run_seconds={run_seconds}, 
             swim_km={swim_km}, bike_km={bike_km}, run_km={run_km}, comments="{comments}", 
-            race_report="{race_report}", last_save="{datetime.datetime.now()}"
+            race_report="{race_report}", last_save="{datetime.now()}"
             WHERE date="{date}" AND race_number={race_number}
         """
         self.__conn.execute(sql)
@@ -336,7 +337,7 @@ class TrainingDataManager:
             ("{str(date)}-{r_number}", "{str(date)}", {r_number}, "{race_type}", "{brand}", "{distance}", "{name}", 
             "{category}", {overall_position}, {category_position}, {swim_seconds}, {t1_seconds}, {bike_seconds}, 
             {t2_seconds}, {run_seconds}, {swim_km}, {bike_km}, {run_km}, "{comments}", "{race_report}", 
-            "{datetime.datetime.now()}")
+            "{datetime.now()}")
         """
         # print(sql)
         self.__conn.execute(sql)
@@ -402,7 +403,7 @@ class TrainingDataManager:
             dd[i[0]] = year_dict
         # fill in zero for missing years
         for k, v in dd.items():
-            v['total'] = sum(v.values())
+            v['Total'] = sum(v.values())
             for y in years:
                 if y not in v:
                     v[y] = 0
@@ -431,18 +432,10 @@ class TrainingDataManager:
 
         return dd
 
-    def day_data_df(self, time_period, activity, activity_type, equipment, measure, day_aggregator):
-        sql = f"SELECT date, {sql_for_aggregator(day_aggregator, measure)} as {measure} FROM {self.table_for_measure(measure)} WHERE "
-        wheres = list()
-        if activity != 'All':
-            wheres.append(f"activity='{activity}'")
-        if activity_type != 'All':
-            wheres.append(f"activity_type='{activity_type}'")
-        if equipment != 'All':
-            wheres.append(f"equipment='{equipment}'")
-        if len(wheres) > 0:
-            sql += f"{' AND'.join(wheres)} AND "
-
+    def day_data_df(self, time_period, data_definition):
+        sql = data_definition.select_clause()
+        sql += f" FROM {self.table_for_measure(data_definition.measure)} WHERE "
+        sql += data_definition.where_clause()
         sql += f"date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
         df = pd.read_sql_query(sql, self.__conn)
         return df

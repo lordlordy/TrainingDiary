@@ -1,22 +1,11 @@
 var $bike_summary_table;
-var $reading_table;
-var $workouts_table;
 var $km_table;
 var $duration_table;
 var $tss_table;
-var $activity_select;
-var $activityType_select;
-var $equipment_select;
-var $tssMethod_select;
 
 $(document).ready(function () {
 
     $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").removeClass('hide');
-
-    $activity_select = refresh_list('activity', $("#activity"), "Select activity");
-    $activityType_select = refresh_list('activityType', $("#activityType"), "Select activity type");
-    $equipment_select = refresh_list('equipment', $("#equipment"), "Select equipment");
-    $tssMethod_select = refresh_list('tssMethod', $("#tssMethod"), "Select method");
 
     bike_summary(function(response){
         $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {});
@@ -56,28 +45,22 @@ $(document).ready(function () {
 
     });
 
-    $("#date_select").on('blur', function(){
-        console.log($(this).val());
-        data_for_date($(this).val(), function(response){
-            console.log(response);
-            populate_for_day(response.data.Day);
-        });
+    $(".card-header").on('dblclick', function(){
+        console.log('dblclick');
+        $(this).siblings().toggleClass('hide');
     });
 
-    $("#workout_save").on("click", function(){
-        console.log("save");
-        var workout_data = $("#workout_form").serializeArray();
-        console.log(JSON.stringify(workout_data));
-    });
 });
 
 function create_chart($table) {
-    var column = 'Total';
-    var row = '2021';
+    var activity = 'Total';
+    var year = '2021';
     // currently only single selection 
     $table.cells({selected: true}).every(function(rowIdx, colIdx, tablecounter, cellcounter){
         column = $table.column(colIdx).header().innerText;
         row = $table.row(rowIdx).data().name;
+        activity = column;
+        year = row;
     });
     switch ($table){
         case $tss_table:
@@ -103,70 +86,16 @@ function create_chart($table) {
             $duration_table.cell('.selected').deselect().draw();
             $km_table.cell('.selected').deselect().draw();
             graph = 'bike';
+            // year is on column so need to switch
+            year = column;
+            activity = row;
             break;
     }
     let $waiting = $("#" + graph + "_infinity");
     $waiting.removeClass('hide');
-    graph_data(graph, row, column, function(response){
+    graph_data(graph, year, activity, function(response){
         console.log(response);
         plot_chart(graph + "-chart", graph + "-chart-container", response.data.time_series, response.data.chart_title)
         $waiting.addClass('hide');
     }); 
 }
-
-function populate_for_day(day){
-    if ($reading_table) {
-        $reading_table.rows().remove();
-        $reading_table.rows.add(day.Readings).draw();
-    } else {
-        let cols = ['type', 'value'];
-        $reading_table = create_table("#readings_table", cols, cols, 2, {});
-        $reading_table.rows().remove();
-        $reading_table.rows.add(day.Readings).draw();
-    }
-    if ($workouts_table) {
-        $workouts_table.rows().remove();
-        $workouts_table.rows.add(day.Workouts).draw()
-    }else {
-        let cols = ['activity', 'duration', 'km', 'rpe', 'tss'];
-        let fields = ['activity', 'seconds', 'km', 'rpe', 'tss'];
-        let render_dict = {'seconds': time_from_seconds}
-        $workouts_table = create_table("#workouts_table", cols, fields, 1, render_dict);
-        wire_workout_table();
-        $workouts_table.rows().remove();
-        $workouts_table.rows.add(day.Workouts).draw();
-    }
-}
-
-function wire_workout_table() {
-    $workouts_table.on('click', 'tbody tr', function (event) {
-        const data = $workouts_table.row("#" + $(this).attr("id")).data();
-        for (const key in data) {
-            set_form(key, data[key])
-          }
-    });
- }
-
-function set_form(field, value) {
-    switch (field){
-        case 'seconds':
-            $("#" + field).val(time_from_seconds(value));
-            break;
-        case "DT_RowId":
-            $("#" + field).text(value);
-            break;
-        case "activity":
-        case "activityType":
-        case "equipment":
-        case "tssMethod":
-            $("#" + field).val(value).trigger('change');
-            break;
-        case 'isRace':
-        case 'isBrick':
-        case 'wattsEstimated':
-            $("#" + field).prop('checked', value == 1);
-            break;
-        default:
-             $("#" + field).val(value);
-     }
- }
