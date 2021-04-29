@@ -4,7 +4,7 @@ from django.http import JsonResponse
 
 from workoutentry.modelling.modelling_types import DayAggregation, Aggregation, PandasPeriod
 from workoutentry.modelling.period import Period
-from workoutentry.modelling.processor import TSBProcessor, NoOpProcessor
+from workoutentry.modelling.processor import TSBProcessor
 from workoutentry.modelling.rolling import RollingDefinition
 from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.modelling.time_series import TimeSeriesManager

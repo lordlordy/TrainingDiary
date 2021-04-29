@@ -8,14 +8,14 @@ $(document).ready(function () {
     $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").removeClass('hide');
 
     bike_summary(function(response){
-        $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {});
+        $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {}, false);
         $bike_summary_table.rows.add(response.data.bikes).draw();
     })
 
     training_summary(function(response){
         var cols = ["year", "Total", "Swim", "Bike", "Run", "Walk"];
         let fields = ["name", "Total.km", "Swim.km", "Bike.km", "Run.km", "Walk.km"];
-        $km_table = create_table("#km_table", cols, fields, 0, {"name": $.fn.dataTable.render.number( '', '.', 0 )});
+        $km_table = create_table("#km_table", cols, fields, 0, {"name": $.fn.dataTable.render.number( '', '.', 0 )}, false);
         $km_table.rows.add(response.data.years).draw();
         cols.push('Gym');
         cols.push('Other');
@@ -29,11 +29,11 @@ $(document).ready(function () {
             "Gym.seconds": time_from_seconds, 
             "Other.seconds": time_from_seconds}
         let seconds_fields = ["name", "Total.seconds", "Swim.seconds", "Bike.seconds", "Run.seconds", "Walk.seconds", "Gym.seconds", "Other.seconds"];
-        $duration_table = create_table("#duration_table", cols, seconds_fields, 0, render_dict);
+        $duration_table = create_table("#duration_table", cols, seconds_fields, 0, render_dict, false);
         $duration_table.rows.add(response.data.years).draw();
 
         let tss_fields = ["name", "Total.tss", "Swim.tss", "Bike.tss", "Run.tss", "Walk.tss", "Gym.tss", "Other.tss"];
-        $tss_table = create_table("#tss_table", cols, tss_fields, 0, render_dict);
+        $tss_table = create_table("#tss_table", cols, tss_fields, 0, render_dict, false);
         $tss_table.rows.add(response.data.years).draw();
 
         $tss_table.on('select', function(e, dt, type, indexes){ create_chart($tss_table);});

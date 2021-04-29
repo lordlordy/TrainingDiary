@@ -41,3 +41,31 @@ function time_from_seconds(seconds) {
     if (seconds < 10) {seconds = "0"+seconds;}
     return hours+':'+minutes+':'+seconds;
 }
+
+function add_alerts($alert, msg_list){
+    msg_list.forEach(function(msg, index){
+       add_alert($alert, msg.type, msg.text);
+    });
+}
+
+function add_alert($alert_div, type, msg){
+    var alert = $('<div>');
+    switch(type){
+        case 'error':
+            alert.addClass('alert-danger');
+            break;
+        case 'info':
+            alert.addClass('alert-info');
+            break;
+        case 'warning':
+            alert.addClass('alert-warning');
+            break;
+        default:
+            alert.addClass('alert-dark');    }
+    alert.addClass('alert alert-dismissable fade show small');
+    alert.text(msg);
+    alert.append($('<button>').attr({type: 'button',
+                                     class: 'close',
+                                     'data-dismiss': 'alert'}).text('x'));
+    $alert_div.append(alert);
+}

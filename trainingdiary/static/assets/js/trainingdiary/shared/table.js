@@ -1,5 +1,5 @@
 
-function create_table(table_id, headings, data_keys, decimal_places, render_dict) {
+function create_table(table_id, headings, data_keys, decimal_places, render_dict, can_search) {
     let $table_header = $(table_id).find("thead tr");
     headings.forEach(function(heading, index){
         let $column = $("<th>").text(heading);
@@ -24,13 +24,14 @@ function create_table(table_id, headings, data_keys, decimal_places, render_dict
         }
     });
     let $table = $(table_id).DataTable({
+        "order": [[ 0, "desc" ]],
         select: {
             style: 'single',
-            items: 'cell',
+            items: can_search ? 'row' : 'cell',
         },
-        info: false,
-        searching: false,
-        paging: false,
+        info: can_search,
+        searching: can_search,
+        paging: can_search,
         columns: cols
     });
     return $table;

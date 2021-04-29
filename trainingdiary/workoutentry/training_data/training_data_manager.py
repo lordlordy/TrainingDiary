@@ -67,6 +67,10 @@ class TrainingDataManager:
         days = self.__conn.execute(f'SELECT date, type, comments FROM Day WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"')
         return [Day(*d) for d in days]
 
+    def day_exists(self, date):
+        count = self.__conn.execute(f'SELECT COUNT(1) FROM Day WHERE date="{date}"').fetchall()[0][0]
+        return count > 0
+
     def update_day(self, date, day_type, comments):
         sql = f"""
             UPDATE Day
@@ -196,11 +200,19 @@ class TrainingDataManager:
         self.__conn.commit()
 
     def readings(self):
-        readings = self.__conn.execute('SELECT date, type, value FROM Reading').fetchall()
+        readings = self.__conn.execute('SELECT date, type, value, primary_key FROM Reading').fetchall()
         return [Reading(*r) for r in readings]
 
+    def reading_for_primary_key(self, primary_key):
+        reading = self.__conn.execute(f'SELECT date, type, value, primary_key FROM Reading WHERE primary_key="{primary_key}"').fetchall()[0]
+        return Reading(*reading)
+
     def readings_for_date(self, date):
-        readings = self.__conn.execute(f'SELECT date, type, value FROM Reading WHERE date="{str(date)}"').fetchall()
+        readings = self.__conn.execute(f'SELECT date, type, value, primary_key FROM Reading WHERE date="{str(date)}"').fetchall()
+        return [Reading(*r) for r in readings]
+
+    def readings_between(self, from_date, to_date):
+        readings = self.__conn.execute(f'SELECT date, type, value, primary_key FROM Reading WHERE date>="{str(from_date)}" AND date<="{str(to_date)}"').fetchall()
         return [Reading(*r) for r in readings]
 
     def unused_readings_for_date(self, date):
@@ -213,7 +225,7 @@ class TrainingDataManager:
         return result
 
     def reading_for_date_and_type(self, date, reading_type):
-        readings = self.__conn.execute(f'SELECT date, type, value FROM Reading WHERE date="{str(date)}" AND type="{reading_type}"').fetchall()
+        readings = self.__conn.execute(f'SELECT date, type, value, primary_key FROM Reading WHERE date="{str(date)}" AND type="{reading_type}"').fetchall()
         return [Reading(*r) for r in readings]
 
     def delete_reading(self, date, reading_type):
@@ -222,6 +234,11 @@ class TrainingDataManager:
             WHERE date="{str(date)}" AND type="{reading_type}"
         '''
         # print(sql)
+        self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def update_reading_for_primary_key(self, primary_key, value):
+        sql = f'UPDATE Reading SET value="{value}" WHERE primary_key="{primary_key}"'
         self.__conn.execute(sql)
         self.__conn.commit()
 
