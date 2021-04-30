@@ -1,19 +1,21 @@
 var $day_table;
 var $reading_table;
 var $workout_table;
-var $activity_select;
-var $activityType_select;
-var $equipment_select;
-var $tssMethod_select;
-var $dayType_select;
+var $new_reading_table
+// var $activity_select;
+// var $activityType_select;
+// var $equipment_select;
+// var $tssMethod_select;
+// var $dayType_select;
+// var $reading_select;
 
 $(document).ready(function () {
 
-    $activity_select = refresh_list('activity', $("#activity"), "Select activity");
-    $activityType_select = refresh_list('activityType', $("#activityType"), "Select activity type");
-    $equipment_select = refresh_list('equipment', $("#equipment"), "Select equipment");
-    $tssMethod_select = refresh_list('tssMethod', $("#tssMethod"), "Select method");
-    $dayType_select = refresh_list('dayType', $("#day_type_select"), "Select type");
+    refresh_list('activity', $("#activity"), "Select activity");
+    refresh_list('activityType', $("#activity_type"), "Select activity type");
+    refresh_list('equipment', $("#equipment"), "Select equipment");
+    refresh_list('tssMethod', $("#tss_method"), "Select method");
+    refresh_list('dayType', $("#day_type_select"), "Select type");
 
     const today = new Date();
     let from_date = new Date();
@@ -63,7 +65,6 @@ $(document).ready(function () {
     });
 
     $("#save_day").on('click', function(){
-        // let form_data = JSON.stringify($("#day_form").serializeArray());
         save_day($("#date").val(), $("#day_type_select").val(), $("#comments").val(), function(response){
             add_alerts($("#day_alerts"), response.messages);
             $("#day_modal").modal('hide');
@@ -71,7 +72,6 @@ $(document).ready(function () {
                 $day_table.row("#" + response.data.day.DT_RowId).remove()
                 $day_table.row.add(response.data.day).select().draw()    
             }
-            console.log(response);
         });
     });
 
@@ -104,9 +104,108 @@ $(document).ready(function () {
     $("#select_reading_date").on('click', function(){
         $("#reading_modal_infinity").removeClass('hide');
         add_alert($("#reading_modal_alerts"), 'warning', 'All readings made for that date. Feel free to select another big boy')
-        readings_left($("#new_readings_date").val(), function(response){
+        let selected_date = $("#new_readings_date").val();
+        $("#save_new_readings").attr({date: selected_date})
+        readings_left(selected_date, function(response){
+            let choices = [];
+            response.data.readings.forEach(function(reading, index){
+                choices.push({text: reading, id: reading});
+            });
+
+            if (choices.length >= 0) {
+                $("#new_reading_select").select2({
+                    data: choices,
+                    allowClear: true,
+                    multiple: true,
+                    closeOnSelect: false,
+                    //not sure this is working
+                    scrollAfterSelect: true,
+                    placeholder: "Select readings"});
+            }
+            $("#new_reading_select").trigger('change');
+            $new_reading_table.rows().remove().draw();
+            $("#reading_day_modal").modal('hide');
+            $("#reading_day_modal_record").modal('show');
+        });
+
+
+    });
+
+    let rCols = ['reading', 'value']
+    $new_reading_table = create_table("#new_reading_table", rCols, rCols, 2, {}, false);
+
+    let new_reading_editor = new $.fn.dataTable.Editor( {
+        ajax: function ( method, url, d, successCallback, errorCallback ) {
+            var output = { data: [] };
+            debugger;
+            if ( d.action === 'edit' ) {
+                var key = Object.keys(d.data)[0];
+                var editedRow = d.data[Object.keys(d.data)[0]];
+                editedRow.DT_RowId = key;
+                editedRow.id = key;
+                editedRow.reading = key;
+                output.data.push(editedRow);
+             }
+  
+         successCallback(output);
+        },
+
+        table: "#new_reading_table",
+        fields: [  
+            {name: "value"},
+        ]
+    } );
+
+    $new_reading_table.on( 'click', 'td', function (e) {
+        new_reading_editor.inline( this, {
+            onBlur: 'submit'
+        } );
+    } );
+
+    $("#add_new_reading_button").on('click', function(){
+        let additions = [];
+        $("#new_reading_select").val().forEach(function(item, index){
+            if (!$new_reading_table.rows("#"+item).any()) {
+                additions.push({'DT_RowId': item, reading: item, value: 0});
+            }
+        });
+        $new_reading_table.rows.add(additions).draw();
+
+    });
+
+    $("#save_new_readings").on('click', function(){
+        let readings = []    
+        $.each($new_reading_table.rows().data(), function(key, value){
+            readings.push(value);
+        });
+        save_readings($(this).attr('date'), JSON.stringify(readings), function(response){
+            add_alerts($("#reading_alerts"), response.messages);
+            if (response.status === 'success') {
+                $reading_table.rows.add(response.data.readings).draw();                
+            }
+            $("#reading_waiting").addClass('hide');
             console.log(response);
         });
+        $("#reading_waiting").removeClass('hide');
+        $("#reading_day_modal_record").modal('hide');
+    });
+
+    $("#save_workout").on('click', function(){
+        console.log("save");
+        let form_data = JSON.stringify($("#workout_form").serializeArray());
+        console.log(form_data);
+    });
+
+    $("#new_workout_button").on('click', function(){
+        new_workout();
+        $("#workout_modal").modal('show');
+    });
+
+    $("#workout_table").on("dblclick", "tbody tr", function(){
+        var data = $workout_table.row( this ).data();
+        console.log(data);
+        set_workout_form(data);
+        $("#workout_modal").modal('show');
     });
 
 });
@@ -131,7 +230,6 @@ function populate_readings(readings){
 }
 
 function populate_workouts(workouts){
-    console.log(workouts)
     if ($workout_table) {
         $workout_table.rows().remove();
         $workout_table.rows.add(workouts).draw()
@@ -148,7 +246,24 @@ function populate_workouts(workouts){
     $("#workout_waiting").addClass('hide');
 }
 
-function set_form(field, value) {
+function new_workout() {
+    let today = new Date();
+    set_workout_form({
+        workout_date: today.toLocaleDateString('en-CA'),
+        seconds: 3600,
+        activity: "Swim",
+        activity_type: "Squad"
+    });
+}
+
+function set_workout_form(workout_dict) {
+    debugger;
+    for (var key in workout_dict) {
+        set_workout_form_field(key, workout_dict[key]);
+    }
+}
+
+function set_workout_form_field(field, value) {
     switch (field){
         case 'seconds':
             $("#" + field).val(time_from_seconds(value));
@@ -157,14 +272,14 @@ function set_form(field, value) {
             $("#" + field).text(value);
             break;
         case "activity":
-        case "activityType":
+        case "activity_type":
         case "equipment":
-        case "tssMethod":
+        case "tss_method":
             $("#" + field).val(value).trigger('change');
             break;
-        case 'isRace':
-        case 'isBrick':
-        case 'wattsEstimated':
+        case 'is_race':
+        case 'is_brick':
+        case 'watts_estimated':
             $("#" + field).prop('checked', value == 1);
             break;
         default:

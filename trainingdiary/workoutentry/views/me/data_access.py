@@ -153,3 +153,28 @@ class SaveDay(BaseSave):
         response.add_data('day', tdm.day_for_date(target_date).data_dictionary())
 
         return JsonResponse(data=response.as_dict())
+
+
+class SaveNewReadings(BaseSave):
+
+    URL = '/readings/new/save/'
+
+    def required_post_fields(self):
+        return ['json', 'date']
+
+    def call_resource(self, request):
+        date = request.POST['date']
+        readings = list()
+        tdm = TrainingDataManager()
+        for reading in json.loads(request.POST['json']):
+            tdm.save_reading(date, reading['reading'], reading['value'])
+            readings.append(reading['reading'])
+
+        readings_saved = list()
+        for r in readings:
+            readings_saved.append(tdm.reading_for_date_and_type(date, r)[0].data_dictionary())
+
+        response = TrainingDiaryResponse()
+        response.add_message(response.MSG_INFO, f"{len(readings)} saved: {', '.join(readings)}")
+        response.add_data('readings', readings_saved)
+        return JsonResponse(data=response.as_dict())

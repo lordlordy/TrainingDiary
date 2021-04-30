@@ -42,3 +42,11 @@ function readings_left(date, callback_function) {
         'date': date,
         resource: '/readings/left_for_date/'}, callback_function);
 }
+
+function save_readings(date, json, callback_function) {
+    get_me_resource({
+        'date': date,
+        'json': json,
+        resource: '/readings/new/save/'}, callback_function);
+}
+
