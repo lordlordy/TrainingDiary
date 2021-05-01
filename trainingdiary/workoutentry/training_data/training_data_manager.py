@@ -138,6 +138,23 @@ class TrainingDataManager:
         workouts = self.__conn.execute(sql).fetchall()
         return [Workout(*w) for w in workouts]
 
+    def workout_for_rowid(self, row_id):
+        sql = f'''
+            {workout_select_sql}
+            WHERE rowid={row_id}
+        '''
+        workouts = self.__conn.execute(sql)
+        return [Workout(*w) for w in workouts]
+
+    def workout_for_primary_key(self, primary_key):
+        sql = f'''
+            {workout_select_sql}
+            WHERE primary_key="{primary_key}"
+        '''
+        workouts = self.__conn.execute(sql)
+        return [Workout(*w) for w in workouts]
+
+
     def workout_for_date_and_number(self, date, number):
         sql = f'''
             {workout_select_sql}
@@ -145,6 +162,16 @@ class TrainingDataManager:
         '''
         workouts = self.__conn.execute(sql)
         return [Workout(*w) for w in workouts]
+
+    def delete_workout_for_primary_key(self, primary_key):
+        sql = f'''
+            DELETE FROM Workout
+            WHERE primary_key="{primary_key}"
+        '''
+        curr = self.__conn.cursor()
+        curr.execute(sql)
+        self.__conn.commit()
+        return curr.lastrowid
 
     def delete_workout(self, date, number):
         sql = f'''
@@ -154,7 +181,7 @@ class TrainingDataManager:
         self.__conn.execute(sql)
         self.__conn.commit()
 
-    def update_workout(self, date, workout_number, activity, activity_type, equipment, seconds, rpe, tss,
+    def update_workout(self, primary_key, activity, activity_type, equipment, seconds, rpe, tss,
              tss_method, km, kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate,
              is_brick, keywords, comments):
 
@@ -165,16 +192,21 @@ class TrainingDataManager:
             reps={reps}, is_race={is_race}, cadence={cadence}, watts={watts}, watts_estimated={watts_estimated}, 
             heart_rate={heart_rate}, is_brick={is_brick}, keywords="{keywords}", comments="{comments}", 
             last_save="{datetime.now()}"
-            WHERE date="{date}" AND workout_number={workout_number}
+            WHERE primary_key="{primary_key}"
         """
-        self.__conn.execute(sql)
+        cursor = self.__conn.cursor()
+        cursor.execute(sql)
         self.__conn.commit()
+
+    def workout_primary_key(self, date, workout_number) -> str:
+        return f"{date}-{workout_number}"
 
     def save_workout(self, date, activity, activity_type, equipment, seconds, rpe, tss,
              tss_method, km, kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate,
              is_brick, keywords, comments):
 
         workout_number = len(self.workouts_on_date(date)) + 1
+        primary_key = self.workout_primary_key(date, workout_number)
 
         sql = f"""
             INSERT INTO Workout
@@ -182,13 +214,15 @@ class TrainingDataManager:
             kj, ascent_metres, reps, is_race, cadence, watts, watts_estimated, heart_rate, is_brick, keywords, comments, 
             last_save)
             VALUES
-            ("{date}-{workout_number}", "{date}", {workout_number}, "{activity}", "{activity_type}", "{equipment}", 
+            ("{primary_key}", "{date}", {workout_number}, "{activity}", "{activity_type}", "{equipment}", 
             {seconds}, {rpe}, {tss}, "{tss_method}", {km}, {kj}, {ascent_metres}, {reps}, {is_race}, {cadence}, {watts}, 
             {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.now()}")
         """
-        # print(sql)
-        self.__conn.execute(sql)
+        print(sql)
+        cursor = self.__conn.cursor()
+        cursor.execute(sql)
         self.__conn.commit()
+        return cursor.lastrowid
 
     def delete_workout(self, date, workout_number):
         sql = f'''
@@ -235,6 +269,15 @@ class TrainingDataManager:
         '''
         # print(sql)
         self.__conn.execute(sql)
+        self.__conn.commit()
+
+    def delete_reading_for_primary_key(self, primary_key):
+        sql = f'''
+              DELETE FROM Reading
+              WHERE primary_key="{primary_key}"
+          '''
+        curr = self.__conn.cursor()
+        curr.execute(sql)
         self.__conn.commit()
 
     def update_reading_for_primary_key(self, primary_key, value):

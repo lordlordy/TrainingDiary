@@ -50,3 +50,20 @@ function save_readings(date, json, callback_function) {
         resource: '/readings/new/save/'}, callback_function);
 }
 
+function save_workout(json, callback_function) {
+    get_me_resource({
+        'json': json,
+        resource: '/workout/save/'}, callback_function);
+}
+
+function delete_workout(pk, callback_function) {
+    get_me_resource({
+        primary_key: pk,
+        resource: '/workout/delete/'}, callback_function);
+}
+
+function delete_reading(pk, callback_function) {
+    get_me_resource({
+        primary_key: pk,
+        resource: '/reading/delete/'}, callback_function);
+}

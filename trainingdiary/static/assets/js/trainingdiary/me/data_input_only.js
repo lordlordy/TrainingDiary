@@ -2,12 +2,6 @@ var $day_table;
 var $reading_table;
 var $workout_table;
 var $new_reading_table
-// var $activity_select;
-// var $activityType_select;
-// var $equipment_select;
-// var $tssMethod_select;
-// var $dayType_select;
-// var $reading_select;
 
 $(document).ready(function () {
 
@@ -19,7 +13,7 @@ $(document).ready(function () {
 
     const today = new Date();
     let from_date = new Date();
-    from_date.setDate(from_date.getDate() - 14);
+    from_date.setDate(from_date.getDate() - 7);
     let from_str = from_date.toLocaleDateString('en-CA');
     let to_str = today.toLocaleDateString('en-CA');
     $("#day_from, #reading_from, #workout_from").val(from_str);
@@ -191,9 +185,17 @@ $(document).ready(function () {
     });
 
     $("#save_workout").on('click', function(){
-        console.log("save");
-        let form_data = JSON.stringify($("#workout_form").serializeArray());
-        console.log(form_data);
+        $("#workout_waiting").removeClass('hide');
+        $("#workout_modal").modal('hide');
+        save_workout(JSON.stringify($("#workout_form").serializeArray()), function(response){
+            add_alerts($("#workout_alerts"), response.messages);
+            $workout_table.rows("#" + response.data.removed_primary_key).remove()
+            if (response.status === 'success') {
+                $workout_table.rows("#" + response.data.workout.primary_key).remove()
+                $workout_table.row.add(response.data.workout).draw();
+            }
+            $("#workout_waiting").addClass('hide');
+        });
     });
 
     $("#new_workout_button").on('click', function(){
@@ -203,9 +205,46 @@ $(document).ready(function () {
 
     $("#workout_table").on("dblclick", "tbody tr", function(){
         var data = $workout_table.row( this ).data();
-        console.log(data);
         set_workout_form(data);
         $("#workout_modal").modal('show');
+    });
+
+    $("#delete_selected").on('click', function(){
+        let pk = $workout_table.row({selected: true}).data().primary_key;
+        $("#confirm_delete_description").text("Are you sure you want to delete selected workout: " + pk + " ?");
+        $("#confirm_delete_button").attr({primary_key: pk, model: "Workout"})
+        $("#confirm_delete").modal('show');    
+    });
+
+    $("#confirm_delete_button").on('click', function(){
+        $("#confirm_delete").modal('hide');
+        switch ($(this).attr('model')) {
+            case "Workout":
+                delete_workout($(this).attr('primary_key'), function(response){
+                    add_alerts($("#workout_alerts"), response.messages);
+                    if (response.status === 'success') {
+                        $workout_table.row("#" + response.data.primary_key).remove().draw();
+                    }
+                });
+                break;
+            case "Reading":
+                delete_reading($(this).attr('primary_key'), function(response){
+                    add_alerts($("#reading_alerts"), response.messages);
+                    if (response.status === 'success') {
+                        $reading_table.row("#" + response.data.primary_key).remove().draw();
+                    }
+                });
+                break;
+    
+            }
+    });
+
+
+    $("#delete_selected_reading").on('click', function(){
+        let pk = $reading_table.row({selected: true}).data().primary_key;
+        $("#confirm_delete_description").text("Are you sure you want to delete selected reading: " + pk + " ?");
+        $("#confirm_delete_button").attr({primary_key: pk, model: "Reading"})
+        $("#confirm_delete").modal('show');    
     });
 
 });
@@ -234,9 +273,10 @@ function populate_workouts(workouts){
         $workout_table.rows().remove();
         $workout_table.rows.add(workouts).draw()
     }else {
-        let cols = ['date', 'activity', 'type', 'equipment', 'duration', 'km', 'ascent', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords'];
-        let fields = ['date', 'activity', 'activity_type', 'equipment', 'seconds', 'km', 'ascent_metres', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords'];
+        let cols = ['date', "#", 'activity', 'type', 'equipment', 'duration', 'km', 'ascent', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords'];
+        let fields = ['date', 'workout_number', 'activity', 'activity_type', 'equipment', 'seconds', 'km', 'ascent_metres', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords'];
         let render_dict = {
+            'workout_number': function(number){return ""+number},
             'seconds': time_from_seconds,
             'date': function(date){return date}}
         $workout_table = create_table("#workout_table", cols, fields, 1, render_dict, true);
@@ -249,15 +289,31 @@ function populate_workouts(workouts){
 function new_workout() {
     let today = new Date();
     set_workout_form({
-        workout_date: today.toLocaleDateString('en-CA'),
-        seconds: 3600,
+        primary_key: "",
+        date: today.toLocaleDateString('en-CA'),
+        workout_number: "",
         activity: "Swim",
-        activity_type: "Squad"
+        activity_type: "Squad",
+        equipment: "",
+        seconds: 3600,
+        km: 0.0,
+        rpe: 5,
+        tss: 0,
+        tss_method: "PacePower",
+        kj: 0,
+        ascent_metres: 0,
+        cadence: 0,
+        watts: 0,
+        watts_estimated: true,
+        is_race: false,
+        is_brick: false,
+        reps: 0,
+        keywords: "",
+        comments: ""
     });
 }
 
 function set_workout_form(workout_dict) {
-    debugger;
     for (var key in workout_dict) {
         set_workout_form_field(key, workout_dict[key]);
     }
@@ -268,8 +324,9 @@ function set_workout_form_field(field, value) {
         case 'seconds':
             $("#" + field).val(time_from_seconds(value));
             break;
-        case "DT_RowId":
-            $("#" + field).text(value);
+        case "primary_key":
+        case "workout_number":
+            $("#" + field).val(value);
             break;
         case "activity":
         case "activity_type":
@@ -282,7 +339,12 @@ function set_workout_form_field(field, value) {
         case 'watts_estimated':
             $("#" + field).prop('checked', value == 1);
             break;
+        case 'date':
+            debugger;
+            $("#workout_date").val(value);
+            break;
         default:
-             $("#" + field).val(value);
-     }
+            debugger;
+            $("#" + field).val(value);
+        }
  }

@@ -23,6 +23,7 @@ function create_table(table_id, headings, data_keys, decimal_places, render_dict
             );    
         }
     });
+
     let $table = $(table_id).DataTable({
         "order": [[ 0, "desc" ]],
         select: {

@@ -14,6 +14,19 @@
 </head>
 
 <body>
+    <div class="modal fade" role="dialog" tabindex="-1" id="confirm_delete">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirm Delete</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm_delete_description">You sure you want to delete selected items</p>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-danger" id="confirm_delete_button" type="button">Confirm Delete</button></div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" role="dialog" tabindex="-1" id="reading_day_modal_record">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -73,16 +86,16 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="workout_modal">
+    <div class="modal fade" role="dialog" tabindex="-1" id="workout_modal" style="background: linear-gradient(black, var(--blue) 23%, white);">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" style="background: linear-gradient(black, var(--blue) 18%, white);">
                     <h4 class="modal-title">Workout Edit</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="background: linear-gradient(black, var(--blue) 0%, rgb(39,143,255) 24%, white 100%);">
                     <form id="workout_form">
                         <div class="table-responsive">
-                            <table class="table table-striped table-sm">
+                            <table class="table table-striped table-dark table-sm">
                                 <thead>
                                     <tr>
                                         <th>Field</th>
@@ -92,11 +105,15 @@
                                 <tbody>
                                     <tr>
                                         <td>primary key</td>
-                                        <td id="DT_RowId"></td>
+                                        <td><input class="form-control" type="text" id="primary_key" name="primary_key" readonly=""></td>
                                     </tr>
                                     <tr>
                                         <td>date</td>
                                         <td><input class="form-control" id="workout_date" type="date" name="date"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>workout number</td>
+                                        <td><input class="form-control" type="text" id="workout_number" name="workout_number" readonly=""></td>
                                     </tr>
                                     <tr>
                                         <td>activity</td>
@@ -112,7 +129,7 @@
                                     </tr>
                                     <tr>
                                         <td>duration</td>
-                                        <td><input class="form-control" id="seconds" type="time" style="width:100%;"></td>
+                                        <td><input class="form-control" id="seconds" type="time" style="width:100%;" name="seconds"></td>
                                     </tr>
                                     <tr>
                                         <td>km</td>
@@ -175,7 +192,7 @@
                         </div><textarea class="form-control" id="comments" name="comments"></textarea>
                     </form>
                 </div>
-                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" id="save_workout" type="button">Save</button></div>
+                <div class="modal-footer" style="background: linear-gradient(black, var(--blue) 0%, white);"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" id="save_workout" type="button">Save</button></div>
             </div>
         </div>
     </div>
@@ -217,7 +234,8 @@
         <div class="col-md-12 col-lg-6 col-xl-7">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4>Readings</h4><img id="reading_waiting" class="hide" src="assets/img/waiting-infinity.svg"><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#reading_day_modal">Add</button>
+                    <h4>Readings</h4>
+                    <div class="btn-group" role="group"><button class="btn btn-outline-danger" id="delete_selected_reading" type="button">Delete Selected</button><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#reading_day_modal">Add</button></div><img id="reading_waiting" class="hide" src="assets/img/waiting-infinity.svg">
                 </div>
                 <div class="card-body">
                     <div id="reading_alerts"></div>
@@ -242,16 +260,18 @@
         <div class="col">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4>Workouts</h4><img id="workout_waiting" class="hide" src="assets/img/waiting-infinity.svg"><button class="btn btn-primary" id="new_workout_button" type="button">Add</button>
+                    <h4>Workouts</h4><img id="workout_waiting" class="hide" src="assets/img/waiting-infinity.svg">
+                    <div class="btn-group" role="group"><button class="btn btn-outline-danger" id="delete_selected" type="button">Delete Selected</button><button class="btn btn-primary" id="new_workout_button" type="button">Add</button></div>
                 </div>
                 <div class="card-body">
+                    <div id="workout_alerts"></div>
                     <div class="row">
                         <div class="col"><input id="workout_from" class="workout" type="date" style="width:100%;" data-type="Workout"></div>
                         <div class="col"><input id="workout_to" class="workout" type="date" style="width:100%;" data-type="Workout"></div>
                     </div>
                     <h6 class="text-muted card-subtitle mb-2"></h6>
                     <div class="table-responsive">
-                        <table class="table table-striped table-dark table-sm" id="workout_table">
+                        <table class="table table-striped table-sm" id="workout_table">
                             <thead>
                                 <tr></tr>
                             </thead>
