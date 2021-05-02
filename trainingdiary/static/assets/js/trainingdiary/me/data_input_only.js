@@ -5,11 +5,11 @@ var $new_reading_table
 
 $(document).ready(function () {
 
-    refresh_list('activity', $("#activity"), "Select activity");
-    refresh_list('activityType', $("#activity_type"), "Select activity type");
-    refresh_list('equipment', $("#equipment"), "Select equipment");
-    refresh_list('tssMethod', $("#tss_method"), "Select method");
-    refresh_list('dayType', $("#day_type_select"), "Select type");
+    refresh_list('activity', false, $("#activity"), "Select activity");
+    refresh_list('activityType', false, $("#activity_type"), "Select activity type");
+    refresh_list('equipment', false, $("#equipment"), "Select equipment");
+    refresh_list('tssMethod', false, $("#tss_method"), "Select method");
+    refresh_list('dayType', false, $("#day_type_select"), "Select type");
 
     const today = new Date();
     let from_date = new Date();

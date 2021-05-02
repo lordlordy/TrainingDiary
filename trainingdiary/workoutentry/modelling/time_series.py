@@ -37,8 +37,7 @@ class TimeSeriesManager:
                 'datasets': ts_list,
                 'scales': scales.data_dictionary()}
 
-    def __time_series(self, requested_time_period, time_series_set, scales):
-
+    def time_series_df(self, requested_time_period, time_series_set):
         time_period = time_series_set.processor.adjusted_time_period(requested_time_period)
 
         df = time_series_set.data_definition.day_data(time_period)
@@ -52,6 +51,12 @@ class TimeSeriesManager:
         if requested_time_period is not None:
             # filter back to original requested period
             df = df.loc[requested_time_period.start : requested_time_period.end]
+
+        return df
+
+    def __time_series(self, requested_time_period, time_series_set, scales):
+
+        df = self.time_series_df(requested_time_period, time_series_set)
 
         values_dict = {col: list() for col in df.columns.values if col != 'date'}
 

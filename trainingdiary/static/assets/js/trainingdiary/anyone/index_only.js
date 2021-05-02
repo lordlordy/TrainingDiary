@@ -7,9 +7,63 @@ $(document).ready(function () {
 
     $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").removeClass('hide');
 
+    refresh_list('measure', false, $("#measure"), "Select measure");
+    refresh_list('activity', true, $("#activity"), "Select type");
+    refresh_list('activityType', true, $("#activity_type"), "Select type");
+    refresh_list('equipment', true, $("#equipment"), "Select type");
+    refresh_list('dayType', true, $("#day_type"), "Select type");
+    refresh_list('period', true, $("#period"), "Select type");
+    refresh_list('aggregation', false, $("#period_aggregation"), "Select type");
+    refresh_list('aggregation', false, $("#rolling_aggregation"), "Select type");
+    refresh_list('aggregation', false, $("#day_aggregation"), "Select type");
+
+    $("#day_of_week").select2({
+        data: [
+            {text: "All", id: "All"},
+            {text: "Monday", id: "Monday"},
+            {text: "Tuesday", id: "Tuesday"},
+            {text: "Wednesday", id: "Wednesday"},
+            {text: "Thursday", id: "Thursday"},
+            {text: "Friday", id: "Friday"},
+            {text: "Saturday", id: "Saturday"},
+            {text: "Sunday", id: "Sunday"},
+        ],
+        closeOnSelect: true});
+
+    $("#month").select2({
+        data: [
+            {text: "All", id: "All"},
+            {text: "January", id: "January"},
+            {text: "February", id: "February"},
+            {text: "March", id: "March"},
+            {text: "April", id: "April"},
+            {text: "May", id: "May"},
+            {text: "June", id: "June"},
+            {text: "July", id: "July"},
+            {text: "August", id: "August"},
+            {text: "September", id: "September"},
+            {text: "October", id: "October"},
+            {text: "November", id: "November"},
+            {text: "December", id: "December"},
+        ],
+        closeOnSelect: true});
+    
+    const yesNo = {
+        data: [{text: 'yes', id: 'yes'}, {text: 'no', id: 'no'}], 
+        closeOnSelect: true,
+        // this removes search box
+        minimumResultsForSearch: -1
+    }
+    $("#to_date").select2(yesNo);
+    $("#rolling").select2(yesNo);
+    $("#period_include_zeroes").select2(yesNo);
+    $("#rolling_include_zeroes").select2(yesNo);
+
     bike_summary(function(response){
         $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {}, false);
         $bike_summary_table.rows.add(response.data.bikes).draw();
+        $bike_summary_table.on('select', function(e, dt, type, indexes){ create_chart($bike_summary_table);});
+        $("#bike_infinity").addClass('hide');
     })
 
     training_summary(function(response){
@@ -39,15 +93,21 @@ $(document).ready(function () {
         $tss_table.on('select', function(e, dt, type, indexes){ create_chart($tss_table);});
         $duration_table.on('select', function(e, dt, type, indexes){ create_chart($duration_table);});
         $km_table.on('select', function(e, dt, type, indexes){ create_chart($km_table);});
-        $bike_summary_table.on('select', function(e, dt, type, indexes){ create_chart($bike_summary_table);});
 
-        $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").addClass('hide');
+        $("#tss_infinity, #duration_infinity, #km_infinity").addClass('hide');
 
     });
 
     $(".card-header").on('dblclick', function(){
         console.log('dblclick');
         $(this).siblings().toggleClass('hide');
+    });
+
+    $("#calculate_eddington_number").on('click', function(){
+        calculate_eddington_number(JSON.stringify($("#eddington_form").serializeArray()), function(response){
+            add_alerts($("#eddington_alerts"), response.messages);
+            console.log(response);
+        });
     });
 
 });

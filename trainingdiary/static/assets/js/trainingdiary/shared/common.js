@@ -18,8 +18,8 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function refresh_list(field_type, $select, placeholder){
-    choices_for_type(field_type, function(response){
+function refresh_list(field_type, include_all, $select, placeholder){
+    choices_for_type(field_type, include_all, function(response){
             $select.select2({
                 data: response.data.choices,
                 allowClear: false,

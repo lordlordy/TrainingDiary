@@ -44,3 +44,29 @@ class PandasPeriod(Enum):
     Q_JAN = 'Q-Jan'
     Q_FEB = 'Q-Feb'
     Q_MAR = 'Q-Mar'
+
+
+class WorkoutFloatMeasureEnum(Enum):
+    SECONDS = 'seconds'
+    MINUTES = 'minutes'
+    HOURS = 'hours'
+    RPE = 'rpe'
+    TSS = 'tss'
+    KM = 'km'
+    KJ = 'kj'
+    ASCENT_METRES = 'ascent_metres'
+    ASCENT_FEET = 'ascent_feet'
+    REPS = 'reps'
+    CADENCE = 'cadence'
+    WATTS = 'watts'
+    HEART_RATE = 'heart_rate'
+
+
+class ReadingEnum(Enum):
+    KG = 'kg'
+    LBS = 'lbs'
+    FAT_PERCENTAGE = 'fatPercentage'
+    RESTING_HEART_RATE = 'restingHR'
+    FATIGUE = 'fatigue'
+    MOTIVATION = 'motivation'
+

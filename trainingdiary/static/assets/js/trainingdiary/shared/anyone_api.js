@@ -27,3 +27,16 @@ function graph_data(graph, year, activity, callback_function) {
         'activity': activity,
         resource: '/training/data/canned/'}, callback_function);
 }
+
+function choices_for_type(field_type, include_all, callback_function) {
+    get_me_resource({
+        type: field_type,
+        'include_all': include_all,
+        resource: '/field/choices/'}, callback_function);
+}
+
+function calculate_eddington_number(json, callback_function) {
+    get_me_resource({
+        'json': json,
+        resource: '/eddington/calculation/'}, callback_function);
+}

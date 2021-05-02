@@ -1,8 +1,8 @@
-from workoutentry.views.me.data_access import DataForDate, ChoiceListForType, NextDiaryDate, SaveDay, ReadingsLeftForDay, SaveNewReadings, SaveWorkout, DeleteWorkout, DeleteReading
+from workoutentry.views.me.data_access import DataForDate, NextDiaryDate, SaveDay, ReadingsLeftForDay, SaveNewReadings, SaveWorkout, DeleteWorkout, DeleteReading
+from workoutentry.views.anyone_access.choice_lists import ChoiceListForType
 
 ME_RESOURCE_MAP = {
     DataForDate.URL: DataForDate,
-    ChoiceListForType.URL: ChoiceListForType,
     NextDiaryDate.URL: NextDiaryDate,
     SaveDay.URL: SaveDay,
     ReadingsLeftForDay.URL: ReadingsLeftForDay,

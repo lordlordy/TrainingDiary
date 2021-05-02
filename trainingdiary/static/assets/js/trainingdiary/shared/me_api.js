@@ -23,11 +23,7 @@ function next_diary_date(callback_function) {
         resource: '/data/next_diary_date/'}, callback_function);
 }
 
-function choices_for_type(field_type, callback_function) {
-    get_me_resource({
-        type: field_type,
-        resource: '/field/choices/'}, callback_function);
-}
+
 
 function save_day(date, day_type, comments, callback_function) {
     get_me_resource({

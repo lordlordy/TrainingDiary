@@ -8,6 +8,7 @@ from dateutil import parser
 from workoutentry.training_data import TrainingDataManager
 from workoutentry.views.json.response import TrainingDiaryResponse
 from workoutentry.views.training_diary_resource import TrainingDiaryResource
+from workoutentry.views.utilities.utilities import BaseJSONForm
 
 
 class NextDiaryDate(TrainingDiaryResource):
@@ -43,35 +44,6 @@ class DataForDate(TrainingDiaryResource):
             instances = tdm.workouts_between(request.POST['from_date'], request.POST['to_date'])
 
         response.add_data('instances', [i.data_dictionary() for i in instances])
-
-        return JsonResponse(data=response.as_dict())
-
-
-class ChoiceListForType(TrainingDiaryResource):
-
-    URL = '/field/choices/'
-
-    def required_post_fields(self):
-        return ['type']
-
-    def call_resource(self, request):
-        type = request.POST['type']
-        tdm = TrainingDataManager()
-
-        choices = list()
-        if type == 'activity':
-            choices = tdm.activities()
-        elif type == 'activityType':
-            choices = tdm.activity_types()
-        elif type == 'equipment':
-            choices = tdm.equipment_types()
-        elif type == 'tssMethod':
-            choices = tdm.tss_methods()
-        elif type == 'dayType':
-            choices = tdm.day_types()
-
-        response = TrainingDiaryResponse()
-        response.add_data('choices', sorted([{'text': c, 'id': c} for c in choices], key=lambda c: c["text"]))
 
         return JsonResponse(data=response.as_dict())
 
@@ -141,7 +113,7 @@ class SaveNewReadings(TrainingDiaryResource):
         return JsonResponse(data=response.as_dict())
 
 
-class SaveWorkout(TrainingDiaryResource):
+class SaveWorkout(BaseJSONForm):
 
     URL = '/workout/save/'
 
@@ -213,32 +185,11 @@ class SaveWorkout(TrainingDiaryResource):
     def _float_fields(self) -> set:
         return {}
 
+    def _yes_no_boolean_fields(self) -> set:
+        return {"can_record_for_day", "can_record_in_workout"}
+
     def _extra_processing(self, data) -> bool:
         return False
-
-    def _process_data(self, json_data) -> (dict, set):
-        data = json.loads(json_data)
-        dd = dict()
-        errors = set()
-        for d in data:
-            field_name = d['name']
-            value = d['value']
-            if field_name in self._int_fields():
-                try:
-                    dd[field_name] = int(value)
-                except ValueError as e:
-                    errors.add(f"Invalid {field_name} value: {e}")
-            elif field_name in self._float_fields():
-                try:
-                    dd[field_name] = float(value)
-                except ValueError as e:
-                    errors.add(f"Invalid {field_name} value: {e}")
-            elif field_name in {"can_record_for_day", "can_record_in_workout"}:
-                dd[field_name] = value.lower() == 'yes'
-
-            elif not self._extra_processing(data):
-                dd[field_name] = value
-        return dd, errors
 
 
 class DeleteWorkout(TrainingDiaryResource):

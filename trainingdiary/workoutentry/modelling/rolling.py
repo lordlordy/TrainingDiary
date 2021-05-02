@@ -21,9 +21,10 @@ class NoOpRoller(AbstractRoller):
 
 class RollingDefinition(AbstractRoller):
 
-    def __init__(self, periods, aggregation=Aggregation.SUM):
+    def __init__(self, periods, aggregation=Aggregation.SUM, incl_zeros=True):
         self.periods = periods
         self.aggregation = aggregation
+        self.incl_zeroes = incl_zeros
 
     def title_component(self):
         return f"Rolling {self.periods}x"

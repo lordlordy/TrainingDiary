@@ -4,10 +4,11 @@ import pandas as pd
 
 class Period:
 
-    def __init__(self, label=PandasPeriod.DAY, aggregation=Aggregation.SUM, to_date=False):
+    def __init__(self, label=PandasPeriod.DAY, aggregation=Aggregation.SUM, to_date=False, incl_zeroes=True):
         self.label = label
         self.aggregation = aggregation
         self.to_date = to_date
+        self.incl_zeroes = incl_zeroes
 
     def title_component(self):
         if self.label == 'Day':

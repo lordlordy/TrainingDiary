@@ -72,7 +72,9 @@ class DataDefinition:
 
 class SeriesDefinition:
     NOT_SET = 'notSet'
-
+    # todo - should measure and underlying_measure reference DataDefinition rather than just the name of the measure.
+    # At the moment there's the chance that this measure in the SeriesDefinition does not match the measure it's been used on even though this does not make sense
+    # This issue is the DataDefinition is not correct for definition things like CTL.
     def __init__(self, period=Period(), rolling_definition=NoOpRoller(), measure=NOT_SET, underlying_measure=NOT_SET):
         self.period = period
         self.rolling_definition = rolling_definition
