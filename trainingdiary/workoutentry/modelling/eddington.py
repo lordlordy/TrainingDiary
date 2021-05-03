@@ -29,33 +29,36 @@ class EddingtonNumberProcessor(AbstractProcessor):
         return dd
 
     def process(self, df):
-            self.contributors_to_next = np.array([])
+        self.contributors_to_next = np.array([])
 
-            df['ed_num'] = np.nan
-            df['plus_one'] = np.nan
-            df['contributor'] = np.nan
+        df['ed_num'] = np.nan
+        df['plus_one'] = np.nan
+        df['contributor'] = np.nan
 
-            df.sort_index(inplace=True)
+        df.sort_index(inplace=True)
 
-            for i, row in df.iterrows():
-                self._check_and_reset(i, row)
-                v = row[0]
-                if v >= self.ed_num + 1:
-                    # this contributes to LTD
-                    self.contributors_to_next = np.append(self.contributors_to_next, v)
+        for i, row in df.iterrows():
+            self._check_and_reset(i, row)
+            v = row[0]
+            if v >= self.ed_num + 1:
+                # this contributes to LTD
+                self.contributors_to_next = np.append(self.contributors_to_next, v)
+                self.plus_one = (self.ed_num + 1) - self.contributors_to_next.size
+                if self.plus_one == 0:
+                    self.ed_num += 1
+                    # remove non contributors as edd num increased
+                    self.contributors_to_next = self.contributors_to_next[self.contributors_to_next >= self.ed_num + 1]
+                    # recalc +1
                     self.plus_one = (self.ed_num + 1) - self.contributors_to_next.size
-                    if self.plus_one == 0:
-                        self.ed_num += 1
-                        # remove non contributors as edd num increased
-                        self.contributors_to_next = self.contributors_to_next[self.contributors_to_next >= self.ed_num + 1]
-                        # recalc +1
-                        self.plus_one = (self.ed_num + 1) - self.contributors_to_next.size
 
-                    row['ed_num'] = self.ed_num
-                    row['plus_one'] = self.plus_one
-                    row['contributor'] = round(v, 1)
+                row['ed_num'] = self.ed_num
+                row['plus_one'] = self.plus_one
+                row['contributor'] = round(v, 1)
 
-            return df
+        # drop the value col
+        df = df.drop(df.columns[0], axis=1)
+
+        return df
 
     def _check_and_reset(self, index, row):
         pass

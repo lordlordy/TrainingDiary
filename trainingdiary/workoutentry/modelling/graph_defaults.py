@@ -154,4 +154,7 @@ class Scales:
         return axis_id
 
     def data_dictionary(self):
-        return {key: value.data_dictionary() for key, value in self.scales.items()}
+        dd = {key: value.data_dictionary() for key, value in self.scales.items()}
+        dd['x'] = {'type': 'time'}
+
+        return dd
