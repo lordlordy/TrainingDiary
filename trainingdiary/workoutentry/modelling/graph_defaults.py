@@ -45,6 +45,16 @@ class TimeSeriesDefaults:
             defaults.dataset.backgroundColour = defaults.dataset.borderColour
             defaults.dataset.pointRadius = 1
             defaults.dataset.pointHoverRadius = 7
+        elif series_definition.period.to_date:
+            defaults.position = 'left'
+            defaults.number = 2
+            defaults.dataset.chart_type = 'line'
+            defaults.dataset.showLine = True
+            defaults.dataset.fill = False
+            defaults.dataset.label += f" {series_definition.title_component()}"
+            defaults.dataset.pointRadius = 1
+            defaults.dataset.pointHoverRadius = 5
+
         return defaults
 
     def __adjust_colour_by(self, colour, percentage):
