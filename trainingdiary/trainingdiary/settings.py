@@ -85,15 +85,15 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
 
-    'training_diary_db': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
-    },
-
-    # 'training_data_db': {
+    # 'training_diary_db': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
     # },
+
+    'training_data_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
+    },
     #
     # 'data_warehouse_db': {
     #     'ENGINE': 'django.db.backends.sqlite3',
