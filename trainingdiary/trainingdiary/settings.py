@@ -90,15 +90,15 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
     },
 
-    'training_data_db': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
-    },
-
-    'data_warehouse_db': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'training_data_warehouse.sqlite3'),
-    }
+    # 'training_data_db': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'TrainingData.sqlite3'),
+    # },
+    #
+    # 'data_warehouse_db': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'training_data_warehouse.sqlite3'),
+    # }
 }
 
 # DATABASE_ROUTERS = ['trainingdiary.db_routers.WorkoutEntryRouter']
