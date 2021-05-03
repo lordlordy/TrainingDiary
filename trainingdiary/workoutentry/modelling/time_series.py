@@ -1,3 +1,5 @@
+import numpy as np
+
 from workoutentry.modelling.data_definition import SeriesDefinition
 from workoutentry.modelling.graph_defaults import Scales, TimeSeriesDefaults
 from workoutentry.modelling.processor import NoOpProcessor
@@ -37,7 +39,7 @@ class TimeSeriesManager:
                 'datasets': ts_list,
                 'scales': scales.data_dictionary()}
 
-    def time_series_df(self, requested_time_period, time_series_set):
+    def __time_series_df(self, requested_time_period, time_series_set):
         time_period = time_series_set.processor.adjusted_time_period(requested_time_period)
 
         df = time_series_set.data_definition.day_data(time_period)
@@ -56,14 +58,15 @@ class TimeSeriesManager:
 
     def __time_series(self, requested_time_period, time_series_set, scales):
 
-        df = self.time_series_df(requested_time_period, time_series_set)
+        df = self.__time_series_df(requested_time_period, time_series_set)
 
         values_dict = {col: list() for col in df.columns.values if col != 'date'}
 
         for index, row in df.iterrows():
             for col in df.columns.values:
                 if col != 'date':
-                    values_dict[col].append({'x': index, 'y': float(row[col])})
+                    if not np.isnan(row[col]):
+                        values_dict[col].append({'x': index, 'y': float(row[col])})
 
         time_series = self.__add_graph_defaults(values_dict,
                                                 time_series_set.processor.series_definitions(time_series_set.data_definition.measure, time_series_set.series_definition),

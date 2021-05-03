@@ -24,32 +24,32 @@ class Period:
                 if self.to_date:
                     df = df.groupby(pd.Grouper(freq=self.label.value)).expanding().sum()
                 else:
-                    df = df.groupby(pd.Grouper(freq=self.label)).sum()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).sum()
             elif self.aggregation == Aggregation.MEAN:
                 if self.to_date:
-                    df = df.groupby(pd.Grouper(freq=self.label)).expanding().mean()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).expanding().mean()
                 else:
-                    df = df.groupby(pd.Grouper(freq=self.label)).mean()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).mean()
             elif self.aggregation == Aggregation.MAX:
                 if self.to_date:
-                    df = df.groupby(pd.Grouper(freq=self.label)).expanding().max()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).expanding().max()
                 else:
-                    df = df.groupby(pd.Grouper(freq=self.label)).max()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).max()
             elif self.aggregation == Aggregation.MEDIAN:
                 if self.to_date:
-                    df = df.groupby(pd.Grouper(freq=self.label)).expanding().median()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).expanding().median()
                 else:
-                    df = df.groupby(pd.Grouper(freq=self.label)).median()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).median()
             elif self.aggregation == Aggregation.MIN:
                 if self.to_date:
-                    df = df.groupby(pd.Grouper(freq=self.label)).expanding().min()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).expanding().min()
                 else:
-                    df = df.groupby(pd.Grouper(freq=self.label)).min()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).min()
             elif self.aggregation == Aggregation.STD_DEV:
                 if self.to_date:
-                    df = df.groupby(pd.Grouper(freq=self.label)).expanding().std()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).expanding().std()
                 else:
-                    df = df.groupby(pd.Grouper(freq=self.label)).std()
+                    df = df.groupby(pd.Grouper(freq=self.label.value)).std()
             if self.to_date:
                 df = df.reset_index(level=0, drop=True)
         return df

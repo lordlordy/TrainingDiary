@@ -13,7 +13,14 @@ class TimeSeriesDefaults:
             'seconds': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'seconds', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
             'minutes': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'minutes', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
             'hours': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('bar', 'hours', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
-            'km': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('bar', 'km', '#171743', '#171743', False, 5, 15, False), 'right', 1, 'linear', True)
+            'km': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('bar', 'km', '#171743', '#171743', False, 5, 15, False), 'right', 1, 'linear', True),
+            'ed_num': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'ed#', '#ff0000', '#fad2d7', False, 1, 3, True), 'left', 1, 'linear', True),
+            'plus_one': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', '+1', '#008f00', '#008f00', False, 1, 2, True), 'left', 1, 'linear', True),
+            'contributor': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'contributors', '#0000ff', '#0000ff', False, 3, 7, False), 'left', 1, 'linear', True),
+            'annual_ed_num': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'annual ed#', '#6a0296', '#d27ff5', False, 10, 20, False), 'left', 1, 'linear', True),
+            'annual_plus_one': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'annual ed#', '#0000ff', '#0000ff', False, 5, 10, False), 'left', 1, 'linear', True),
+            'monthly_ed_num': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'annual ed#', '#6a0296', '#d27ff5', False, 10, 20, False), 'left', 1, 'linear', True),
+            'monthly_plus_one': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'annual ed#', '#0000ff', '#0000ff', False, 5, 10, False), 'left', 1, 'linear', True),
         }
 
     def defaults(self, series_definition):

@@ -48,6 +48,14 @@ $(document).ready(function () {
         ],
         closeOnSelect: true});
     
+    $("#eddington_type").select2({
+        data: [
+            {text: "Lifetime", id: "Lifetime"},
+            {text: "Annual", id: "Annual"},
+            {text: "Monnthly", id: "Monthly"},
+        ],
+        closeOnSelect: true});
+
     const yesNo = {
         data: [{text: 'yes', id: 'yes'}, {text: 'no', id: 'no'}], 
         closeOnSelect: true,
@@ -104,11 +112,15 @@ $(document).ready(function () {
     });
 
     $("#calculate_eddington_number").on('click', function(){
+        $("#eddington_infinity").removeClass('hide');
         calculate_eddington_number(JSON.stringify($("#eddington_form").serializeArray()), function(response){
             add_alerts($("#eddington_alerts"), response.messages);
-            console.log(response);
+            plot_chart("eddington-chart", "eddington-chart-container", response.data.time_series, response.data.chart_title)
+            $("#eddington_infinity").addClass('hide');
         });
     });
+
+    $(".card-body").addClass('hide')
 
 });
 
@@ -154,7 +166,6 @@ function create_chart($table) {
     let $waiting = $("#" + graph + "_infinity");
     $waiting.removeClass('hide');
     graph_data(graph, year, activity, function(response){
-        console.log(response);
         plot_chart(graph + "-chart", graph + "-chart-container", response.data.time_series, response.data.chart_title)
         $waiting.addClass('hide');
     }); 

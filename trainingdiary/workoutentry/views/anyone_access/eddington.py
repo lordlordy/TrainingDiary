@@ -1,11 +1,10 @@
 from django.http import JsonResponse
 
 from workoutentry.modelling.data_definition import DataDefinition, SeriesDefinition
+from workoutentry.modelling.eddington import EddingtonNumberProcessor, AnnualEddingtonNumberProcessor, MonthlyEddingtonNumberProcessor
 from workoutentry.modelling.modelling_types import DayAggregation, Aggregation, PandasPeriod
 from workoutentry.modelling.period import Period
-from workoutentry.modelling.processor import NoOpProcessor
 from workoutentry.modelling.rolling import RollingDefinition, NoOpRoller
-from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.modelling.time_series import TimeSeriesManager
 from workoutentry.training_data import TrainingDataManager
 from workoutentry.views.json.response import TrainingDiaryResponse
@@ -61,17 +60,23 @@ class EddingtonNumberCalculation(BaseJSONForm):
         dd_keys.remove('rolling')
 
         series_definition = SeriesDefinition(period=period, rolling_definition=rolling_definition)
-        processor = NoOpProcessor()
 
-        tdm = TrainingDataManager()
-        tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor)
-        tsm = TimeSeriesManager()
-
-        df = tsm.time_series_df(tdm.diary_time_period(), tss)
+        processor = None
+        if dd['eddington_type'] == 'Lifetime':
+            processor = EddingtonNumberProcessor()
+        elif dd['eddington_type'] == 'Annual':
+            processor = AnnualEddingtonNumberProcessor()
+        elif dd['eddington_type'] == 'Monthly':
+            processor = MonthlyEddingtonNumberProcessor()
 
         response = TrainingDiaryResponse()
         [response.add_message(response.MSG_ERROR, e) for e in errors]
-        response.add_data('data', dd)
+
+        if processor is not None:
+            tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor)
+            ts = TimeSeriesManager().time_series(TrainingDataManager().diary_time_period(), [tss])
+            response.add_data('time_series', ts)
+
         response.add_data('unused_data', [k for k in dd_keys])
 
         return JsonResponse(data=response.as_dict())
