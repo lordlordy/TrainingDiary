@@ -92,11 +92,11 @@ class CannedGraph(TrainingDiaryResource):
         tss_list = list()
         if graph == 'tss':
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=DataDefinition(activity='All' if activity == "Total" else activity,
-                                                                                 activity_type='All',
-                                                                                 equipment='All',
-                                                                                 measure='tss',
-                                                                                 day_aggregation_method=DayAggregation.SUM),
-                                                  processor=TSBProcessor(7, 7, 42, 42)))
+                                                                                           activity_type='All',
+                                                                                           equipment='All',
+                                                                                           measure='tss',
+                                                                                           day_aggregation_method=DayAggregation.SUM),
+                                                            processor=TSBProcessor(7, 7, 42, 42)))
         elif graph == 'duration':
             duration_defn = DataDefinition(activity='All' if activity == "Total" else activity,
                                            activity_type='All',
@@ -126,7 +126,7 @@ class CannedGraph(TrainingDiaryResource):
                                                             series_definition=SeriesDefinition(Period(PandasPeriod.Y_DEC, Aggregation.SUM, to_date=True))))
 
         if len(tss_list) > 0:
-            values = tms.time_series(requested_time_period=tp, time_series_list=tss_list)
+            values = tms.time_series_graph(requested_time_period=tp, time_series_list=tss_list)
         else:
             values = {'title': "No Data"}
 

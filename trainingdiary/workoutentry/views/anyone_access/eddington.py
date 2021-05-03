@@ -74,7 +74,7 @@ class EddingtonNumberCalculation(BaseJSONForm):
 
         if processor is not None:
             tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor)
-            ts = TimeSeriesManager().time_series(TrainingDataManager().diary_time_period(), [tss])
+            ts = TimeSeriesManager().time_series_graph(TrainingDataManager().diary_time_period(), [tss])
             response.add_data('time_series', ts)
 
         response.add_data('unused_data', [k for k in dd_keys])

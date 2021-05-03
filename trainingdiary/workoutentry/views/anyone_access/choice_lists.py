@@ -1,3 +1,4 @@
+import dateutil.parser
 from django.http import JsonResponse
 
 from workoutentry.modelling.modelling_types import WorkoutFloatMeasureEnum, ReadingEnum, PandasPeriod, Aggregation
@@ -34,6 +35,8 @@ class ChoiceListForType(TrainingDiaryResource):
             choices = [p.value for p in PandasPeriod]
         elif type == 'aggregation':
             choices = [a.value for a in Aggregation]
+        elif type == 'years':
+            choices = range(dateutil.parser.parse(tdm.earliest_date()).year, dateutil.parser.parse(tdm.latest_date()).year + 1)
 
         if request.POST['include_all'] == 'true':
             choices.append('All')
