@@ -18,7 +18,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function refresh_list(field_type, include_all, $select, placeholder){
+function refresh_list(field_type, include_all, $select, placeholder, callback_function){
     choices_for_type(field_type, include_all, function(response){
             $select.select2({
                 data: response.data.choices,
@@ -28,6 +28,7 @@ function refresh_list(field_type, include_all, $select, placeholder){
                 //not sure this is working
                 scrollAfterSelect: true,
                 placeholder: placeholder});
+            callback_function(response);
     });
 }
 
