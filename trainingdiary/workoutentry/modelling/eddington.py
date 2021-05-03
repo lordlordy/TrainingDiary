@@ -57,7 +57,7 @@ class EddingtonNumberProcessor(AbstractProcessor):
 
             return df
 
-    def _check_and_reset(self, index):
+    def _check_and_reset(self, index, row):
         pass
 
 

@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'stevenlord.eu.pythonanywhere.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'mainsite.apps.MainsiteConfig',
     'workoutentry.apps.WorkoutentryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,11 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'crispy_forms',
     'django_registration',
-
-
-    'modelcluster',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
