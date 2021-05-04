@@ -81,4 +81,6 @@ class TSBProcessor(AbstractProcessor):
         df['tsb'] = df['ctl'] - df['atl']
 
         df = df.drop(columns=['date', 'date_shift', 'atl_impact', 'ctl_impact', 'days'])
+        # replace with NAN so that zeroes are removed
+        df['tss'] = df['tss'].replace(0, np.nan)
         return df
