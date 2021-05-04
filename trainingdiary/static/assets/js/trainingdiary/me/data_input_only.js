@@ -5,11 +5,11 @@ var $new_reading_table
 
 $(document).ready(function () {
 
-    refresh_list('activity', false, $("#activity"), "Select activity");
-    refresh_list('activityType', false, $("#activity_type"), "Select activity type");
-    refresh_list('equipment', false, $("#equipment"), "Select equipment");
-    refresh_list('tssMethod', false, $("#tss_method"), "Select method");
-    refresh_list('dayType', false, $("#day_type_select"), "Select type");
+    refresh_list('activity', false, $("#activity"), "Select activity", function(response){});
+    refresh_list('activityType', false, $("#activity_type"), "Select activity type", function(response){});
+    refresh_list('equipment', false, $("#equipment"), "Select equipment", function(response){});
+    refresh_list('tssMethod', false, $("#tss_method"), "Select method", function(response){});
+    refresh_list('dayType', false, $("#day_type_select"), "Select type", function(response){});
 
     const today = new Date();
     let from_date = new Date();
@@ -314,6 +314,7 @@ function new_workout() {
 }
 
 function set_workout_form(workout_dict) {
+    console.log(workout_dict);
     for (var key in workout_dict) {
         set_workout_form_field(key, workout_dict[key]);
     }
@@ -340,11 +341,12 @@ function set_workout_form_field(field, value) {
             $("#" + field).prop('checked', value == 1);
             break;
         case 'date':
-            debugger;
             $("#workout_date").val(value);
             break;
+        case 'comments':
+            $("#workout_comments").val(value);
+            break;
         default:
-            debugger;
             $("#" + field).val(value);
         }
  }
