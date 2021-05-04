@@ -104,7 +104,7 @@ class TimeSeriesManager:
         if df is None:
             return None
 
-        new_index = pd.date_range(start=requested_time_period.start, end=requested_time_period.end)
+        new_index = pd.date_range(start=time_period.start, end=time_period.end)
         df = df.reindex(new_index, fill_value=0.0)
 
         df = time_series_set.series_definition.period.aggregate_to_period(df)
