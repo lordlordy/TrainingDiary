@@ -55,8 +55,9 @@ class EddingtonNumberProcessor(AbstractProcessor):
                 row['plus_one'] = self.plus_one
                 row['contributor'] = round(v, 1)
 
+
         # drop the value col
-        df = df.drop(df.columns[0], axis=1)
+        # df = df.drop(df.columns[0], axis=1)
 
         return df
 
