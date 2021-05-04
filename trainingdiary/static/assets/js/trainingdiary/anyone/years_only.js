@@ -1,5 +1,7 @@
 var $table1;
 var $table2;
+var period1;
+var period2;
 
 $(document).ready(function () {
 
@@ -11,11 +13,12 @@ $(document).ready(function () {
     refresh_list('period', false, $("#period2"), "Select period", function(response){$("#period2").val('W-Sun').trigger('change')});
 
     var cols = ["date", "All hours", "Swim km", "Bike km", "Run km"];
-    $table1 = create_table("#table1", cols, cols, 1, {'date': function(d){return d;}}, false);
-    $table2 = create_table("#table2", cols, cols, 1, {'date': function(d){return d;}}, false);
+    $table1 = create_table("#table1", cols, cols, 1, {'date': date_converter1}, false);
+    $table2 = create_table("#table2", cols, cols, 1, {'date': date_converter2}, false);
 
 
     $("#refresh1").on('click', function(){
+        period1 = $("#period1").val().charAt(0);
         year_summary($("#year1").val(), $("#period1").val(), function(response){
             add_alerts($("#year1_alerts"), response.messages);
             $table1.rows().remove();
@@ -25,6 +28,7 @@ $(document).ready(function () {
     });
 
     $("#refresh2").on('click', function(){
+        period2 = $("#period2").val().charAt(0);
         year_summary($("#year2").val(), $("#period2").val(), function(response){
             add_alerts($("#year2_alerts"), response.messages);
             $table2.rows().remove();
@@ -41,4 +45,32 @@ function set_title1() {
 
 function set_title2() {
     $("#title2").text($("#year2").val() + " : " + $("#period2").val());
+}
+
+function date_converter1(data, type, row, meta ) {
+    return convert_date(period1, data, type, meta);
+}
+
+function date_converter2(data, type, row, meta ) {
+    return convert_date(period2, data, type, meta);
+}
+
+function convert_date(period, data, type, meta) {
+    if (type === 'display') {
+        let month = parseInt(data.substring(5,7)) - 1;
+        switch (period) {
+            case 'W':
+                return "Wk-" + (meta.row + 1) + " " + data.substring(8,10) + "-" + SHORT_MONTHS[month];
+                break;
+            case 'Q':
+                return "Q-" + (meta.row + 1) + " " + SHORT_MONTHS[month];
+                break;
+            case 'M':
+                return LONG_MONTHS[month]
+                break;
+            default:
+                return data;
+        }
+    }
+    return data;
 }
