@@ -54,7 +54,7 @@ $(document).ready(function () {
         data: [
             {text: "Lifetime", id: "Lifetime"},
             {text: "Annual", id: "Annual"},
-            {text: "Monnthly", id: "Monthly"},
+            {text: "Monthly", id: "Monthly"},
         ],
         closeOnSelect: true});
     $("#eddington_type").val('Lifetime').trigger('change')

@@ -31,7 +31,6 @@ class TimeSeriesManager:
                 tsl.append(row)
         return tsl
 
-
     def time_series_dict(self, requested_time_period, time_series_list):
         ts_list = {}
         for time_series_set in time_series_list:

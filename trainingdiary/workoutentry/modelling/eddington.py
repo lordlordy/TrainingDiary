@@ -76,7 +76,7 @@ class AnnualEddingtonNumberProcessor(EddingtonNumberProcessor):
     def series_definitions(self, base_measure, base_series_definition):
         dd = super().series_definitions(base_measure, base_series_definition)
         dd['annual_ed_num'] = SeriesDefinition(measure='annual_ed_num', underlying_measure=base_measure)
-        dd['annual_plus_one'] = SeriesDefinition(measure='plus_one', underlying_measure=base_measure)
+        dd['annual_plus_one'] = SeriesDefinition(measure='annual_plus_one', underlying_measure=base_measure)
         return dd
 
     def process(self, df):
@@ -96,6 +96,9 @@ class AnnualEddingtonNumberProcessor(EddingtonNumberProcessor):
 
 class MonthlyEddingtonNumberProcessor(EddingtonNumberProcessor):
 
+    ED_NUM = 'monthly_ed_num'
+    PLUS_ONE = 'monthly_plus_one'
+
     def __init__(self):
         super().__init__()
         self.current_month = None
@@ -105,20 +108,20 @@ class MonthlyEddingtonNumberProcessor(EddingtonNumberProcessor):
 
     def series_definitions(self, base_measure, base_series_definition):
         dd = super().series_definitions(base_measure, base_series_definition)
-        dd['month_ed_num'] = SeriesDefinition(measure='month_ed_num', underlying_measure=base_measure)
-        dd['month_plus_one'] = SeriesDefinition(measure='month_plus_one', underlying_measure=base_measure)
+        dd[self.ED_NUM] = SeriesDefinition(measure=self.ED_NUM, underlying_measure=base_measure)
+        dd[self.PLUS_ONE] = SeriesDefinition(measure=self.PLUS_ONE, underlying_measure=base_measure)
         return dd
 
     def process(self, df):
         self.current_month = df.index[0].month
-        df['month_ed_num'] = np.nan
-        df['month_plus_one'] = np.nan
+        df[self.ED_NUM] = np.nan
+        df[self.PLUS_ONE] = np.nan
         return super().process(df)
 
     def _check_and_reset(self, index, row):
         if index.month != self.current_month:
-            row['month_ed_num'] = self.ed_num
-            row['month_plus_one'] = self.plus_one
+            row[self.ED_NUM] = self.ed_num
+            row[self.PLUS_ONE] = self.plus_one
             self.current_month = index.month
             self.ed_num = 0
             self.contributors_to_next = np.array([])
