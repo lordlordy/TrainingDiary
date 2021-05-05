@@ -2,6 +2,7 @@ import dateutil.parser
 from django.http import JsonResponse
 
 from workoutentry.modelling.modelling_types import WorkoutFloatMeasureEnum, ReadingEnum, PandasPeriod, Aggregation
+from workoutentry.modelling.processor import TimeSeriesProcessor
 from workoutentry.training_data import TrainingDataManager
 from workoutentry.views.json.response import TrainingDiaryResponse
 from workoutentry.views.training_diary_resource import TrainingDiaryResource
@@ -37,6 +38,8 @@ class ChoiceListForType(TrainingDiaryResource):
             choices = [a.value for a in Aggregation]
         elif type == 'years':
             choices = range(dateutil.parser.parse(tdm.earliest_date()).year, dateutil.parser.parse(tdm.latest_date()).year + 1)
+        elif type == 'processor':
+            choices = TimeSeriesProcessor.TYPES
 
         if request.POST['include_all'] == 'true':
             choices.append('All')

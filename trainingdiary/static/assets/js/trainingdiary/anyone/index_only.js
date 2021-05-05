@@ -8,15 +8,6 @@ $(document).ready(function () {
     $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").removeClass('hide');
 
     create_series_form("#eddington_form")
-    
-    $("#eddington_type").select2({
-        data: [
-            {text: "Lifetime", id: "Lifetime"},
-            {text: "Annual", id: "Annual"},
-            {text: "Monthly", id: "Monthly"},
-        ],
-        closeOnSelect: true});
-    $("#eddington_type").val('Lifetime').trigger('change')
 
     bike_summary(function(response){
         $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {}, false);
@@ -64,7 +55,7 @@ $(document).ready(function () {
 
     $("#calculate_eddington_number").on('click', function(){
         $("#eddington_infinity").removeClass('hide');
-        calculate_eddington_number(JSON.stringify($("#eddington_form").serializeArray()), function(response){
+        time_series(JSON.stringify($("#eddington_form").serializeArray()), function(response){
             add_alerts($("#eddington_alerts"), response.messages);
             plot_chart("eddington-chart", "eddington-chart-container", response.data.time_series, response.data.chart_title)
             $("#eddington_infinity").addClass('hide');

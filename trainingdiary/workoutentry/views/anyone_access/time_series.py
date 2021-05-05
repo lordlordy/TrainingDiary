@@ -3,8 +3,9 @@ from django.http import JsonResponse
 from workoutentry.modelling.data_definition import DataDefinition, SeriesDefinition
 from workoutentry.modelling.modelling_types import DayAggregation, Aggregation, PandasPeriod
 from workoutentry.modelling.period import Period
-from workoutentry.modelling.processor import NoOpProcessor
+from workoutentry.modelling.processor import NoOpProcessor, TimeSeriesProcessor
 from workoutentry.modelling.rolling import RollingDefinition, NoOpRoller
+from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.modelling.time_series import TimeSeriesManager
 from workoutentry.training_data import TrainingDataManager
 from workoutentry.views.json.response import TrainingDiaryResponse
@@ -17,6 +18,9 @@ class TimeSeriesAccess(BaseJSONForm):
 
     def required_post_fields(self):
         return ['json']
+
+    def _date_fields(self) -> set:
+        return {'series_start', 'series_end'}
 
     def call_resource(self, request):
         dd, errors = self._process_data(request.POST['json'])
@@ -66,8 +70,12 @@ class TimeSeriesAccess(BaseJSONForm):
         response = TrainingDiaryResponse()
         [response.add_message(response.MSG_ERROR, e) for e in errors]
 
+        diary_time_period = TrainingDataManager().diary_time_period()
+        data_tp = TimePeriod(diary_time_period.start if dd['series_start'] is None else dd['series_start'],
+                             diary_time_period.end if dd['series_end'] is None else dd['series_end'])
+
         tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor)
-        ts = TimeSeriesManager().time_series_graph(TrainingDataManager().diary_time_period(), [tss])
+        ts = TimeSeriesManager().time_series_graph(data_tp, [tss])
         response.add_data('time_series', ts)
 
         response.add_data('unused_data', [k for k in dd_keys])
@@ -75,4 +83,4 @@ class TimeSeriesAccess(BaseJSONForm):
         return JsonResponse(data=response.as_dict())
 
     def get_processor(self, dd):
-        return NoOpProcessor()
+        return TimeSeriesProcessor.process(dd.get('processor_type', ""))

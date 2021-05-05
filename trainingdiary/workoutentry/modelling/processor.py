@@ -9,6 +9,27 @@ from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.modelling.data_definition import SeriesDefinition
 
 
+class TimeSeriesProcessor:
+
+    TYPES = ['No-op', 'TSB', 'Lifetime Eddington', 'Annual Eddington', 'Monthly Eddington']
+
+    @classmethod
+    def process(cls, for_type):
+        if for_type == cls.TYPES[1]:
+            return TSBProcessor()
+        elif for_type == cls.TYPES[2]:
+            from workoutentry.modelling.eddington import EddingtonNumberProcessor
+            return EddingtonNumberProcessor()
+        elif for_type == cls.TYPES[3]:
+            from workoutentry.modelling.eddington import AnnualEddingtonNumberProcessor
+            return AnnualEddingtonNumberProcessor()
+        elif for_type == cls.TYPES[4]:
+            from workoutentry.modelling.eddington import MonthlyEddingtonNumberProcessor
+            return MonthlyEddingtonNumberProcessor()
+        else:
+            return NoOpProcessor()
+
+
 class AbstractProcessor(ABC):
 
     @abstractmethod
@@ -42,7 +63,7 @@ class NoOpProcessor(AbstractProcessor):
 class TSBProcessor(AbstractProcessor):
     TARGET_PERCENTAGE = 0.05
 
-    def __init__(self, atl_impact_days, atl_decay_days, ctl_impact_days, ctl_decay_days):
+    def __init__(self, atl_impact_days=7, atl_decay_days=7, ctl_impact_days=42, ctl_decay_days=42):
         self.ctl_decay = np.exp(-1 / ctl_decay_days)
         self.ctl_impact = 1 - np.exp(-1 / ctl_impact_days)
         self.atl_decay = np.exp(-1 / atl_decay_days)
@@ -82,5 +103,5 @@ class TSBProcessor(AbstractProcessor):
 
         df = df.drop(columns=['date', 'date_shift', 'atl_impact', 'ctl_impact', 'days'])
         # replace with NAN so that zeroes are removed
-        df['tss'] = df['tss'].replace(0, np.nan)
+        df[df.columns[0]] = df[df.columns[0]].replace(0, np.nan)
         return df

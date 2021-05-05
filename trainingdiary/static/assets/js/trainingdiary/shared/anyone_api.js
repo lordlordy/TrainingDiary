@@ -35,12 +35,6 @@ function choices_for_type(field_type, include_all, callback_function) {
         resource: '/field/choices/'}, callback_function);
 }
 
-function calculate_eddington_number(json, callback_function) {
-    get_anyone_resource({
-        'json': json,
-        resource: '/eddington/calculation/'}, callback_function);
-}
-
 function time_series(json, callback_function) {
     get_anyone_resource({
         'json': json,

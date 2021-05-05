@@ -1,5 +1,7 @@
 import json
 
+from dateutil import parser
+
 from workoutentry.views.training_diary_resource import TrainingDiaryResource
 
 
@@ -32,8 +34,8 @@ class BaseJSONForm(TrainingDiaryResource):
     def _yes_no_boolean_fields(self) -> set:
         return {}
 
-    def _extra_processing(self, data) -> bool:
-        return False
+    def _date_fields(self) -> set:
+        return {}
 
     def _process_data(self, json_data) -> (dict, set):
         data = json.loads(json_data)
@@ -54,7 +56,11 @@ class BaseJSONForm(TrainingDiaryResource):
                     errors.add(f"Invalid {field_name} value: {e}")
             elif field_name in self._yes_no_boolean_fields():
                 dd[field_name] = value.lower() == 'yes'
-
-            elif not self._extra_processing(data):
+            elif field_name in self._date_fields():
+                try:
+                    dd[field_name] = parser.parse(value).date()
+                except Exception:
+                    dd[field_name] = None
+            else:
                 dd[field_name] = value
         return dd, errors
