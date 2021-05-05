@@ -1,6 +1,9 @@
 from django.conf import settings
 import sqlite3
 import os
+
+from pandas.io.sql import DatabaseError
+
 import trainingdiary
 from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.models import Day, Reading, Workout, RaceResult
@@ -493,10 +496,7 @@ class TrainingDataManager:
         return dd
 
     def day_data_df(self, time_period, data_definition):
-        sql = data_definition.select_clause()
-        sql += f" FROM {self.table_for_measure(data_definition.measure)} WHERE "
-        sql += data_definition.where_clause()
-        sql += f"date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
+        sql = data_definition.sql(time_period)
         df = pd.read_sql_query(sql, self.__conn)
         return df
 

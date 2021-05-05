@@ -32,8 +32,21 @@ class DataDefinition:
         components.append(self.measure)
         return " ".join(components)
 
-    def select_clause(self) -> str:
-        return f"SELECT date, {sql_for_aggregator(self.day_aggregation_method, self.target_measure)} as {self.target_measure}"
+    def sql(self, time_period) -> str:
+        tdm = TrainingDataManager();
+        table = tdm.table_for_measure(self.measure)
+        sql = self.select_clause(table)
+        sql += f" FROM {table} WHERE "
+        if table != 'Reading':
+            sql += self.where_clause()
+        sql += f"date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
+        return sql
+
+    def select_clause(self, table) -> str:
+        if table == 'Reading':
+            return f"SELECT date, {sql_for_aggregator(self.day_aggregation_method, 'value')} as {self.target_measure}"
+        else:
+            return f"SELECT date, {sql_for_aggregator(self.day_aggregation_method, self.target_measure)} as {self.target_measure}"
 
     def where_clause(self) -> str:
         wheres = list()

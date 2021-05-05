@@ -189,7 +189,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div><textarea class="form-control" id="workout_comments" name="comments" rows="10">sdcs</textarea>
+                        </div><textarea class="form-control" id="comments" name="comments"></textarea>
                     </form>
                 </div>
                 <div class="modal-footer" style="background: linear-gradient(black, var(--blue) 0%, white);"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" id="save_workout" type="button">Save</button></div>
@@ -208,78 +208,30 @@
         </div>
     </nav>
     <div class="row">
-        <div class="col-md-12 col-lg-6 col-xl-5">
+        <div class="col-md-12 col-lg-3">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4>Days</h4><img id="day_waiting" class="hide" src="assets/img/waiting-infinity.svg"><button class="btn btn-primary" id="add_next_day" type="button">Add Next</button>
+                    <h4 id="title1">Define Series</h4><img id="day_waiting" class="hide" src="assets/img/waiting-infinity.svg">
                 </div>
                 <div class="card-body">
-                    <div id="day_alerts"></div>
-                    <div class="row">
-                        <div class="col"><input id="day_from" class="day" type="date" style="width:100%;" data-type="Day"></div>
-                        <div class="col"><input id="day_to" class="day" type="date" style="width:100%;" data-type="Day"></div>
-                    </div>
                     <h6 class="text-muted card-subtitle mb-2"></h6>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-dark table-sm" id="day_table">
-                            <thead>
-                                <tr></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-12 col-lg-6 col-xl-7">
+        <div class="col-md-12 col-lg-9">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4>Readings</h4>
-                    <div class="btn-group" role="group"><button class="btn btn-outline-danger" id="delete_selected_reading" type="button">Delete Selected</button><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#reading_day_modal">Add</button></div><img id="reading_waiting" class="hide" src="assets/img/waiting-infinity.svg">
+                    <h4 id="title2">Summary 2</h4><img id="day_waiting" class="hide" src="assets/img/waiting-infinity.svg">
                 </div>
-                <div class="card-body">
-                    <div id="reading_alerts"></div>
-                    <div class="row">
-                        <div class="col"><input id="reading_from" class="reading" type="date" style="width:100%;" data-type="Reading"></div>
-                        <div class="col"><input id="reading_to" class="reading" type="date" style="width:100%;" data-type="Reading"></div>
-                    </div>
-                    <h6 class="text-muted card-subtitle mb-2"></h6>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-dark table-sm" id="reading_table">
-                            <thead>
-                                <tr></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+                <div class="card-body"></div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                    <h4>Workouts</h4><img id="workout_waiting" class="hide" src="assets/img/waiting-infinity.svg">
-                    <div class="btn-group" role="group"><button class="btn btn-outline-danger" id="delete_selected" type="button">Delete Selected</button><button class="btn btn-primary" id="new_workout_button" type="button">Add</button></div>
-                </div>
-                <div class="card-body">
-                    <div id="workout_alerts"></div>
-                    <div class="row">
-                        <div class="col"><input id="workout_from" class="workout" type="date" style="width:100%;" data-type="Workout"></div>
-                        <div class="col"><input id="workout_to" class="workout" type="date" style="width:100%;" data-type="Workout"></div>
-                    </div>
-                    <h6 class="text-muted card-subtitle mb-2"></h6>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-dark table-sm" id="workout_table">
-                            <thead>
-                                <tr></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Graph</h4><div id="duration-chart-container" style="width: 100%;">
+    <canvas id="duration-chart"></canvas>
+</div>
         </div>
     </div>
     <script src="assets/js/jquery.min.js"></script>
@@ -287,7 +239,6 @@
     <script src="assets/js/datatables.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
-    <script src="assets/js/trainingdiary/me/data_input_only.js"></script>
     <script src="assets/js/trainingdiary/shared/anyone_api.js"></script>
     <script src="assets/js/trainingdiary/shared/chart.js"></script>
     <script src="assets/js/trainingdiary/shared/common.js"></script>
