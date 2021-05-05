@@ -35,7 +35,8 @@ class YearSummary(TrainingDiaryResource):
         tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=run_km, series_definition=series_defn))
         tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=hours, series_definition=series_defn))
 
-        dd = TimeSeriesManager().time_series_list(tp, tss_list)
+        dd, errors = TimeSeriesManager().time_series_list(tp, tss_list)
         response.add_data('time_series', dd)
+        [response.add_message(response.MSG_ERROR, error) for error in errors]
 
         return JsonResponse(data=response.as_dict())

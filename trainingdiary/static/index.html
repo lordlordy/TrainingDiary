@@ -115,10 +115,10 @@
     </div>
     <div class="card">
         <div class="card-header">
-            <h4>Adhoc Series Graph<img id="eddington_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
+            <h4>Adhoc Series Graph<img id="adhoc_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
         </div>
         <div class="card-body">
-            <div id="eddington_alerts"></div>
+            <div id="time_series_alerts"></div>
             <div class="row">
                 <div class="col-2">
                     <form id="eddington_form">
@@ -213,15 +213,15 @@
                                         <td><select class="form-control" id="rolling_include_zeroes" style="width:100%;" name="rolling_include_zeroes"></select></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2"><button class="btn btn-secondary btn-block" id="calculate_eddington_number" type="button">Calculate</button></td>
+                                        <td colspan="2"><button class="btn btn-secondary btn-block" id="calculate_time_series" type="button">Calculate</button></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </form>
                 </div>
-                <div class="col-10"><div id="eddington-chart-container" style="width: 100%;">
-    <canvas id="eddington-chart"></canvas>
+                <div class="col-10"><div id="adhoc-chart-container" style="width: 100%;">
+    <canvas id="adhoc-chart"></canvas>
 </div></div>
             </div>
         </div>

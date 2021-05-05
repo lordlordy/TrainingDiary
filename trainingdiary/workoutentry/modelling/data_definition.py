@@ -10,6 +10,33 @@ from workoutentry.training_data.utitilties import sql_for_aggregator
 
 class DataDefinition:
 
+    DAY_TO_SQL_NUMBER = {
+        'All': '-1',
+        'Sunday': '0',
+        'Monday': '1',
+        'Tuesday': '2',
+        'Wednesday': '3',
+        'Thursday': '4',
+        'Friday': '5',
+        'Saturday': '6',
+    }
+
+    MONTH_TO_SQL_NUMBER = {
+        'All': '-1',
+        'January': '01',
+        'February': '02',
+        'March': '03',
+        'April': '04',
+        'May': '05',
+        'June': '06',
+        'July': '07',
+        'August': '08',
+        'September': '09',
+        'October': '10',
+        'November': '11',
+        'December': '12',
+    }
+
     def __init__(self, activity='All', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM, day_of_week='All', month='All', day_type='All'):
         self.activity = activity
         self.activity_type = activity_type
@@ -17,7 +44,9 @@ class DataDefinition:
         self.measure = measure
         self.day_aggregation_method = day_aggregation_method
         self.day_of_week = day_of_week
+        self.sql_day_of_week = self.DAY_TO_SQL_NUMBER[day_of_week]
         self.month = month
+        self.sql_month = self.MONTH_TO_SQL_NUMBER[month]
         self.day_type = day_type
         self.converter = measure_converter(measure)
         self.target_measure = measure if self.converter is None else self.converter.underlying_measure()
@@ -34,7 +63,7 @@ class DataDefinition:
 
     def sql(self, time_period) -> str:
         tdm = TrainingDataManager();
-        table = tdm.table_for_measure(self.measure)
+        table = tdm.table_for_measure(self.target_measure)
         # SELECT
         sql = self.select_clause(table)
         sql += f" FROM {table} "
@@ -42,10 +71,10 @@ class DataDefinition:
         sql += self.inner_join(table)
         sql += f"WHERE "
         if table == 'Reading':
-            sql += f"type='{self.measure}' AND "
+            sql += self.where_clause_reading()
         else:
-            sql += self.where_clause()
-        sql += f"Workout.date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY Workout.date"
+            sql += self.where_clause_workout()
+        sql += f"{table}.date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY {table}.date"
         return sql
 
     def inner_join(self, table) -> str:
@@ -55,11 +84,25 @@ class DataDefinition:
 
     def select_clause(self, table) -> str:
         if table == 'Reading':
-            return f"SELECT Workout.date, {sql_for_aggregator(self.day_aggregation_method, 'value')} as {self.target_measure}"
+            return f"SELECT Reading.date, {sql_for_aggregator(self.day_aggregation_method, 'value')} as {self.target_measure}"
         else:
             return f"SELECT Workout.date, {sql_for_aggregator(self.day_aggregation_method, self.target_measure)} as {self.target_measure}"
 
-    def where_clause(self) -> str:
+    def where_clause_reading(self) -> str:
+        wheres = [f"type='{self.target_measure}'"]
+        sql = ""
+        if self.day_type != 'All':
+            wheres.append(f"Day.type='{self.day_type}'")
+        if self.day_of_week != 'All':
+            wheres.append(f"strftime('%w', Reading.date)='{self.sql_day_of_week}'")
+        if self.month != 'All':
+            wheres.append(f"strftime('%m', Reading.date)='{self.sql_month}'")
+
+        if len(wheres) > 0:
+            sql = f"{' AND '.join(wheres)} AND "
+        return sql
+
+    def where_clause_workout(self) -> str:
         wheres = list()
         sql = ""
         if self.activity != 'All':
@@ -70,6 +113,11 @@ class DataDefinition:
             wheres.append(f"Workout.equipment='{self.equipment}'")
         if self.day_type != 'All':
             wheres.append(f"Day.type='{self.day_type}'")
+        if self.day_of_week != 'All':
+            wheres.append(f"strftime('%w', Workout.date)='{self.sql_day_of_week}'")
+        if self.month != 'All':
+            wheres.append(f"strftime('%m', Workout.date)='{self.sql_month}'")
+
         if len(wheres) > 0:
             sql = f"{' AND '.join(wheres)} AND "
         return sql

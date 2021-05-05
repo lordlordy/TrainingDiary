@@ -53,12 +53,12 @@ $(document).ready(function () {
         $(this).siblings().toggleClass('hide');
     });
 
-    $("#calculate_eddington_number").on('click', function(){
-        $("#eddington_infinity").removeClass('hide');
+    $("#calculate_time_series").on('click', function(){
+        $("#adhoc_infinity").removeClass('hide');
         time_series(JSON.stringify($("#eddington_form").serializeArray()), function(response){
-            add_alerts($("#eddington_alerts"), response.messages);
-            plot_chart("eddington-chart", "eddington-chart-container", response.data.time_series, response.data.chart_title)
-            $("#eddington_infinity").addClass('hide');
+            add_alerts($("#time_series_alerts"), response.messages);
+            plot_chart("adhoc-chart", "adhoc-chart-container", response.data.time_series, response.data.chart_title)
+            $("#adhoc_infinity").addClass('hide');
         });
     });
 

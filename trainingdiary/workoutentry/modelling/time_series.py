@@ -6,6 +6,12 @@ from workoutentry.modelling.graph_defaults import Scales, TimeSeriesDefaults
 from workoutentry.modelling.processor import NoOpProcessor
 
 
+class NoTimeSeriesDataException(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+
 class TimeSeriesManager:
 
     class TimeSeriesSet:
@@ -16,7 +22,7 @@ class TimeSeriesManager:
             self.processor = processor
 
     def time_series_list(self, requested_time_period, time_series_list):
-        ts_dict = self.time_series_dict(requested_time_period, time_series_list)
+        ts_dict, errors = self._time_series_dict(requested_time_period, time_series_list)
         names = []
         date_dicts = []
         for name, dd in ts_dict.items():
@@ -29,21 +35,26 @@ class TimeSeriesManager:
                 for i in range(len(names)):
                     row[names[i]] = date_dicts[i][key]
                 tsl.append(row)
-        return tsl
+        return tsl, errors
 
-    def time_series_dict(self, requested_time_period, time_series_list):
+    def _time_series_dict(self, requested_time_period, time_series_list):
         ts_list = {}
+        errors = list()
         for time_series_set in time_series_list:
-            title = time_series_set.data_definition.title_component()
-            for name, values in self.__time_series_dict(requested_time_period, time_series_set).items():
-                ts_list[title] = values
-        return ts_list
+            try:
+                title = time_series_set.data_definition.title_component()
+                for name, values in self.__time_series_dict(requested_time_period, time_series_set).items():
+                    ts_list[title] = values
+            except NoTimeSeriesDataException as e:
+                errors.append(e.msg)
+        return ts_list , errors
 
     def time_series_graph(self, requested_time_period, time_series_list) -> object:
         scales = Scales()
         ts_list = list()
         data_titles = list()
         processor_titles = list()
+        errors = list()
         for tss in time_series_list:
             data_title = tss.data_definition.title_component()
             if data_title not in data_titles:
@@ -53,10 +64,11 @@ class TimeSeriesManager:
                 if processor_title not in processor_titles:
                     processor_titles.append(processor_title)
 
-            time_series = self.__time_series_graph(requested_time_period, tss, scales)
-
-            if time_series is not None:
+            try:
+                time_series = self.__time_series_graph(requested_time_period, tss, scales)
                 ts_list += time_series
+            except NoTimeSeriesDataException as e:
+                errors.append(e.msg)
 
         title = ' / '.join(data_titles)
         if len(processor_titles) > 0:
@@ -102,7 +114,7 @@ class TimeSeriesManager:
         df = time_series_set.data_definition.day_data(time_period)
 
         if df is None:
-            return None
+            raise NoTimeSeriesDataException('No data for time series')
 
         new_index = pd.date_range(start=time_period.start, end=time_period.end)
         df = df.reindex(new_index, fill_value=0.0)
