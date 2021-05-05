@@ -4,6 +4,7 @@ import pandas as pd
 from workoutentry.modelling.data_definition import SeriesDefinition
 from workoutentry.modelling.graph_defaults import Scales, TimeSeriesDefaults
 from workoutentry.modelling.processor import NoOpProcessor
+from workoutentry.modelling.time_period import TimePeriod
 
 
 class NoTimeSeriesDataException(Exception):
@@ -20,6 +21,11 @@ class TimeSeriesManager:
             self.data_definition = data_definition
             self.series_definition = series_definition
             self.processor = processor
+
+        def adjusted_time_period(self, time_period) -> TimePeriod:
+            processor_adjusted = self.processor.adjusted_time_period(time_period)
+            series_adjusted = self.series_definition.adjusted_time_period(time_period)
+            return TimePeriod(min(processor_adjusted.start, series_adjusted.start), time_period.end)
 
     def time_series_list(self, requested_time_period, time_series_list):
         ts_dict, errors = self._time_series_dict(requested_time_period, time_series_list)
@@ -109,7 +115,7 @@ class TimeSeriesManager:
         return time_series
 
     def __time_series_df(self, requested_time_period, time_series_set):
-        time_period = time_series_set.processor.adjusted_time_period(requested_time_period)
+        time_period = time_series_set.adjusted_time_period(requested_time_period)
 
         df = time_series_set.data_definition.day_data(time_period)
 

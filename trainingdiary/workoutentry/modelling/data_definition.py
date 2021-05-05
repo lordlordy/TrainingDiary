@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 import pandas as pd
 
 from workoutentry.modelling.converters import measure_converter
 from workoutentry.modelling.modelling_types import DayAggregation, PandasInterpolation
 from workoutentry.modelling.period import Period
 from workoutentry.modelling.rolling import NoOpRoller
+from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.training_data import TrainingDataManager
 from workoutentry.training_data.utitilties import sql_for_aggregator
 
@@ -170,6 +173,13 @@ class SeriesDefinition:
         if rolling is not None:
             title += f" {rolling}"
         return title
+
+    def adjusted_time_period(self, time_period):
+        if not self.is_rolling():
+            return time_period
+        periods = self.rolling_definition.number_of_periods()
+        period_length = self.period.period_length_estimate()
+        return TimePeriod(time_period.start - timedelta(periods * period_length), time_period.end)
 
     def set_measure(self, measure):
         self.measure = measure

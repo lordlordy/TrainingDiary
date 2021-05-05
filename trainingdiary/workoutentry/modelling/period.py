@@ -18,6 +18,12 @@ class Period:
             title += " to date"
         return title
 
+    def period_length_estimate(self) -> int:
+        if self.to_date:
+            return 1
+        else:
+            return self.label.length_estimate()
+
     def aggregate_to_period(self, df):
         if self.label != PandasPeriod.DAY:
             if self.aggregation == Aggregation.SUM:

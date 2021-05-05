@@ -18,6 +18,9 @@ class NoOpRoller(AbstractRoller):
     def roll_it_up(self,df):
         return df
 
+    def number_of_periods(self) -> int:
+        return 1
+
 
 class RollingDefinition(AbstractRoller):
 
@@ -28,6 +31,9 @@ class RollingDefinition(AbstractRoller):
 
     def title_component(self):
         return f"Rolling {self.periods}x"
+
+    def number_of_periods(self) -> int:
+        return self.periods
 
     def roll_it_up(self, df):
         if self.aggregation == Aggregation.SUM:

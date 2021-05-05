@@ -65,6 +65,19 @@ class PandasPeriod(Enum):
     Q_FEB = 'Q-Feb'
     Q_MAR = 'Q-Mar'
 
+    def length_estimate(self) -> int:
+        if self.value[0] == 'D':
+            return 1
+        elif self.value[0] == 'W':
+            return 7
+        elif self.value[0] == 'M':
+            return 31
+        elif self.value[0] == 'Q':
+            return 91
+        elif self.value[0] == 'A':
+            return 365
+        return 1
+
 
 class WorkoutFloatMeasureEnum(Enum):
     SECONDS = 'seconds'
