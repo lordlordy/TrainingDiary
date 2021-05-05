@@ -34,7 +34,8 @@ class TimeSeriesAccess(BaseJSONForm):
                                          day_aggregation_method=DayAggregation(dd['day_aggregation']),
                                          day_type=dd['day_type'],
                                          day_of_week=dd['day_of_week'],
-                                         month=dd['month'])
+                                         month=dd['month'],
+                                         interpolation=dd['interpolation'])
 
         dd_keys.remove('activity')
         dd_keys.remove('activity_type')
@@ -44,6 +45,7 @@ class TimeSeriesAccess(BaseJSONForm):
         dd_keys.remove('day_type')
         dd_keys.remove('day_of_week')
         dd_keys.remove('month')
+        dd_keys.remove('interpolation')
 
         period = Period(label=PandasPeriod(dd['period']), aggregation=Aggregation(dd['period_aggregation']),
                         to_date=dd['to_date'] == 'yes',
@@ -66,6 +68,7 @@ class TimeSeriesAccess(BaseJSONForm):
         series_definition = SeriesDefinition(period=period, rolling_definition=rolling_definition)
 
         processor = self.get_processor(dd)
+        dd_keys.remove('processor_type')
 
         response = TrainingDiaryResponse()
         [response.add_message(response.MSG_ERROR, e) for e in errors]
@@ -73,12 +76,15 @@ class TimeSeriesAccess(BaseJSONForm):
         diary_time_period = TrainingDataManager().diary_time_period()
         data_tp = TimePeriod(diary_time_period.start if dd['series_start'] is None else dd['series_start'],
                              diary_time_period.end if dd['series_end'] is None else dd['series_end'])
+        dd_keys.remove('series_start')
+        dd_keys.remove('series_end')
 
         tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor)
         ts = TimeSeriesManager().time_series_graph(data_tp, [tss])
         response.add_data('time_series', ts)
 
-        response.add_data('unused_data', [k for k in dd_keys])
+        if len(dd_keys) > 0:
+            response.add_message(response.MSG_WARNING, f"The following data was not used: {' ,'.join(dd_keys)}")
 
         return JsonResponse(data=response.as_dict())
 

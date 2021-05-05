@@ -19,6 +19,26 @@ class Aggregation(Enum):
     STD_DEV = 'Std_Dev'
 
 
+class PandasInterpolation(Enum):
+    NONE = 'none'
+    FILL_ZERO = 'fill zero'
+    LINEAR = 'linear'
+    TIME = 'time'
+    NEAREST = 'nearest'
+    ZERO = 'zero'
+    SLINEAR = 'slinear'
+    QUADRATIC = 'quadratic'
+    CUBIC = 'cubic'
+    SPLINE = 'spline'
+    BARYCENTRIC = 'barycentric'
+    POLYNOMIAL = 'polynomial'
+    KROGH = 'krogh'
+    PIECEWISE_POLYNOMIAL = 'piecewise_polynomial'
+    PCHIP = 'pchip'
+    AKIMA = 'akima'
+    CUBIC_SPLINE = 'cubicspline'
+
+
 class PandasPeriod(Enum):
     DAY = 'Day'
     W_MON = 'W-Mon'

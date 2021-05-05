@@ -1,7 +1,7 @@
 import pandas as pd
 
 from workoutentry.modelling.converters import measure_converter
-from workoutentry.modelling.modelling_types import DayAggregation
+from workoutentry.modelling.modelling_types import DayAggregation, PandasInterpolation
 from workoutentry.modelling.period import Period
 from workoutentry.modelling.rolling import NoOpRoller
 from workoutentry.training_data import TrainingDataManager
@@ -37,7 +37,7 @@ class DataDefinition:
         'December': '12',
     }
 
-    def __init__(self, activity='All', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM, day_of_week='All', month='All', day_type='All'):
+    def __init__(self, activity='All', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM, day_of_week='All', month='All', day_type='All', interpolation='zero'):
         self.activity = activity
         self.activity_type = activity_type
         self.equipment = equipment
@@ -50,6 +50,7 @@ class DataDefinition:
         self.day_type = day_type
         self.converter = measure_converter(measure)
         self.target_measure = measure if self.converter is None else self.converter.underlying_measure()
+        self.interpolation = interpolation
         self.tdm = TrainingDataManager()
 
     def title_component(self):
@@ -135,12 +136,20 @@ class DataDefinition:
         df = self.__fill_gaps(df)
         return df
 
-    # todo currently just fills with zeroes - need to add not filling and interpolation methods
     def __fill_gaps(self, df):
+        if self.interpolation == PandasInterpolation.NONE.value:
+            return df
         max_date = df.index.max()
         min_date = df.index.min()
         index = pd.date_range(min_date, max_date)
-        df = df.reindex(index, fill_value=0)
+        if self.interpolation == PandasInterpolation.FILL_ZERO.value:
+            df =df.reindex(index, fill_value=0)
+        else:
+            df = df.reindex(index)
+            if self.interpolation in {PandasInterpolation.POLYNOMIAL.value, PandasInterpolation.SPLINE.value}:
+                df = df.interpolate(method=self.interpolation, axis=0, order=5)
+            else:
+                df = df.interpolate(method=self.interpolation, axis=0)
         return df
 
 
