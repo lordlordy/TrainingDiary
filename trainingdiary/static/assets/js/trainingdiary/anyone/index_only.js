@@ -7,48 +7,7 @@ $(document).ready(function () {
 
     $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").removeClass('hide');
 
-    refresh_list('measure', false, $("#measure"), "Select measure", function(response){$("#measure").val('miles').trigger('change')});
-    refresh_list('activity', true, $("#activity"), "Select type", function(response){$("#activity").val('Bike').trigger('change')});
-    refresh_list('activityType', true, $("#activity_type"), "Select type", function(response){$("#meaactivity_typesure").val('All').trigger('change')});
-    refresh_list('equipment', true, $("#equipment"), "Select type", function(response){$("#equipment").val('All').trigger('change')});
-    refresh_list('dayType', true, $("#day_type"), "Select type", function(response){$("#day_type").val('All').trigger('change')});
-    refresh_list('period', true, $("#period"), "Select type", function(response){$("#period").val('Day').trigger('change')});
-    refresh_list('aggregation', false, $("#period_aggregation"), "Select type", function(response){$("#period_aggregation").val('Sum').trigger('change')});
-    refresh_list('aggregation', false, $("#rolling_aggregation"), "Select type", function(response){$("#rolling_aggregation").val('Sum').trigger('change')});
-    refresh_list('aggregation', false, $("#day_aggregation"), "Select type", function(response){$("#day_aggregation").val('Sum').trigger('change')});
-
-    $("#day_of_week").select2({
-        data: [
-            {text: "All", id: "All"},
-            {text: "Monday", id: "Monday"},
-            {text: "Tuesday", id: "Tuesday"},
-            {text: "Wednesday", id: "Wednesday"},
-            {text: "Thursday", id: "Thursday"},
-            {text: "Friday", id: "Friday"},
-            {text: "Saturday", id: "Saturday"},
-            {text: "Sunday", id: "Sunday"},
-        ],
-        closeOnSelect: true});
-    $("#day_of_week").val('All').trigger('change');
-
-    $("#month").select2({
-        data: [
-            {text: "All", id: "All"},
-            {text: "January", id: "January"},
-            {text: "February", id: "February"},
-            {text: "March", id: "March"},
-            {text: "April", id: "April"},
-            {text: "May", id: "May"},
-            {text: "June", id: "June"},
-            {text: "July", id: "July"},
-            {text: "August", id: "August"},
-            {text: "September", id: "September"},
-            {text: "October", id: "October"},
-            {text: "November", id: "November"},
-            {text: "December", id: "December"},
-        ],
-        closeOnSelect: true});
-    $("#month").val('All').trigger('change');
+    create_series_form("#eddington_form")
     
     $("#eddington_type").select2({
         data: [
@@ -58,21 +17,6 @@ $(document).ready(function () {
         ],
         closeOnSelect: true});
     $("#eddington_type").val('Lifetime').trigger('change')
-
-    const yesNo = {
-        data: [{text: 'yes', id: 'yes'}, {text: 'no', id: 'no'}], 
-        closeOnSelect: true,
-        // this removes search box
-        minimumResultsForSearch: -1
-    }
-    $("#to_date").select2(yesNo);
-    $("#to_date").val('no').trigger('change');
-    $("#rolling").select2(yesNo);
-    $("#rolling").val('no').trigger('change');
-    $("#period_include_zeroes").select2(yesNo);
-    $("#period_include_zeroes").val('yes').trigger('change');
-    $("#rolling_include_zeroes").select2(yesNo);
-    $("#rolling_include_zeroes").val('yes').trigger('change');
 
     bike_summary(function(response){
         $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {}, false);

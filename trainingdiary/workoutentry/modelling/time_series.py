@@ -39,7 +39,7 @@ class TimeSeriesManager:
                 ts_list[title] = values
         return ts_list
 
-    def time_series_graph(self, requested_time_period, time_series_list):
+    def time_series_graph(self, requested_time_period, time_series_list) -> object:
         scales = Scales()
         ts_list = list()
         data_titles = list()

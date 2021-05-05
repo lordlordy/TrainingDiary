@@ -41,6 +41,12 @@ function calculate_eddington_number(json, callback_function) {
         resource: '/eddington/calculation/'}, callback_function);
 }
 
+function time_series(json, callback_function) {
+    get_anyone_resource({
+        'json': json,
+        resource: '/time_series/'}, callback_function);
+}
+
 function year_summary(year, period, callback_function) {
     get_anyone_resource({
         'year': year,

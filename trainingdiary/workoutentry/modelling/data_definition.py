@@ -37,7 +37,9 @@ class DataDefinition:
         table = tdm.table_for_measure(self.measure)
         sql = self.select_clause(table)
         sql += f" FROM {table} WHERE "
-        if table != 'Reading':
+        if table == 'Reading':
+            sql += f"type='{self.measure}' AND "
+        else:
             sql += self.where_clause()
         sql += f"date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
         return sql
