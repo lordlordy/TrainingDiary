@@ -35,30 +35,41 @@ class DataDefinition:
     def sql(self, time_period) -> str:
         tdm = TrainingDataManager();
         table = tdm.table_for_measure(self.measure)
+        # SELECT
         sql = self.select_clause(table)
-        sql += f" FROM {table} WHERE "
+        sql += f" FROM {table} "
+        # INNER JOIN TO DATE
+        sql += self.inner_join(table)
+        sql += f"WHERE "
         if table == 'Reading':
             sql += f"type='{self.measure}' AND "
         else:
             sql += self.where_clause()
-        sql += f"date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY date"
+        sql += f"Workout.date BETWEEN '{time_period.start}' and '{time_period.end}' GROUP BY Workout.date"
         return sql
+
+    def inner_join(self, table) -> str:
+        if self.day_type == "All":
+            return ""
+        return f"INNER JOIN Day On {table}.date = Day.date "
 
     def select_clause(self, table) -> str:
         if table == 'Reading':
-            return f"SELECT date, {sql_for_aggregator(self.day_aggregation_method, 'value')} as {self.target_measure}"
+            return f"SELECT Workout.date, {sql_for_aggregator(self.day_aggregation_method, 'value')} as {self.target_measure}"
         else:
-            return f"SELECT date, {sql_for_aggregator(self.day_aggregation_method, self.target_measure)} as {self.target_measure}"
+            return f"SELECT Workout.date, {sql_for_aggregator(self.day_aggregation_method, self.target_measure)} as {self.target_measure}"
 
     def where_clause(self) -> str:
         wheres = list()
         sql = ""
         if self.activity != 'All':
-            wheres.append(f"activity='{self.activity}'")
+            wheres.append(f"Workout.activity='{self.activity}'")
         if self.activity_type != 'All':
-            wheres.append(f"activity_type='{self.activity_type}'")
+            wheres.append(f"Workout.activity_type='{self.activity_type}'")
         if self.equipment != 'All':
-            wheres.append(f"equipment='{self.equipment}'")
+            wheres.append(f"Workout.equipment='{self.equipment}'")
+        if self.day_type != 'All':
+            wheres.append(f"Day.type='{self.day_type}'")
         if len(wheres) > 0:
             sql = f"{' AND '.join(wheres)} AND "
         return sql
