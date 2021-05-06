@@ -40,7 +40,7 @@ class DataDefinition:
         'December': '12',
     }
 
-    def __init__(self, activity='All', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM, day_of_week='All', month='All', day_type='All', interpolation='zero'):
+    def __init__(self, activity='All', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM, day_of_week='All', month='All', day_type='All', interpolation='none'):
         self.activity = activity
         self.activity_type = activity_type
         self.equipment = equipment
