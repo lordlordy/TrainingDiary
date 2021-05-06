@@ -268,6 +268,8 @@ $(document).ready(function () {
         $("#confirm_delete").modal('show');    
     });
 
+    $("#rpe, #seconds").on('change', update_rpe_tss);
+
 });
 
 function populate_days(days){
@@ -339,6 +341,7 @@ function set_workout_form(workout_dict) {
     for (var key in workout_dict) {
         set_workout_form_field(key, workout_dict[key]);
     }
+    update_rpe_tss();
 }
 
 function set_workout_form_field(field, value) {
@@ -370,4 +373,11 @@ function set_workout_form_field(field, value) {
         default:
             $("#" + field).val(value);
         }
+ }
+
+ function update_rpe_tss() {
+     rpe = parseFloat($('#rpe').val());
+     duration = seconds_from_time($('#seconds').val());
+     tss = (100 / 49) * rpe * rpe * duration / 3600.0
+     $("#rpe_tss").text(tss);
  }

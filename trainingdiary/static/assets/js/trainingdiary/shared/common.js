@@ -75,6 +75,11 @@ function time_from_seconds(seconds) {
     return hours+':'+minutes+':'+seconds;
 }
 
+function seconds_from_time(time) {
+    let parts = time.split(":")
+    return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2])
+}
+
 function add_alerts($alert, msg_list){
     msg_list.forEach(function(msg, index){
        add_alert($alert, msg.type, msg.text);
