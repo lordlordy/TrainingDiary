@@ -56,13 +56,14 @@ class Workout:
         return f'{self.date} ~ {self.workout_number}: {self.activity}:{self.activity_type}:{self.equipment} : {self.seconds}s'
 
     def data_dictionary(self):
-        return {'primary_key': self.primary_key,
+        return {'DT_RowId': self.primary_key,
+                'primary_key': self.primary_key,
                 'date': self.date,
                 'workout_number': self.workout_number,
                 'activity': self.activity,
                 'activity_type': self.activity_type,
                 'equipment': self.equipment,
-                'seconds': self.seconds,
+                'seconds': self.__seconds,
                 'rpe': self.rpe,
                 'tss': self.tss,
                 'tss_method': self.tss_method,
@@ -81,7 +82,8 @@ class Workout:
                 'last_save': self.last_save}
 
     def json_dictionary(self):
-        return {"activity": self.activity,
+        return {"DT_RowId": self.primary_key,
+                "activity": self.activity,
                 "isRace": self.is_race,
                 "ascentMetres": self.ascent_metres,
                 "rpe": self.rpe,

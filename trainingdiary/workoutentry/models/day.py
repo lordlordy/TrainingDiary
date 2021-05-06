@@ -11,6 +11,7 @@ class Day:
         self.day_type = args[1]
         self.comments = args[2]
 
+    def populate_readings(self):
         from workoutentry.training_data import TrainingDataManager
         self.readings = TrainingDataManager().readings_for_date(self.date)
         self.reading_count = len(self.readings)
@@ -58,6 +59,19 @@ class Day:
         if 'fatPercentage' in rDict:
                 self.fat_percentage = rDict['fatPercentage']
 
+        # values for data warehouse. Want zero instead of null
+        self.dw_sleep = rDict['sleep'] if 'sleep' in rDict else 0.0
+        self.dw_sleepQualityScore = rDict['sleepQualityScore'] if 'sleepQualityScore' in rDict else 0.0
+        self.dw_fatigue = rDict['fatigue'] if 'fatigue' in rDict else 0.0
+        self.dw_motivation = rDict['motivation'] if 'motivation' in rDict else 0.0
+        self.dw_restingHR = int(rDict['restingHR']) if 'restingHR' in rDict else 0.0
+        self.dw_SDNN = rDict['SDNN'] if 'SDNN' in rDict else 0.0
+        self.dw_rMSSD = rDict['rMSSD'] if 'rMSSD' in rDict else 0.0
+        self.dw_kg = rDict['kg'] if 'kg' in rDict else 0.0
+        self.dw_fatPercentage = rDict['fatPercentage'] if 'fatPercentage' in rDict else 0.0
+
+    def populate_workouts(self):
+        from workoutentry.training_data import TrainingDataManager
         self.workouts = TrainingDataManager().workouts_on_date(self.date)
         self.workout_count = len(self.workouts)
         if self.workout_count > 0:
@@ -75,18 +89,6 @@ class Day:
             self.bike_km = functools.reduce(operator.add, [w.km for w in bike_workouts])
         if len(run_workouts) > 0:
             self.run_km = functools.reduce(operator.add, [w.km for w in run_workouts])
-
-
-        # values for data warehouse. Want zero instead of null
-        self.dw_sleep = rDict['sleep'] if 'sleep' in rDict else 0.0
-        self.dw_sleepQualityScore = rDict['sleepQualityScore'] if 'sleepQualityScore' in rDict else 0.0
-        self.dw_fatigue = rDict['fatigue'] if 'fatigue' in rDict else 0.0
-        self.dw_motivation = rDict['motivation'] if 'motivation' in rDict else 0.0
-        self.dw_restingHR = int(rDict['restingHR']) if 'restingHR' in rDict else 0.0
-        self.dw_SDNN = rDict['SDNN'] if 'SDNN' in rDict else 0.0
-        self.dw_rMSSD = rDict['rMSSD'] if 'rMSSD' in rDict else 0.0
-        self.dw_kg = rDict['kg'] if 'kg' in rDict else 0.0
-        self.dw_fatPercentage = rDict['fatPercentage'] if 'fatPercentage' in rDict else 0.0
 
 
     def __str__(self):
@@ -113,11 +115,15 @@ class Day:
             result = result.union(w.workout_types)
         return result
 
-
     def data_dictionary(self):
-        return {'date': self.date_str, 'day_type': self.day_type, 'comments': self.comments}
+        return {'DT_RowId': self.date_str,
+                'date': self.date_str,
+                'day_type': self.day_type,
+                'comments': self.comments}
 
     def json_dictionary(self):
+        self.populate_readings()
+        self.populate_workouts()
         return {'iso8601DateString': self.date_str,
                 'type': self.day_type,
                 'comments': self.comments,
