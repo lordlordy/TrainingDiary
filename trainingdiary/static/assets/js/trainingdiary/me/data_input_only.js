@@ -20,9 +20,30 @@ $(document).ready(function () {
     $("#day_to, #reading_to, #workout_to, #new_readings_date").val(to_str);
 
     $("#day_waiting, #reading_waiting, #workout_waiting").removeClass('hide');
-    data_for_between('Day', from_str, to_str, function(response){populate_days(response.data.instances)});
-    data_for_between('Reading', from_str, to_str, function(response){populate_readings(response.data.instances)});
-    data_for_between('Workout', from_str, to_str, function(response){populate_workouts(response.data.instances)});
+    
+    data_for_between('Day', from_str, to_str, function(response){
+        add_alerts($("#day_alerts"), response.messages);
+        $("#day_waiting").addClass('hide');
+        if (response.status === 'success') {
+            populate_days(response.data.instances)
+        }
+    });
+
+    data_for_between('Reading', from_str, to_str, function(response){
+        add_alerts($("#reading_alerts"), response.messages);
+        $("#reading_waiting").addClass('hide');
+        if (response.status === 'success') {
+           populate_readings(response.data.instances);
+        }
+    });
+
+    data_for_between('Workout', from_str, to_str, function(response){
+        add_alerts($("#workout_alerts"), response.messages);
+        $("#workout_waiting").addClass('hide');
+        if (response.status === 'success') {
+            populate_workouts(response.data.instances);
+        }
+    });
 
     $("#day_from, #day_to, #reading_from, #reading_to, #workout_from, #workout_to").on('blur', function(){
         const dataType = $(this).attr('data-type');

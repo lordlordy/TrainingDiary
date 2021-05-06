@@ -23,6 +23,11 @@ function next_diary_date(callback_function) {
         resource: '/data/next_diary_date/'}, callback_function);
 }
 
+function logout(callback_function) {
+    get_me_resource({
+        resource: '/logout/'}, callback_function); 
+}
+
 
 
 function save_day(date, day_type, comments, callback_function) {

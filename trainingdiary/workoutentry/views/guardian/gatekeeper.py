@@ -18,16 +18,12 @@ def check_and_forward(request):
 
     logger.debug(f"{request.user} requesting {resource}")
 
-    if request.user.is_authenticated:
+    view_class = ANYONE_RESOURCE_MAP.get(resource, None)
+    if view_class is None and request.user.is_authenticated:
         view_class = ME_RESOURCE_MAP.get(resource, None)
-    else:
-        view_class = ANYONE_RESOURCE_MAP.get(resource, None)
 
     if view_class is None:
-        # todo - this is temporary until get authentication in place
-        view_class = ME_RESOURCE_MAP.get(resource, None)
-        if view_class is None:
-            return JsonResponse(data=TrainingDiaryResponse.error_response_dict(f"Cannot process request as no resource for {resource}"))
+        return JsonResponse(data=TrainingDiaryResponse.error_response_dict(f"You need to be logged in to access this resource"))
 
     view_class_instance = view_class()
     missing_fields = []

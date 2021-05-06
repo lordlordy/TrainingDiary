@@ -1,6 +1,34 @@
 LONG_MONTHS = ['January', 'February', 'March', 'April' , 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr' , 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
+$(document).ready(function () {
+
+    $("#logout").on('click', function(){
+        logout(function(response){
+            window.location.href='index.html';
+        })
+    });
+});
+
+
+$('#login_form').submit(function () {
+    $.ajax({
+        data: $(this).serialize(),
+        type: $(this).attr('method'),
+        url: '/login/',
+        headers: {'X-CSRFToken': getCookie('csrftoken')},
+        success: login_success
+    });
+    return false;
+});
+
+function login_success(response) {
+    console.log(response);
+    if (response.status) {
+        window.location.href='index.html';
+    }
+}
+
 
 // Function to get value from a cookie
 function getCookie(name) {

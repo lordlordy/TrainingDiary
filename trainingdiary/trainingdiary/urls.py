@@ -17,11 +17,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from workoutentry.views.login import TrainingDiaryLogin
 
 urlpatterns = [
+    path('login/', TrainingDiaryLogin.as_view()),
     path('', include('workoutentry.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('trainingdiary/', include('workoutentry.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    # path('trainingdiary/', include('workoutentry.urls')),
     path('', include('workoutentry.rest_urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

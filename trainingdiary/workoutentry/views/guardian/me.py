@@ -1,3 +1,4 @@
+from workoutentry.views.login import TrainingDiaryLogout
 from workoutentry.views.me.data_access import DataForDate, NextDiaryDate, SaveDay, ReadingsLeftForDay, SaveNewReadings, SaveWorkout, DeleteWorkout, DeleteReading
 from workoutentry.views.anyone_access.choice_lists import ChoiceListForType
 
@@ -9,5 +10,6 @@ ME_RESOURCE_MAP = {
     SaveNewReadings.URL: SaveNewReadings,
     SaveWorkout.URL: SaveWorkout,
     DeleteWorkout.URL: DeleteWorkout,
-    DeleteReading.URL: DeleteReading
+    DeleteReading.URL: DeleteReading,
+    TrainingDiaryLogout.URL: TrainingDiaryLogout
 }
