@@ -12,14 +12,16 @@ $(document).ready(function () {
     refresh_list('years', false, $("#year2"), "Select year", function(response){$("#year2").val('2020').trigger('change')});
     refresh_list('period', false, $("#period2"), "Select period", function(response){$("#period2").val('W-Sun').trigger('change')});
 
-    var cols = ["date", "All hours", "Swim km", "Bike km", "Run km"];
-    $table1 = create_table("#table1", cols, cols, 1, {'date': date_converter1}, false);
-    $table2 = create_table("#table2", cols, cols, 1, {'date': date_converter2}, false);
+    var headings = ["date", "Hours", "Swim", "Bike", "Run", "Press Ups"];
+    var data_keys = ["date", "All hours", "Swim km", "Bike km", "Run km", "Gym PressUp reps"];
+    $table1 = create_table("#table1", headings, data_keys, 1, {'date': date_converter1}, false);
+    $table2 = create_table("#table2", headings, data_keys, 1, {'date': date_converter2}, false);
 
 
     $("#refresh1").on('click', function(){
         period1 = $("#period1").val().charAt(0);
         year_summary($("#year1").val(), $("#period1").val(), function(response){
+            console.log(response)
             add_alerts($("#year1_alerts"), response.messages);
             $table1.rows().remove();
             $table1.rows.add(response.data.time_series).draw();

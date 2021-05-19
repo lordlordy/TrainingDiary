@@ -27,15 +27,17 @@ class YearSummary(TrainingDiaryResource):
         bike_km = DataDefinition(activity='Bike', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM)
         run_km = DataDefinition(activity='Run', activity_type='All', equipment='All', measure='km', day_aggregation_method=DayAggregation.SUM)
         hours = DataDefinition(activity='All', activity_type='All', equipment='All', measure='hours', day_aggregation_method=DayAggregation.SUM)
+        reps = DataDefinition(activity='Gym', activity_type='PressUp', equipment='All', measure='reps', day_aggregation_method=DayAggregation.SUM)
         series_defn = SeriesDefinition(period=Period(PandasPeriod(request.POST['period'])))
 
-        tss_list = list()
-        tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=swim_km, series_definition=series_defn))
-        tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=bike_km, series_definition=series_defn))
-        tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=run_km, series_definition=series_defn))
-        tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=hours, series_definition=series_defn))
+        summary = list()
+        summary.append(TimeSeriesManager.TimeSeriesSet(data_definition=swim_km, series_definition=series_defn))
+        summary.append(TimeSeriesManager.TimeSeriesSet(data_definition=bike_km, series_definition=series_defn))
+        summary.append(TimeSeriesManager.TimeSeriesSet(data_definition=run_km, series_definition=series_defn))
+        summary.append(TimeSeriesManager.TimeSeriesSet(data_definition=hours, series_definition=series_defn))
+        summary.append(TimeSeriesManager.TimeSeriesSet(data_definition=reps, series_definition=series_defn))
 
-        dd, errors = TimeSeriesManager().time_series_list(tp, tss_list)
+        dd, errors = TimeSeriesManager().time_series_list(tp, summary)
         response.add_data('time_series', dd)
         [response.add_message(response.MSG_ERROR, error) for error in errors]
 
