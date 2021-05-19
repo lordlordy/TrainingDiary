@@ -2,7 +2,7 @@ from django.conf import settings
 import sqlite3
 import os
 
-from pandas.io.sql import DatabaseError
+from django.utils import timezone
 
 import trainingdiary
 from workoutentry.modelling.time_period import TimePeriod
@@ -190,12 +190,12 @@ class TrainingDataManager:
 
         sql = f"""
             UPDATE Workout
-            SET activity="{activity}", activity_type="{activity_type}", equipment="{equipment}", seconds={seconds}, 
-            rpe={rpe}, tss={tss}, tss_method="{tss_method}", km={km}, kj={kj}, ascent_metres={ascent_metres}, 
+            SET activity='{activity}', activity_type='{activity_type}', equipment='{equipment}', seconds={seconds}, 
+            rpe={rpe}, tss={tss}, tss_method='{tss_method}', km={km}, kj={kj}, ascent_metres={ascent_metres}, 
             reps={reps}, is_race={is_race}, cadence={cadence}, watts={watts}, watts_estimated={watts_estimated}, 
-            heart_rate={heart_rate}, is_brick={is_brick}, keywords="{keywords}", comments="{comments}", 
-            last_save="{datetime.now()}"
-            WHERE primary_key="{primary_key}"
+            heart_rate={heart_rate}, is_brick={is_brick}, keywords='{keywords}', comments='{comments}', 
+            last_save='{timezone.now().isoformat()}'
+            WHERE primary_key='{primary_key}'
         """
         cursor = self.__conn.cursor()
         cursor.execute(sql)
@@ -219,7 +219,7 @@ class TrainingDataManager:
             VALUES
             ("{primary_key}", "{date}", {workout_number}, "{activity}", "{activity_type}", "{equipment}", 
             {seconds}, {rpe}, {tss}, "{tss_method}", {km}, {kj}, {ascent_metres}, {reps}, {is_race}, {cadence}, {watts}, 
-            {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{datetime.now()}")
+            {watts_estimated}, {heart_rate}, {is_brick}, "{keywords}", "{comments}", "{timezone.now().isoformat()}")
         """
         print(sql)
         cursor = self.__conn.cursor()

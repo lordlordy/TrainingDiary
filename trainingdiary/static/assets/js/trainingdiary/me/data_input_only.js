@@ -296,12 +296,14 @@ function populate_workouts(workouts){
         $workout_table.rows().remove();
         $workout_table.rows.add(workouts).draw()
     }else {
-        let cols = ['date', "#", 'activity', 'type', 'equipment', 'duration', 'km', 'ascent', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords'];
-        let fields = ['date', 'workout_number', 'activity', 'activity_type', 'equipment', 'seconds', 'km', 'ascent_metres', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords'];
+        let cols = ['date', "#", 'activity', 'type', 'equipment', 'duration', 'km', 'ascent', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords', 'last_save'];
+        let fields = ['date', 'workout_number', 'activity', 'activity_type', 'equipment', 'seconds', 'km', 'ascent_metres', 'rpe', 'tss', 'tss_method', 'watts', 'heart_rate', 'kj', 'cadence', 'reps', 'keywords', 'last_save'];
         let render_dict = {
             'workout_number': function(number){return ""+number},
             'seconds': time_from_seconds,
-            'date': function(date){return date}}
+            'date': function(date){return date},
+            'last_save': function(date){return date}
+        }
         $workout_table = create_table("#workout_table", cols, fields, 1, render_dict, true);
         $workout_table.rows().remove();
         $workout_table.rows.add(workouts).draw();
