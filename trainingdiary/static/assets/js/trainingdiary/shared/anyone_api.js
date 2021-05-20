@@ -20,6 +20,11 @@ function training_summary(callback_function) {
         resource: '/training/summary/'}, callback_function);
 }
 
+function reading_summary(callback_function) {
+    get_anyone_resource({
+        resource: '/reading/summary/'}, callback_function);
+}
+
 function graph_data(graph, year, activity, callback_function) {
     get_anyone_resource({
         'graph': graph,

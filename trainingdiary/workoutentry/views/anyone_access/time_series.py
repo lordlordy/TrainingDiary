@@ -89,4 +89,4 @@ class TimeSeriesAccess(BaseJSONForm):
         return JsonResponse(data=response.as_dict())
 
     def get_processor(self, dd):
-        return TimeSeriesProcessor.process(dd.get('processor_type', ""))
+        return TimeSeriesProcessor.get_processor(dd.get('processor_type', ""))

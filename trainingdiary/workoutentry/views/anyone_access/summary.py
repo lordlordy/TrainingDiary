@@ -2,10 +2,10 @@ from datetime import date
 
 from django.http import JsonResponse
 
-from workoutentry.modelling.modelling_types import DayAggregation, Aggregation, PandasPeriod
+from workoutentry.modelling.modelling_types import DayAggregation, Aggregation, PandasPeriod, ReadingEnum
 from workoutentry.modelling.period import Period
-from workoutentry.modelling.processor import TSBProcessor
-from workoutentry.modelling.rolling import RollingDefinition
+from workoutentry.modelling.processor import TSBProcessor, TimeSeriesProcessor
+from workoutentry.modelling.rolling import RollingDefinition, NoOpRoller
 from workoutentry.modelling.time_period import TimePeriod
 from workoutentry.modelling.time_series import TimeSeriesManager
 from workoutentry.modelling.data_definition import DataDefinition, SeriesDefinition
@@ -67,6 +67,51 @@ class TrainingSummary(TrainingDiaryResource):
         return JsonResponse(data=response.as_dict())
 
 
+class ReadingSummary(TrainingDiaryResource):
+
+    URL = '/reading/summary/'
+
+    def call_resource(self, request):
+
+        period_year = Period(label=PandasPeriod.Y_DEC,
+                             aggregation=Aggregation.MEAN,
+                             to_date=False,
+                             incl_zeroes=False)
+
+        series_definition = SeriesDefinition(period=period_year, rolling_definition=NoOpRoller())
+
+        time_series_sets = list()
+
+        for reading in ReadingEnum:
+            dd = DataDefinition(measure=reading.value, day_aggregation_method=DayAggregation.MEAN)
+            time_series_sets.append(TimeSeriesManager.TimeSeriesSet(data_definition=dd,
+                                                                    series_definition=series_definition,
+                                                                    processor=TimeSeriesProcessor.get_processor("No-op")))
+
+        diary_time_period = TrainingDataManager().diary_time_period()
+        # year summaries do need time period to be to year end
+        diary_time_period.end = date(diary_time_period.end.year, 12, 31)
+        tsl, errors = TimeSeriesManager().time_series_list(requested_time_period=diary_time_period, time_series_list=time_series_sets)
+
+        if len(tsl) > 0:
+            total_series = {'date': "Total"}
+            for k in tsl[0].keys():
+                if k != 'date':
+                    entries = [d[k] for d in tsl]
+                    year_count = sum([1 for e in entries if e > 0])
+                    total_series[k] = 0 if year_count == 0 else sum(entries) / year_count
+            tsl.append(total_series)
+
+        for dd in tsl:
+            dd['name'] = dd['date']
+
+        response = TrainingDiaryResponse()
+        [response.add_message(response.MSG_ERROR, e) for e in errors]
+        response.add_data('time_series', tsl)
+
+        return JsonResponse(data=response.as_dict())
+
+
 class CannedGraph(TrainingDiaryResource):
 
     URL = '/training/data/canned/'
@@ -79,7 +124,7 @@ class CannedGraph(TrainingDiaryResource):
         tms = TimeSeriesManager()
         graph = request.POST['graph']
         activity = request.POST['activity']
-        year_str = request.POST['year']
+        year_str = self._normalise_year_str(request.POST['year'])
         yr_title = year_str if year_str != 'Total' else "All Time"
 
         if year_str == 'Total':
@@ -113,6 +158,14 @@ class CannedGraph(TrainingDiaryResource):
                                      day_aggregation_method=DayAggregation.SUM)
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=km_defn))
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=km_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(7, Aggregation.SUM))))
+        elif graph == 'reading':
+            reading_defn = DataDefinition(activity='All',
+                                          activity_type='All',
+                                          equipment='All',
+                                          measure=activity,
+                                          day_aggregation_method=DayAggregation.MEAN)
+            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn))
+            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(7, Aggregation.MEAN))))
         elif graph == 'bike':
             bike_defn = DataDefinition(activity='Bike',
                                        activity_type='All',
@@ -133,3 +186,8 @@ class CannedGraph(TrainingDiaryResource):
         response.add_data('chart_title', f"{yr_title} {values['title']}")
         response.add_data('time_series', values)
         return JsonResponse(data=response.as_dict())
+
+    def _normalise_year_str(self, year_str) -> str:
+        if year_str == "Total":
+            return year_str
+        return year_str[:4]

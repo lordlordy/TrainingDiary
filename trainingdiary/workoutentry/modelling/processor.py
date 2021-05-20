@@ -14,7 +14,7 @@ class TimeSeriesProcessor:
     TYPES = ['No-op', 'TSB', 'Lifetime Eddington', 'Annual Eddington', 'Monthly Eddington']
 
     @classmethod
-    def process(cls, for_type):
+    def get_processor(cls, for_type):
         if for_type == cls.TYPES[1]:
             return TSBProcessor()
         elif for_type == cls.TYPES[2]:

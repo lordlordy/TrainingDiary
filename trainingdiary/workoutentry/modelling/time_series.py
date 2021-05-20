@@ -31,15 +31,17 @@ class TimeSeriesManager:
         ts_dict, errors = self._time_series_dict(requested_time_period, time_series_list)
         names = []
         date_dicts = []
+        dates = set()
         for name, dd in ts_dict.items():
             names.append(name)
             date_dicts.append(dd)
+            [dates.add(d) for d in dd.keys()]
         tsl = list()
         if len(date_dicts) > 0:
-            for key in date_dicts[0].keys():
+            for key in dates:
                 row = {'date': key}
                 for i in range(len(names)):
-                    row[names[i]] = date_dicts[i][key]
+                    row[names[i]] = date_dicts[i].get(key, 0)
                 tsl.append(row)
         return tsl, errors
 
@@ -122,8 +124,9 @@ class TimeSeriesManager:
         if df is None:
             raise NoTimeSeriesDataException('No data for time series')
 
-        new_index = pd.date_range(start=time_period.start, end=time_period.end)
-        df = df.reindex(new_index, fill_value=0.0)
+        if time_series_set.series_definition.period.incl_zeroes:
+            new_index = pd.date_range(start=time_period.start, end=time_period.end)
+            df = df.reindex(new_index, fill_value=0.0)
 
         df = time_series_set.series_definition.period.aggregate_to_period(df)
         df = time_series_set.series_definition.rolling_definition.roll_it_up(df)

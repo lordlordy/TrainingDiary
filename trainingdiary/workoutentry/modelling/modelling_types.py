@@ -103,4 +103,8 @@ class ReadingEnum(Enum):
     RESTING_HEART_RATE = 'restingHR'
     FATIGUE = 'fatigue'
     MOTIVATION = 'motivation'
+    SLEEP = 'sleep'
+    SLEEP_QUALITY_SCORE = 'sleepQualityScore'
+    SDNN = 'SDNN'
+    RMSSD = 'rMSSD'
 

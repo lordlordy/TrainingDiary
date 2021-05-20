@@ -2,10 +2,11 @@ var $bike_summary_table;
 var $km_table;
 var $duration_table;
 var $tss_table;
+var $reading_table;
 
 $(document).ready(function () {
 
-    $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity").removeClass('hide');
+    $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity, #reading_infinity").removeClass('hide');
 
     create_series_form("#eddington_form")
 
@@ -48,6 +49,17 @@ $(document).ready(function () {
 
     });
 
+    reading_summary(function(response){
+        var cols = ["year", "kg", "lbs", "fatPercentage", "motivation", "fatigue", "sleep", "sleepQualityScore", "restingHR", "SDNN", "rMSSD"];
+        let fields = ["date", "All kg", "All lbs", "All fatPercentage", "All motivation", "All fatigue", "All sleep", "All sleep", "All restingHR", "All SDNN", "All rMSSD"];
+        $reading_table = create_table("#reading_summary_table", cols, fields, 2, {"date": $.fn.dataTable.render.number( '', '.', 0 )}, false);
+        $reading_table.rows.add(response.data.time_series).draw();    
+        $reading_table.on('select', function(e, dt, type, indexes){ create_chart($reading_table);});
+
+        $("#reading_infinity").addClass('hide');
+
+    });
+
     $(".card-header").on('dblclick', function(){
         console.log('dblclick');
         $(this).siblings().toggleClass('hide');
@@ -81,24 +93,35 @@ function create_chart($table) {
             $duration_table.cell('.selected').deselect().draw();
             $km_table.cell('.selected').deselect().draw();
             $bike_summary_table.cell('.selected').deselect().draw();
+            $reading_table.cell('.selected').deselect().draw();
             graph = 'tss';
             break;
         case $duration_table:
             $tss_table.cell('.selected').deselect().draw();
             $km_table.cell('.selected').deselect().draw();
             $bike_summary_table.cell('.selected').deselect().draw();
+            $reading_table.cell('.selected').deselect().draw();
             graph = 'duration';
             break;
         case $km_table:
             $tss_table.cell('.selected').deselect().draw();
             $duration_table.cell('.selected').deselect().draw();
             $bike_summary_table.cell('.selected').deselect().draw();
+            $reading_table.cell('.selected').deselect().draw();
             graph = 'km';
+            break;
+        case $reading_table:
+            $tss_table.cell('.selected').deselect().draw();
+            $duration_table.cell('.selected').deselect().draw();
+            $bike_summary_table.cell('.selected').deselect().draw();
+            $km_table.cell('.selected').deselect().draw();
+            graph = 'reading';
             break;
         case $bike_summary_table:
             $tss_table.cell('.selected').deselect().draw();
             $duration_table.cell('.selected').deselect().draw();
             $km_table.cell('.selected').deselect().draw();
+            $reading_table.cell('.selected').deselect().draw();
             graph = 'bike';
             // year is on column so need to switch
             year = column;
