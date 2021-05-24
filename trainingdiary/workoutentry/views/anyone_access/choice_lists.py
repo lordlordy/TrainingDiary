@@ -32,6 +32,8 @@ class ChoiceListForType(TrainingDiaryResource):
             choices = tdm.day_types()
         elif type == 'measure':
             choices = [m.value for m in WorkoutFloatMeasureEnum] + [m.value for m in ReadingEnum]
+        elif type == 'generated_measure':
+            choices = [m for m in TimeSeriesProcessor.generated_measures()]
         elif type == 'period':
             choices = [p.value for p in PandasPeriod]
         elif type == 'aggregation':

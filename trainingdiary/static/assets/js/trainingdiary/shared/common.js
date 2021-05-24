@@ -1,6 +1,13 @@
 LONG_MONTHS = ['January', 'February', 'March', 'April' , 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr' , 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
+const yesNo = {
+    data: [{text: 'yes', id: 'yes'}, {text: 'no', id: 'no'}], 
+    closeOnSelect: true,
+    // this removes search box
+    minimumResultsForSearch: -1
+}
+
 $(document).ready(function () {
 
     $("#logout").on('click', function(){
@@ -109,14 +116,15 @@ function add_alert($alert_div, type, msg){
 }
 
 function create_series_form(form_id) {
-    refresh_list('measure', false, $("#measure"), "Select measure", function(response){$("#measure").val('miles').trigger('change')});
-    refresh_list('activity', true, $("#activity"), "Select type", function(response){$("#activity").val('Bike').trigger('change')});
+    refresh_list('measure', false, $("#measure"), "Select measure", function(response){$("#measure").val('tss').trigger('change')});
+    refresh_list('generated_measure', false, $("#timeseries_measure"), "Select measure", function(response){$("#timeseries_measure").val('noop').trigger('change')});
+    refresh_list('activity', true, $("#activity"), "Select type", function(response){$("#activity").val('All').trigger('change')});
     refresh_list('activityType', true, $("#activity_type"), "Select type", function(response){$("#activity_type").val('All').trigger('change')});
     refresh_list('equipment', true, $("#equipment"), "Select type", function(response){$("#equipment").val('All').trigger('change')});
     refresh_list('dayType', true, $("#day_type"), "Select type", function(response){$("#day_type").val('All').trigger('change')});
     refresh_list('period', true, $("#period"), "Select type", function(response){$("#period").val('Day').trigger('change')});
-    refresh_list('aggregation', false, $("#period_aggregation"), "Select type", function(response){$("#period_aggregation").val('Sum').trigger('change')});
-    refresh_list('aggregation', false, $("#rolling_aggregation"), "Select type", function(response){$("#rolling_aggregation").val('Sum').trigger('change')});
+    refresh_list('aggregation', false, $("#period_aggregation, #rolling_aggregation"), "Select type", function(response){$("#period_aggregation").val('Sum').trigger('change')});
+    // refresh_list('aggregation', false, $("#rolling_aggregation"), "Select type", function(response){$("#rolling_aggregation").val('Sum').trigger('change')});
     refresh_list('day_aggregation', false, $("#day_aggregation"), "Select type", function(response){$("#day_aggregation").val('Sum').trigger('change')});
     refresh_list('processor', false, $("#processor_type"), "Select type", function(response){$("#processor_type").val('Lifetime Eddington').trigger('change')});
     refresh_list('interpolation', false, $("#interpolation"), "Select type", function(response){$("#interpolation").val('zero').trigger('change')});
@@ -154,20 +162,23 @@ function create_series_form(form_id) {
         closeOnSelect: true});
     $("#month").val('All').trigger('change');
 
-    const yesNo = {
-        data: [{text: 'yes', id: 'yes'}, {text: 'no', id: 'no'}], 
-        closeOnSelect: true,
-        // this removes search box
-        minimumResultsForSearch: -1
-    }
 
-    $("#to_date").select2(yesNo);
-    $("#to_date").val('no').trigger('change');
-    $("#rolling").select2(yesNo);
-    $("#rolling").val('no').trigger('change');
-    $("#period_include_zeroes").select2(yesNo);
-    $("#period_include_zeroes").val('yes').trigger('change');
-    $("#rolling_include_zeroes").select2(yesNo);
-    $("#rolling_include_zeroes").val('yes').trigger('change');
+    createYesNoSelect($("#to_date, #rolling"), 'no');
+    createYesNoSelect($("#period_include_zeroes, #rolling_include_zeroes"), 'yes');
 
+    // $("#to_date, #rolling, #period_include_zeroes, #rolling_include_zeroes").sel/ect2(yesNo);
+    // $("#to_date, #rolling").val('no').trigger('change');
+    // $("#rolling").select2(yesNo);
+    // $("#rolling").val('no').trigger('change');
+    // $("#period_include_zeroes").select2(yesNo);
+    // $("#period_include_zeroes, #rolling_include_zeroes").val('yes').trigger('change');
+    // $("#rolling_include_zeroes").select2(yesNo);
+    // $("#rolling_include_zeroes").val('yes').trigger('change');
+
+}
+
+function createYesNoSelect($target_ids, default_value){
+    $target_ids.select2(yesNo);
+    $target_ids.val(default_value).trigger('change');
+    
 }

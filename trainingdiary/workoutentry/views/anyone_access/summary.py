@@ -73,7 +73,7 @@ class ReadingSummary(TrainingDiaryResource):
 
     def call_resource(self, request):
 
-        period_year = Period(label=PandasPeriod.Y_DEC,
+        period_year = Period(pandas_period=PandasPeriod.Y_DEC,
                              aggregation=Aggregation.MEAN,
                              to_date=False,
                              incl_zeroes=False)

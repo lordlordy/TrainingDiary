@@ -47,7 +47,7 @@ class TimeSeriesAccess(BaseJSONForm):
         dd_keys.remove('month')
         dd_keys.remove('interpolation')
 
-        period = Period(label=PandasPeriod(dd['period']), aggregation=Aggregation(dd['period_aggregation']),
+        period = Period(pandas_period=PandasPeriod(dd['period']), aggregation=Aggregation(dd['period_aggregation']),
                         to_date=dd['to_date'] == 'yes',
                         incl_zeroes=dd['period_include_zeroes'] == 'yes')
         dd_keys.remove('period')

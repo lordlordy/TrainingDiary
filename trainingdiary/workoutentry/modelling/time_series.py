@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from workoutentry.modelling.data_definition import SeriesDefinition
-from workoutentry.modelling.graph_defaults import Scales, TimeSeriesDefaults
+from workoutentry.graphs.graph_defaults import Scales, TimeSeriesDefaults
 from workoutentry.modelling.processor import NoOpProcessor
 from workoutentry.modelling.time_period import TimePeriod
 

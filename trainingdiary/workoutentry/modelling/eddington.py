@@ -7,6 +7,10 @@ from workoutentry.modelling.time_period import TimePeriod
 
 class EddingtonNumberProcessor(AbstractProcessor):
 
+    @staticmethod
+    def generated_measures() -> set:
+        return {'ed_num', 'plus_one', 'contributor'}
+
     def __init__(self):
         self.ed_num = 0
         self.plus_one = 0
@@ -67,6 +71,10 @@ class EddingtonNumberProcessor(AbstractProcessor):
 
 class AnnualEddingtonNumberProcessor(EddingtonNumberProcessor):
 
+    @staticmethod
+    def generated_measures() -> set:
+        return {'annual_ed_num', 'annual_plus_one'}
+
     def __init__(self):
         super().__init__()
         self.current_year = None
@@ -96,6 +104,10 @@ class AnnualEddingtonNumberProcessor(EddingtonNumberProcessor):
 
 
 class MonthlyEddingtonNumberProcessor(EddingtonNumberProcessor):
+
+    @staticmethod
+    def generated_measures() -> set:
+        return {'monthly_ed_num', 'monthly_plus_one'}
 
     ED_NUM = 'monthly_ed_num'
     PLUS_ONE = 'monthly_plus_one'

@@ -157,6 +157,21 @@ class DataDefinition:
 
 
 class SeriesDefinition:
+
+    @staticmethod
+    def generate_unique_key(period, rolling_definition, measure, underlying_measure) -> str:
+        # generates key from:
+        # period: pandas_period, aggregation, to_date, incl_zeroes
+        # rolling_definition: aggregation, periods
+        # measure & underlying_measure
+        s = f"{measure}"
+        if underlying_measure != SeriesDefinition.NOT_SET and underlying_measure != measure:
+            s += f"-{underlying_measure}"
+        s += f"[{period.unique_key()}]"
+        if not isinstance(rolling_definition, NoOpRoller):
+            s += f"[{rolling_definition.unique_key()}]"
+        return s
+
     NOT_SET = 'notSet'
     # todo - should measure and underlying_measure reference DataDefinition rather than just the name of the measure.
     # At the moment there's the chance that this measure in the SeriesDefinition does not match the measure it's been used on even though this does not make sense
@@ -166,6 +181,9 @@ class SeriesDefinition:
         self.rolling_definition = rolling_definition
         self.measure = measure
         self.underlying_measure = underlying_measure
+
+    def unique_key(self):
+        return SeriesDefinition.generate_unique_key(self.period, self.rolling_definition, self.measure, self.underlying_measure)
 
     def title_component(self):
         title = self.period.title_component()

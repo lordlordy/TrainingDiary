@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>TrainingDiary</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/datatables.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Dark.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/trainingdiary.css">
+</head>
+
+<body style="background: var(--blue);">
+    <nav class="navbar navbar-light navbar-expand-md" style="background: linear-gradient(black, rgb(0,89,184) 12%, var(--blue) 17%, rgb(3,125,255) 18%, rgb(54,151,255) 34%, rgb(75,162,255) 41%, white);">
+        <div class="container-fluid"><a class="navbar-brand" href="index.html">Steven Lords Website</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="data_input.html">Data Input</a></li>
+                    <li class="nav-item"><a class="nav-link" href="years.html">Years</a></li>
+                    <li class="nav-item"><a class="nav-link" href="graphs.html">Graphs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="defaults.html">Defaults</a></li>
+                </ul>
+            </div>
+            <div class="btn-group" role="group"><button class="btn btn-warning" id="logout" type="button">Logout</button><button class="btn btn-info" id="login" type="button" data-toggle="modal" data-target="#login_modal">Login</button></div>
+            <div class="modal fade" role="dialog" tabindex="-1" id="login_modal" style="background: linear-gradient(black, var(--blue) 22%, white), var(--blue);">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body" style="background: linear-gradient(black, var(--blue) 17%, white);">
+                            <section class="login-clean" style="background: linear-gradient(black 0%, var(--blue) 0%, white);">
+                                <form class="form-inline" id="login_form" method="post" style="background: linear-gradient(black, var(--blue) 0%, white);">
+                                    <h2 class="sr-only">Login Form</h2>
+                                    <div class="illustration"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none">
+                                            <path d="M15.4857 20H19.4857C20.5903 20 21.4857 19.1046 21.4857 18V6C21.4857 4.89543 20.5903 4 19.4857 4H15.4857V6H19.4857V18H15.4857V20Z" fill="currentColor"></path>
+                                            <path d="M10.1582 17.385L8.73801 15.9768L12.6572 12.0242L3.51428 12.0242C2.96199 12.0242 2.51428 11.5765 2.51428 11.0242C2.51429 10.4719 2.962 10.0242 3.51429 10.0242L12.6765 10.0242L8.69599 6.0774L10.1042 4.6572L16.4951 10.9941L10.1582 17.385Z" fill="currentColor"></path>
+                                        </svg></div>
+                                    <div class="form-group"><input class="form-control" type="text" name="username" placeholder="username"></div>
+                                    <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+                                    <div class="form-group"><button class="btn btn-primary btn-block" id="login" type="submit">Log In</button></div>
+                                </form>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="card">
+        <div class="card-header">
+            <h4>Chart Defaults<img id="adhoc_infinity" class="ml-1 hide" src="assets/img/waiting-infinity.svg"></h4>
+        </div>
+        <div class="card-body">
+            <div id="defaults_alerts"></div>
+            <div class="row">
+                <div class="col-2">
+                    <form id="defaults_form">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-dark table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">Create Key:</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Measure</td>
+                                        <td><select class="form-control" id="measure" name="measure" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Time series measure</td>
+                                        <td><select class="form-control" id="timeseries_measure" name="timeseries_measure" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Period</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pandas Period</td>
+                                        <td><select class="form-control" id="period" name="period" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Aggregation</td>
+                                        <td><select class="form-control" id="period_aggregation" name="period_aggregation" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>to date ?</td>
+                                        <td><select class="form-control" id="to_date" name="to_date" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>incl zeros ?</td>
+                                        <td><select class="form-control" id="period_include_zeroes" name="period_include_zeroes" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Rolling</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rolling ?</td>
+                                        <td><select class="form-control" id="rolling" name="rolling" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Aggregation</td>
+                                        <td><select class="form-control" id="rolling_aggregation" name="rolling_aggregation" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Periods</td>
+                                        <td><input class="form-control" type="number" id="number_of_periods" min="1" max="1000000" step="1" name="number_of_periods" style="width:100%;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Incl zeros</td>
+                                        <td><select class="form-control" id="rolling_include_zeroes" name="rolling_include_zeroes" style="width:100%;"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1">Chart Definition:</td>
+                                        <td colspan="1"><button class="btn btn-primary" id="new_definition" type="button">New</button></td>
+                                    </tr>
+                                    <tr></tr>
+                                    <tr>
+                                        <td>Key</td>
+                                        <td><input class="form-control" type="text" id="unique_key" name="unique_key" value="none" readonly=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Label</td>
+                                        <td><input class="form-control" type="text" id="label" name="label" value="none"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chart Type</td>
+                                        <td><select class="form-control" id="chart_type" style="width:100%;" name="chart_type">
+                                                <option value="line" selected="">line</option>
+                                                <option value="bar">bar</option>
+                                            </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Line Colour</td>
+                                        <td><input type="color" id="borderColor" style="width:100%;" name="borderColor"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fill Colour</td>
+                                        <td><input type="color" id="backgroundColor" style="width:100%;" name="backgroundColor"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fill</td>
+                                        <td><select class="form-control" id="fill" style="width:100%;" name="fill"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>point radius</td>
+                                        <td><input class="form-control" type="number" id="pointRadius" name="pointRadius" min="0" max="50" step="1" style="width:100%;" value="3"></td>
+                                    </tr>
+                                    <tr></tr>
+                                    <tr>
+                                        <td>hover radius</td>
+                                        <td><input class="form-control" type="number" id="pointHoverRadius" name="pointHoverRadius" min="0" max="50" step="1" style="width:100%;" value="10"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>showline</td>
+                                        <td><select class="form-control" id="showLine" style="width:100%;" name="showLine"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Side</td>
+                                        <td><select class="form-control" id="position" style="width:100%;" name="position">
+                                                <option value="left" selected="">left</option>
+                                                <option value="right">right</option>
+                                            </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>axis number</td>
+                                        <td><input class="form-control" type="number" id="number" name="number" min="1" max="5" step="1" style="width:100%;" value="1"></td>
+                                    </tr>
+                                    <tr></tr>
+                                    <tr>
+                                        <td>Scale type</td>
+                                        <td><select class="form-control" id="scale_type" style="width:100%;" name="scale_type">
+                                                <option value="linear" selected="">linear</option>
+                                            </select></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Draw gridlines</td>
+                                        <td><select class="form-control" id="draw_grid_lines" style="width:100%;" name="draw_grid_lines"></select></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><button class="btn btn-secondary btn-block" id="add_update" type="button">Add / Update</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-10"><button class="btn btn-primary" id="delete_selected" type="button">Delete selected</button>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark table-sm" id="chart_defaults_table">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/datatables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"></script>
+    <script src="assets/js/trainingdiary/shared/common.js"></script>
+    <script src="assets/js/trainingdiary/shared/anyone_api.js"></script>
+    <script src="assets/js/trainingdiary/shared/chart.js"></script>
+    <script src="assets/js/trainingdiary/shared/me_api.js"></script>
+    <script src="assets/js/trainingdiary/shared/table.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@next/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="assets/js/trainingdiary/me/defaults_only.js"></script>
+</body>
+
+</html>

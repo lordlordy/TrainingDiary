@@ -13,22 +13,28 @@ class TimeSeriesProcessor:
 
     TYPES = ['No-op', 'TSB', 'Lifetime Eddington', 'Annual Eddington', 'Monthly Eddington']
 
-    @classmethod
-    def get_processor(cls, for_type):
-        if for_type == cls.TYPES[1]:
+    @staticmethod
+    def get_processor(for_type):
+        if for_type == TimeSeriesProcessor.TYPES[1]:
             return TSBProcessor()
-        elif for_type == cls.TYPES[2]:
+        elif for_type == TimeSeriesProcessor.TYPES[2]:
             from workoutentry.modelling.eddington import EddingtonNumberProcessor
             return EddingtonNumberProcessor()
-        elif for_type == cls.TYPES[3]:
+        elif for_type == TimeSeriesProcessor.TYPES[3]:
             from workoutentry.modelling.eddington import AnnualEddingtonNumberProcessor
             return AnnualEddingtonNumberProcessor()
-        elif for_type == cls.TYPES[4]:
+        elif for_type == TimeSeriesProcessor.TYPES[4]:
             from workoutentry.modelling.eddington import MonthlyEddingtonNumberProcessor
             return MonthlyEddingtonNumberProcessor()
         else:
             return NoOpProcessor()
 
+    @staticmethod
+    def generated_measures() -> set:
+        s = set()
+        for t in TimeSeriesProcessor.TYPES:
+            s = s | TimeSeriesProcessor.get_processor(t).generated_measures()
+        return s
 
 class AbstractProcessor(ABC):
 
@@ -53,6 +59,10 @@ class AbstractProcessor(ABC):
 
 class NoOpProcessor(AbstractProcessor):
 
+    @staticmethod
+    def generated_measures() -> set:
+        return {'noop'}
+
     def process(self, df):
         return df
 
@@ -62,6 +72,10 @@ class NoOpProcessor(AbstractProcessor):
 
 class TSBProcessor(AbstractProcessor):
     TARGET_PERCENTAGE = 0.05
+
+    @staticmethod
+    def generated_measures() -> set:
+        return {'atl', 'ctl', 'tsb'}
 
     def __init__(self, atl_impact_days=7, atl_decay_days=7, ctl_impact_days=42, ctl_decay_days=42):
         self.ctl_decay = np.exp(-1 / ctl_decay_days)

@@ -157,7 +157,6 @@ class TrainingDataManager:
         workouts = self.__conn.execute(sql)
         return [Workout(*w) for w in workouts]
 
-
     def workout_for_date_and_number(self, date, number):
         sql = f'''
             {workout_select_sql}

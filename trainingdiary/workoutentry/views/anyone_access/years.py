@@ -38,7 +38,7 @@ class YearSummary(TrainingDiaryResource):
         summary.append(TimeSeriesManager.TimeSeriesSet(data_definition=reps, series_definition=series_defn))
 
         dd, errors = TimeSeriesManager().time_series_list(tp, summary)
-        response.add_data('time_series', dd)
+        response.add_data('time_series', sorted(dd, key=lambda x: x['date']))
         [response.add_message(response.MSG_ERROR, error) for error in errors]
 
         return JsonResponse(data=response.as_dict())

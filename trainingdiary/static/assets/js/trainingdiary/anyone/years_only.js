@@ -58,6 +58,15 @@ function date_converter2(data, type, row, meta ) {
 }
 
 function convert_date(period, data, type, meta) {
+    console.log("period:")
+    console.log(period)
+    console.log("data:")
+    console.log(data)
+    console.log("type:")
+    console.log(type)
+    console.log("meta:")
+    console.log(meta)
+    
     if (type === 'display') {
         let month = parseInt(data.substring(5,7)) - 1;
         switch (period) {

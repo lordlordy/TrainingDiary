@@ -1,4 +1,37 @@
+
+
 class TimeSeriesDefaults:
+
+    @staticmethod
+    def create(**kwargs):
+        unique_key = kwargs['unique_key']
+        label = kwargs['label']
+        chart_type = kwargs['chart_type']
+        borderColor = kwargs['borderColor']
+        backgroundColor = kwargs['backgroundColor']
+        fill = kwargs['fill'] > 0
+        pointRadius = kwargs['pointRadius']
+        pointHoverRadius = kwargs['pointHoverRadius']
+        showLine = kwargs['showLine'] > 0
+        position = kwargs['position']
+        number = kwargs['number']
+        scale_type = kwargs['scale_type']
+        draw_grid_lines = kwargs['draw_grid_lines'] > 0
+
+        # dataset, position, number, scale_type, draw_grid_lines
+        return TimeSeriesDefaults.Default(dataset=TimeSeriesDefaults.DataSet(chart_type=chart_type,
+                                                                             label=label,
+                                                                             borderColor=borderColor,
+                                                                             backgroundColor=backgroundColor,
+                                                                             fill=fill,
+                                                                             pointRadius=pointRadius,
+                                                                             pointHoverRadius=pointHoverRadius,
+                                                                             showLine=showLine),
+                                          position=position,
+                                          number=number,
+                                          scale_type=scale_type,
+                                          draw_grid_lines=draw_grid_lines,
+                                          unique_key=unique_key)
 
     # This implementation returns a single case of defaults. This is ok as not graphing to compare say two ctl graphs
     # When that come the case will need to sperate out the default object from the data.
@@ -24,8 +57,15 @@ class TimeSeriesDefaults:
         }
 
     def defaults(self, series_definition):
+        from workoutentry.graphs.defaults_db import ChartDefaultsManager
+        cdm = ChartDefaultsManager()
         if series_definition is None:
-            return TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'Unknown Measure', '#111111', '#777777', True, 3, 15, True), 'left', 1, 'linear', True)
+            return TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'Unknown', '#111111', '#777777', True, 3, 15, True), 'left', 1, 'linear', True)
+        if cdm.key_exists(series_definition.unique_key()):
+            defaults = cdm.get_default(series_definition.unique_key())[0]
+            if defaults.dataset.label == 'generate':
+                defaults.dataset.label = defaults.unique_key
+            return defaults
         measure = series_definition.measure
         if measure in self.dd:
             defaults = self.dd[measure]
@@ -41,8 +81,8 @@ class TimeSeriesDefaults:
             defaults.dataset.showLine = True
             defaults.dataset.fill = False
             defaults.dataset.label += f" {series_definition.title_component()}"
-            defaults.dataset.borderColour = self.__adjust_colour_by(defaults.dataset.borderColour, 0.85)
-            defaults.dataset.backgroundColour = defaults.dataset.borderColour
+            defaults.dataset.borderColor = self.__adjust_colour_by(defaults.dataset.borderColor, 0.85)
+            defaults.dataset.fill_colour = defaults.dataset.borderColor
             defaults.dataset.pointRadius = 1
             defaults.dataset.pointHoverRadius = 7
         elif series_definition.period.to_date:
@@ -63,7 +103,11 @@ class TimeSeriesDefaults:
 
     class Default:
 
-        def __init__(self, dataset, position, number, scale_type, draw_grid_lines):
+        def __init__(self, dataset, position, number, scale_type, draw_grid_lines, unique_key=None):
+            if unique_key is None:
+                self.unique_key = "Need to write code to generate unique key here"
+            else:
+                self.unique_key = unique_key
             self.dataset = dataset
             self.position = position
             self.number = number
@@ -73,17 +117,34 @@ class TimeSeriesDefaults:
         def axis_id(self):
             return Scales.axis_id(self.position, self.number, self.scale_type, self.draw_grid_lines)
 
+        def data_dictionary(self) -> dict:
+            return {'DT_RowId': self.unique_key,
+                    'unique_key': self.unique_key,
+                    'label': self.dataset.label,
+                    'chart_type': self.dataset.chart_type,
+                    'borderColor': self.dataset.borderColor,
+                    'backgroundColor': self.dataset.backgroundColor,
+                    'fill': self.dataset.fill,
+                    'pointRadius': self.dataset.pointRadius,
+                    'pointHoverRadius': self.dataset.pointHoverRadius,
+                    'showLine': self.dataset.showLine,
+                    'position': self.position,
+                    'number': self.number,
+                    'scale_type': self.scale_type,
+                    'draw_grid_lines': self.draw_grid_lines
+                    }
+
     class DataSet:
 
-        def __init__(self, chart_type, label, borderColour, backgroundColour, fill, pointRadius, pointHoverRadius, showline):
+        def __init__(self, chart_type, label, borderColor, backgroundColor, fill, pointRadius, pointHoverRadius, showLine):
             self.chart_type = chart_type
             self.label = label
-            self.borderColour = borderColour
-            self.backgroundColour = backgroundColour
+            self.borderColor = borderColor
+            self.backgroundColor = backgroundColor
             self.fill = fill
             self.pointRadius = pointRadius
             self.pointHoverRadius = pointHoverRadius
-            self.showLine = showline
+            self.showLine = showLine
             self.yAxisID = "not configured"
             self.data = list()
 
@@ -96,8 +157,8 @@ class TimeSeriesDefaults:
         def data_dictionary(self):
             return {'type': self.chart_type,
                     'label': self.label,
-                    'borderColor': self.borderColour,
-                    'backgroundColor': self.backgroundColour,
+                    'borderColor': self.borderColor,
+                    'backgroundColor': self.backgroundColor,
                     'fill': self.fill,
                     'pointRadius': self.pointRadius,
                     'pointHoverRadius': self.pointHoverRadius,

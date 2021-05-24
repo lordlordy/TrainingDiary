@@ -28,8 +28,6 @@ function logout(callback_function) {
         resource: '/logout/'}, callback_function); 
 }
 
-
-
 function save_day(date, day_type, comments, callback_function) {
     get_me_resource({
         'date': date,
@@ -67,4 +65,21 @@ function delete_reading(pk, callback_function) {
     get_me_resource({
         primary_key: pk,
         resource: '/reading/delete/'}, callback_function);
+}
+
+function save_graph_defaults(json, callback_function) {
+    get_me_resource({
+        'json': json,
+        resource: '/graph/defaults/save/'}, callback_function);
+}
+
+function graph_defaults(callback_function) {
+    get_me_resource({
+        resource: '/graph/defaults/'}, callback_function);
+}
+
+function delete_graph_defaults(unique_key, callback_function) {
+    get_me_resource({
+        'unique_key': unique_key,
+        resource: '/graph/defaults/delete/'}, callback_function);
 }

@@ -24,13 +24,23 @@ class NoOpRoller(AbstractRoller):
 
 class RollingDefinition(AbstractRoller):
 
+    @staticmethod
+    def generate_unique_key(periods, aggregation, incl_zeros):
+        s = f"Rolling-{aggregation.value}-{periods}x"
+        if not incl_zeros:
+            s += "-excl_zeroes"
+        return s
+
     def __init__(self, periods, aggregation=Aggregation.SUM, incl_zeros=True):
         self.periods = periods
         self.aggregation = aggregation
         self.incl_zeroes = incl_zeros
 
+    def unique_key(self) -> str:
+        return RollingDefinition.generate_unique_key(self.periods, self.aggregation, self.incl_zeroes)
+
     def title_component(self):
-        return f"Rolling {self.periods}x"
+        return f"Rolling {self.aggregation.value} {self.periods}x"
 
     def number_of_periods(self) -> int:
         return self.periods
