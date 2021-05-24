@@ -57,6 +57,7 @@ class SaveGraphDefaults(BaseJSONForm):
 
         cdm = ChartDefaultsManager()
         cdm.save_defaults(unique_key=unique_key,
+                          label=dd['label'],
                           chart_type=dd['chart_type'],
                           borderColor=dd['borderColor'],
                           backgroundColor=dd['backgroundColor'],
