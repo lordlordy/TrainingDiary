@@ -150,6 +150,7 @@ class CannedGraph(TrainingDiaryResource):
                                            day_aggregation_method=DayAggregation.SUM)
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=duration_defn))
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=duration_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(7, Aggregation.SUM))))
+            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=duration_defn, series_definition=SeriesDefinition(Period(PandasPeriod.Y_DEC, to_date=True))))
         elif graph == 'km':
             km_defn = DataDefinition(activity='All' if activity == "Total" else activity,
                                      activity_type='All',
@@ -158,6 +159,7 @@ class CannedGraph(TrainingDiaryResource):
                                      day_aggregation_method=DayAggregation.SUM)
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=km_defn))
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=km_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(7, Aggregation.SUM))))
+            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=km_defn, series_definition=SeriesDefinition(Period(PandasPeriod.Y_DEC, to_date=True))))
         elif graph == 'reading':
             reading_defn = DataDefinition(activity='All',
                                           activity_type='All',
@@ -166,6 +168,7 @@ class CannedGraph(TrainingDiaryResource):
                                           day_aggregation_method=DayAggregation.MEAN)
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn))
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(7, Aggregation.MEAN))))
+            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(31, Aggregation.MEAN))))
         elif graph == 'bike':
             bike_defn = DataDefinition(activity='Bike',
                                        activity_type='All',
