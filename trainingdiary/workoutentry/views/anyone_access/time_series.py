@@ -79,7 +79,9 @@ class TimeSeriesAccess(BaseJSONForm):
         dd_keys.remove('series_start')
         dd_keys.remove('series_end')
 
-        tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor)
+        tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor, x_axis_number=dd['x_axis_number'])
+        dd_keys.remove('x_axis_number')
+
         ts = TimeSeriesManager().time_series_graph(data_tp, [tss])
         response.add_data('time_series', ts)
 

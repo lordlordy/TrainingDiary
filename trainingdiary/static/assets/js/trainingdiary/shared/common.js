@@ -124,10 +124,9 @@ function create_series_form(form_id) {
     refresh_list('dayType', true, $("#day_type"), "Select type", function(response){$("#day_type").val('All').trigger('change')});
     refresh_list('period', true, $("#period"), "Select type", function(response){$("#period").val('Day').trigger('change')});
     refresh_list('aggregation', false, $("#period_aggregation, #rolling_aggregation"), "Select type", function(response){$("#period_aggregation").val('Sum').trigger('change')});
-    // refresh_list('aggregation', false, $("#rolling_aggregation"), "Select type", function(response){$("#rolling_aggregation").val('Sum').trigger('change')});
     refresh_list('day_aggregation', false, $("#day_aggregation"), "Select type", function(response){$("#day_aggregation").val('Sum').trigger('change')});
     refresh_list('processor', false, $("#processor_type"), "Select type", function(response){$("#processor_type").val('Lifetime Eddington').trigger('change')});
-    refresh_list('interpolation', false, $("#interpolation"), "Select type", function(response){$("#interpolation").val('zero').trigger('change')});
+    refresh_list('interpolation', false, $("#interpolation"), "Select type", function(response){$("#interpolation").val('none').trigger('change')});
 
     $("#day_of_week").select2({
         data: [

@@ -8,7 +8,7 @@ $(document).ready(function () {
 
     $("#tss_infinity, #duration_infinity, #km_infinity, #bike_infinity, #reading_infinity").removeClass('hide');
 
-    create_series_form("#eddington_form")
+    create_series_form("#time_series_form")
 
     bike_summary(function(response){
         $bike_summary_table = create_table("#bike_summary_table", response.data.years, response.data.years, 0, {}, false);
@@ -67,7 +67,7 @@ $(document).ready(function () {
 
     $("#calculate_time_series").on('click', function(){
         $("#adhoc_infinity").removeClass('hide');
-        time_series(JSON.stringify($("#eddington_form").serializeArray()), function(response){
+        time_series(JSON.stringify($("#time_series_form").serializeArray()), function(response){
             add_alerts($("#time_series_alerts"), response.messages);
             plot_chart("adhoc-chart", "adhoc-chart-container", response.data.time_series, response.data.chart_title)
             $("#adhoc_infinity").addClass('hide');
@@ -131,7 +131,7 @@ function create_chart($table) {
     let $waiting = $("#" + graph + "_infinity");
     $waiting.removeClass('hide');
     graph_data(graph, year, activity, function(response){
-        plot_chart(graph + "-chart", graph + "-chart-container", response.data.time_series, response.data.chart_title)
+        plot_chart(graph + "-chart", graph + "-chart-container", response.data.time_series.datasets, response.data.time_series.scales, response.data.chart_title)
         $waiting.addClass('hide');
     }); 
 }

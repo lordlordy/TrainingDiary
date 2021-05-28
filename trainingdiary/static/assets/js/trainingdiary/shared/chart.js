@@ -1,11 +1,11 @@
-function plot_chart(chart_id, chart_container_id, time_series_dict, chart_title) {
+function plot_chart(chart_id, chart_container_id, data_sets, y_axis_scales, chart_title) {
 
     $('#' + chart_id).remove();
     $('#' + chart_container_id).append('<canvas id="' + chart_id + '"></canvas>');
     var chart = $('#' + chart_id)[0].getContext("2d");
     var chart_config = {
         data: {
-            datasets: time_series_dict.datasets
+            datasets: data_sets
         },
         options: {
             responsive: true,
@@ -24,7 +24,7 @@ function plot_chart(chart_id, chart_container_id, time_series_dict, chart_title)
                 intersect: false,
                 displayColors: false,
             },
-            scales: time_series_dict.scales
+            scales: y_axis_scales
         }
     };
 

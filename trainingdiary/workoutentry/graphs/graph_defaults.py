@@ -1,5 +1,4 @@
 
-
 class TimeSeriesDefaults:
 
     @staticmethod
@@ -39,7 +38,7 @@ class TimeSeriesDefaults:
 
     def __init__(self):
         self.dd = {
-            'atl': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'atl', '#ff0000', '#ff0000', False, 3, 15, True),'left',  1, 'linear', True),
+            'atl': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'atl', '#ff0000', '#ff0000', False, 3, 15, True) ,'left',  1, 'linear', True),
             'ctl': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'ctl', '#00ff00', '#00ff00', False, 3, 15, True), 'left', 1, 'linear', True),
             'tsb': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tsb', '#0000ff', '#11e7ff', True, 3, 15, True), 'left', 1, 'linear', True),
             'tss': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tss', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
@@ -146,6 +145,7 @@ class TimeSeriesDefaults:
             self.pointHoverRadius = pointHoverRadius
             self.showLine = showLine
             self.yAxisID = "not configured"
+            self.xAxisID = "not configured"
             self.data = list()
 
         def set_data(self, data):
@@ -154,8 +154,12 @@ class TimeSeriesDefaults:
         def set_yaxis_id(self, yaxis_id):
             self.yAxisID = yaxis_id
 
+        def set_xaxis_id(self, xaxis_id):
+            self.xAxisID = xaxis_id
+
         def data_dictionary(self):
-            return {'type': self.chart_type,
+            return {'DT_RowId': self.label,
+                    'type': self.chart_type,
                     'label': self.label,
                     'borderColor': self.borderColor,
                     'backgroundColor': self.backgroundColor,
@@ -163,6 +167,7 @@ class TimeSeriesDefaults:
                     'pointRadius': self.pointRadius,
                     'pointHoverRadius': self.pointHoverRadius,
                     'showLine': self.showLine,
+                    'xAxisID': self.xAxisID,
                     'yAxisID': self.yAxisID,
                     'data': self.data}
 
@@ -202,20 +207,32 @@ class Scales:
                               'font': {'size': 18},
                               'text': " ".join(self.titles)}}
 
+    class XAxis:
+
+        def __init__(self, axis_type='time', display=True):
+            self.axis_type = axis_type
+            self.display = display
+
+        def data_dictionary(self):
+            return {'type': self.axis_type,
+                    'display': self.display}
+
     def __init__(self):
         self.scales = dict()
+        self.x_axis_added = False
 
-    def add(self, defaults) -> str:
-        axis_id = defaults.axis_id()
-        if axis_id in self.scales:
-            self.scales[axis_id].add_to_axis(defaults.dataset.label)
+    def add(self, defaults: TimeSeriesDefaults.Default, x_axis_number=1) -> (str, str):
+        x_axis_id = f'xAxis-{x_axis_number}'
+        if x_axis_id not in self.scales:
+            self.scales[x_axis_id] = Scales.XAxis(display=((x_axis_number == 1) or x_axis_number == "1"))
+
+        y_axis_id = defaults.axis_id()
+        if y_axis_id in self.scales:
+            self.scales[y_axis_id].add_to_axis(defaults.dataset.label)
         else:
             axis = Scales.YAxis(defaults)
-            self.scales[axis_id] = axis
-        return axis_id
+            self.scales[y_axis_id] = axis
+        return x_axis_id, y_axis_id
 
     def data_dictionary(self):
-        dd = {key: value.data_dictionary() for key, value in self.scales.items()}
-        dd['x'] = {'type': 'time'}
-
-        return dd
+        return {key: value.data_dictionary() for key, value in self.scales.items()}

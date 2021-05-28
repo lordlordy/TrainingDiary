@@ -17,10 +17,11 @@ class TimeSeriesManager:
 
     class TimeSeriesSet:
 
-        def __init__(self, data_definition, series_definition=SeriesDefinition(), processor=NoOpProcessor()):
+        def __init__(self, data_definition, series_definition=SeriesDefinition(), processor=NoOpProcessor(), x_axis_number=1):
             self.data_definition = data_definition
             self.series_definition = series_definition
             self.processor = processor
+            self.x_axis_number = x_axis_number
 
         def adjusted_time_period(self, time_period) -> TimePeriod:
             processor_adjusted = self.processor.adjusted_time_period(time_period)
@@ -112,7 +113,8 @@ class TimeSeriesManager:
 
         time_series = self.__add_graph_defaults(values_dict,
                                                 time_series_set.processor.series_definitions(time_series_set.data_definition.measure, time_series_set.series_definition),
-                                                scales)
+                                                scales,
+                                                x_axis_number=time_series_set.x_axis_number)
 
         return time_series
 
@@ -139,13 +141,14 @@ class TimeSeriesManager:
 
         return df
 
-    def __add_graph_defaults(self, values_dict, series_definitions, scales) -> list:
+    def __add_graph_defaults(self, values_dict, series_definitions, scales, x_axis_number=1) -> list:
         time_series = list()
         tsd = TimeSeriesDefaults()
         for measure, data in values_dict.items():
             defaults = tsd.defaults(series_definitions.get(measure, None))
-            scale_id = scales.add(defaults)
+            x_axis_id, y_axis_id = scales.add(defaults, x_axis_number)
             defaults.dataset.set_data(data)
-            defaults.dataset.set_yaxis_id(scale_id)
+            defaults.dataset.set_xaxis_id(x_axis_id)
+            defaults.dataset.set_yaxis_id(y_axis_id)
             time_series.append(defaults.dataset.data_dictionary())
         return time_series

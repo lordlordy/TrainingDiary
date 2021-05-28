@@ -1,14 +1,83 @@
+var $dataset_table;
+var datasets = new Array();
+var scales = new Object();
+var chart;
+var selected_dataset;
+
 $(document).ready(function () {
 
-    create_series_form("#eddington_form");
+    create_series_form("#time_series_form");
 
-    $("#plot_series").on('click', function(){
+    var cols = ["label", "type", "borderColor", "backgroundColor", "fill", "pointRadius", "pointHoverRadius", "showLine", "xAxisID", "yAxisID"];
+    $dataset_table = create_table("#dataset_table", cols, cols, 0, {}, true);
+    
+    $("#calculate_time_series").on('click', function(){
         $("#series_waiting").removeClass('hide');
-        time_series(JSON.stringify($("#series_form").serializeArray()), function(response){
+        time_series(JSON.stringify($("#time_series_form").serializeArray()), function(response){
             add_alerts($("#series_alerts"), response.messages);
-            plot_chart("chart", "chart-container", response.data.time_series, response.data.chart_title)
+            response.data.time_series.datasets.forEach(function(dataset, i) { 
+                datasets.push(dataset); 
+            });
+            for (const [key, value] of Object.entries(response.data.time_series.scales)) {
+                if (key in scales) {
+                    if (key.charAt(0) === 'x') {
+                        // do nothing for now. Need to decide how to combine x - axes ...
+                        let new_key = key + "x";
+                        scales[new_key] = value;
+                        response.data.time_series.datasets.forEach(function(dataset, i) { 
+                            dataset['xAxisId'] = new_key;
+                            console.log(dataset); 
+                        });
+                    } else {
+                        debugger;
+                        // add this text to existing text
+                        var currentText = scales[key].title.text;
+                        scales[key].title.text = currentText + " " + value.title.text;
+                    }
+                } else {
+                    scales[key] = value;
+                }
+            }
+            console.log(scales)
+            console.log(datasets)
+            chart = plot_chart("chart", "chart-container", datasets, scales, response.data.chart_title)
+            $dataset_table.rows.add(response.data.time_series.datasets).draw();
             $("#series_waiting").addClass('hide');
         });
     });
 
+    $("#dataset_table").on("click", "tbody tr", function(){
+        var data = $dataset_table.row( this ).data();
+        update_table_for_selected_row(data);
+    });
+
+    $("#update_dataset").on('click', update_chart_from_inputs);
+
 });
+
+function update_table_for_selected_row(dataset) {
+    selected_dataset = dataset;
+    $("#label").val(dataset.label);
+    $("#chart_type").val(dataset.type);
+    $("#borderColor").val(dataset.borderColor);
+    $("#backgroundColor").val(dataset.backgroundColor);
+    $("#fill").val(dataset.fill);
+    $("#pointRadius").val(dataset.pointRadius);
+    $("#pointHoverRadius").val(dataset.pointHoverRadius);
+    $("#showLine").val(dataset.showLine);
+    $("#yAxisID").val(dataset.yAxisID);
+}
+
+function update_chart_from_inputs() {
+    selected_dataset.label = $("#label").val();
+    selected_dataset.type = $("#chart_type").val();
+    selected_dataset.borderColor = $("#borderColor").val();
+    selected_dataset.backgroundColor = $("#backgroundColor").val();
+    selected_dataset.fill = $("#fill").val() == 'true';
+    selected_dataset.pointRadius = $("#pointRadius").val();
+    selected_dataset.pointHoverRadius = $("#pointHoverRadius").val();
+    selected_dataset.showLine = $("#showLine").val() === 'true';
+    selected_dataset.yAxisID = $("#yAxisID").val();
+    chart.update();
+}
+
