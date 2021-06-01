@@ -69,7 +69,7 @@ $(document).ready(function () {
         $("#adhoc_infinity").removeClass('hide');
         time_series(JSON.stringify($("#time_series_form").serializeArray()), function(response){
             add_alerts($("#time_series_alerts"), response.messages);
-            plot_chart("adhoc-chart", "adhoc-chart-container", response.data.time_series, response.data.chart_title)
+            plot_chart("adhoc-chart", "adhoc-chart-container", response.data.time_series.datasets, response.data.time_series.scales, response.data.chart_title)
             $("#adhoc_infinity").addClass('hide');
         });
     });

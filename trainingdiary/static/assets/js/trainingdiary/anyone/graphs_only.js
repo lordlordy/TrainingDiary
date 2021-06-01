@@ -21,13 +21,7 @@ $(document).ready(function () {
             for (const [key, value] of Object.entries(response.data.time_series.scales)) {
                 if (key in scales) {
                     if (key.charAt(0) === 'x') {
-                        // do nothing for now. Need to decide how to combine x - axes ...
-                        let new_key = key + "x";
-                        scales[new_key] = value;
-                        response.data.time_series.datasets.forEach(function(dataset, i) { 
-                            dataset['xAxisId'] = new_key;
-                            console.log(dataset); 
-                        });
+                        // no labels currently on x axis so no need to combine anything
                     } else {
                         debugger;
                         // add this text to existing text

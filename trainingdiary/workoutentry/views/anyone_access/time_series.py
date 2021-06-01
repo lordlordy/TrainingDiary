@@ -79,8 +79,11 @@ class TimeSeriesAccess(BaseJSONForm):
         dd_keys.remove('series_start')
         dd_keys.remove('series_end')
 
-        tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor, x_axis_number=dd['x_axis_number'])
-        dd_keys.remove('x_axis_number')
+        x_axis_number = 1
+        if 'x_axis_number' in dd:
+            x_axis_number = dd['x_axis_number']
+            dd_keys.remove('x_axis_number')
+        tss = TimeSeriesManager.TimeSeriesSet(data_definition, series_definition=series_definition, processor=processor, x_axis_number=x_axis_number)
 
         ts = TimeSeriesManager().time_series_graph(data_tp, [tss])
         response.add_data('time_series', ts)
