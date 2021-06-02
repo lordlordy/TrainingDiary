@@ -8,7 +8,7 @@ $(document).ready(function () {
 
     create_series_form("#time_series_form");
 
-    var cols = ["label", "type", "borderColor", "backgroundColor", "fill", "pointRadius", "pointHoverRadius", "showLine", "xAxisID", "yAxisID"];
+    var cols = ["DT_RowId", "label", "type", "borderColor", "backgroundColor", "fill", "pointRadius", "pointHoverRadius", "showLine", "xAxisID", "yAxisID"];
     $dataset_table = create_table("#dataset_table", cols, cols, 0, {}, true);
     
     $("#calculate_time_series").on('click', function(){
@@ -32,8 +32,6 @@ $(document).ready(function () {
                     scales[key] = value;
                 }
             }
-            console.log(scales)
-            console.log(datasets)
             chart = plot_chart("chart", "chart-container", datasets, scales, response.data.chart_title)
             $dataset_table.rows.add(response.data.time_series.datasets).draw();
             $("#series_waiting").addClass('hide');
@@ -51,6 +49,7 @@ $(document).ready(function () {
 
 function update_table_for_selected_row(dataset) {
     selected_dataset = dataset;
+    $("#DT_RowId").val(dataset.DT_RowId);
     $("#label").val(dataset.label);
     $("#chart_type").val(dataset.type);
     $("#borderColor").val(dataset.borderColor);
@@ -72,6 +71,7 @@ function update_chart_from_inputs() {
     selected_dataset.pointHoverRadius = $("#pointHoverRadius").val();
     selected_dataset.showLine = $("#showLine").val() === 'true';
     selected_dataset.yAxisID = $("#yAxisID").val();
+    $dataset_table.rows().invalidate().draw();
     chart.update();
 }
 

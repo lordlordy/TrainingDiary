@@ -150,5 +150,8 @@ class TimeSeriesManager:
             defaults.dataset.set_data(data)
             defaults.dataset.set_xaxis_id(x_axis_id)
             defaults.dataset.set_yaxis_id(y_axis_id)
-            time_series.append(defaults.dataset.data_dictionary())
+
+            ds_dd = defaults.dataset.data_dictionary()
+            ds_dd['DT_RowId'] = f"{ds_dd['DT_RowId']}-{x_axis_number}"
+            time_series.append(ds_dd)
         return time_series
