@@ -1,3 +1,11 @@
+
+$(document).ready(function(){
+    force_csrf_set(function(response){
+        console.log('Hopefully the csrf cookie is set');
+        console.log(response);
+    });
+});
+
 function get_anyone_resource(post_data, callback_function){
     $.ajax({
         url: '/guardian/anyone/',
@@ -51,4 +59,13 @@ function year_summary(year, period, callback_function) {
         'year': year,
         'period': period,
         resource: '/year/summary/'}, callback_function);
+}
+
+function force_csrf_set(callback_function){
+    $.ajax({
+        url: '/force/csrf/',
+        data: {},
+        type: 'get',
+        success: callback_function
+    });
 }
