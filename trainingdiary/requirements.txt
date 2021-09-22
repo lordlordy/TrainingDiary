@@ -1,6 +1,6 @@
 asgiref==3.3.4
 bootstrap4==0.1.0
-Django==3.2
+Django==3.2.5
 django-registration==3.0.1
 numpy==1.16.3
 pandas==1.1.5
