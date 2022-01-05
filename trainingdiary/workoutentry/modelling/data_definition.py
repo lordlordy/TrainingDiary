@@ -129,7 +129,7 @@ class DataDefinition:
     def day_data(self, time_period):
         df = self.tdm.day_data_df(time_period, self)
         if len(df) == 0:
-            return None
+            df[time_period.start] = 0
         if self.converter is not None:
             df[self.measure] = df[self.target_measure].astype('float')
             df = df.drop(columns=[self.target_measure])
