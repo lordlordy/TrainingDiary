@@ -137,7 +137,7 @@ class TimeSeriesManager:
 
         if requested_time_period is not None:
             # filter back to original requested period
-            df = df.loc[requested_time_period.start : requested_time_period.end]
+            df = df.loc[requested_time_period.start : requested_time_period.end if df.index.max() >= requested_time_period.end else df.index.max()]
 
         return df
 

@@ -51,7 +51,7 @@ $(document).ready(function () {
 
     reading_summary(function(response){
         var cols = ["year", "kg", "lbs", "fatPercentage", "motivation", "fatigue", "sleep", "sleepQualityScore", "restingHR", "SDNN", "rMSSD"];
-        let fields = ["date", "All kg", "All lbs", "All fatPercentage", "All motivation", "All fatigue", "All sleep", "All sleep", "All restingHR", "All SDNN", "All rMSSD"];
+        let fields = ["date", "All kg", "All lbs", "All fatPercentage", "All motivation", "All fatigue", "All sleep", "All sleepQualityScore", "All restingHR", "All SDNN", "All rMSSD"];
         $reading_table = create_table("#reading_summary_table", cols, fields, 2, {"date": $.fn.dataTable.render.number( '', '.', 0 )}, false);
         $reading_table.rows.add(response.data.time_series).draw();    
         $reading_table.on('select', function(e, dt, type, indexes){ create_chart($reading_table);});
