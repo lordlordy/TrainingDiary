@@ -166,7 +166,7 @@ class CannedGraph(TrainingDiaryResource):
                                           equipment='All',
                                           measure=activity,
                                           day_aggregation_method=DayAggregation.MEAN)
-            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn))
+            tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn, series_definition=SeriesDefinition(period=Period(incl_zeroes=False))))
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(7, Aggregation.MEAN))))
             tss_list.append(TimeSeriesManager.TimeSeriesSet(data_definition=reading_defn, series_definition=SeriesDefinition(Period(), RollingDefinition(31, Aggregation.MEAN))))
         elif graph == 'bike':
