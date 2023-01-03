@@ -107,4 +107,5 @@ class ReadingEnum(Enum):
     SLEEP_QUALITY_SCORE = 'sleepQualityScore'
     SDNN = 'SDNN'
     RMSSD = 'rMSSD'
+    READINESS = 'readiness'
 
