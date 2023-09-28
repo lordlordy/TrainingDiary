@@ -40,8 +40,8 @@ class TimeSeriesDefaults:
         self.dd = {
             'atl': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'atl', '#ff0000', '#ff0000', False, 3, 15, True) ,'left',  1, 'linear', True),
             'ctl': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'ctl', '#00ff00', '#00ff00', False, 3, 15, True), 'left', 1, 'linear', True),
-            'tsb': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tsb', '#0000ff', '#11e7ff', True, 3, 15, True), 'left', 1, 'linear', True),
-            'tss': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tss', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
+            'tsb': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tsb', '#0000ff', '#11e7ff', True, 3, 15, True), 'right', 1, 'linear', True),
+            'tss': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'tss', '#ff00dd', '#ff00dd', False, 5, 15, False), 'left', 2, 'linear', True),
             'seconds': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'seconds', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
             'minutes': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('line', 'minutes', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
             'hours': TimeSeriesDefaults.Default(TimeSeriesDefaults.DataSet('bar', 'hours', '#ff00dd', '#ff00dd', False, 5, 15, False), 'right', 1, 'linear', True),
